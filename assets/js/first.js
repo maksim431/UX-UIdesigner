@@ -2,10 +2,12 @@
 
 import { initScramble, makeAsciiGrid, drawAsciiFrame, coverAndGo } from './ascii.js'
 import { initCursor } from './cursor.js'
+import { initLang } from './ui.js'
 
 const root = document.documentElement
 initScramble()
 initCursor()
+initLang()
 
 /* ---------- переход по «да / нет» ---------- */
 document.querySelectorAll('[data-go]').forEach((a) =>

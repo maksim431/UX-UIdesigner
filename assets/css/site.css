@@ -593,3 +593,22 @@ html.cs-anim .cs-rise.is-in { opacity: 1; transform: none; transition: opacity .
 @media (prefers-reduced-motion: reduce) {
   html.cs-anim .cs-rise { opacity: 1; transform: none; }
 }
+
+/* переключатель языка ru / en (в шапке рядом с «контактами», на первом экране — в правом верхнем углу) */
+.lang { display: flex; align-items: center; gap: 6px; font-size: 20px; line-height: 24px; margin-right: 40px; white-space: pre; }
+.lang a { color: #a3a3a3; transition: color .2s; }
+.lang a:hover { color: #000; }
+.lang [aria-current] { color: #000; }
+.lang i { font-style: normal; color: #a3a3a3; }
+.hdr__bar > .hdr__right { justify-self: end; }
+@media (max-width: 1199.98px) { .lang { margin-right: 20px; } }
+@media (max-width: 809.98px) { .lang { font-size: 16px; margin-right: 12px; } }
+.fs-lang { position: fixed; top: 26px; right: 76px; z-index: 10; margin: 0; }
+@media (max-width: 1199.98px) { .fs-lang { top: 32px; right: 42px; } }
+@media (max-width: 809.98px) { .fs-lang { top: 16px; right: 16px; } }
+
+/* «design» для английской версии первого экрана — временный шрифт вместо рисованной надписи «дизайн» */
+.hero__dizain--en { overflow: visible; }
+.hero__dizain--en text { font-family: "Sedgwick Ave Display", var(--font); }
+/* телефон, страница кейса: в шапке «назад», логотип, язык и меню — подпись «portfolio» прячем, чтобы не было тесно */
+@media (max-width: 809.98px) { .hdr--case .logo span { display: none; } }

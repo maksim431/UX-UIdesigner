@@ -36,6 +36,46 @@ const CASES = {
   },
 }
 
+// английская версия текстов (макеты и так на английском)
+const CASES_EN = {
+  scplab: {
+    prompt: 'Design a mobile workout app for athletes',
+    intro: "The picture came out bright, but the AI doesn't know the conditions an athlete works in: the gym, heavy breathing, sweaty hands, seconds between sets. It doesn't think about when to offer a subscription or how to start a workout. As a result, the app looks great in a screenshot but is awkward in the gym — people drop it after a couple of workouts and never subscribe. An app people pay for every month has to be designed with an understanding of the user.",
+    issues: [
+      'The subscription is offered on the first screen — before the person understands what they are paying for.',
+      'Small buttons and icons: impossible to hit in the gym with sweaty hands.',
+      'The home screen is overloaded with numbers — it is unclear how to start a workout.',
+    ],
+  },
+  foodbot: {
+    prompt: 'Make a dashboard for a service where cafés create a Telegram delivery bot',
+    intro: "The dashboard looks modern, but the AI doesn't know that a café owner is not a programmer and is on their feet all day. It copies complex interfaces: technical fields, dozens of sections, desktop-only work. The owner won't be able to launch a bot on their own, will keep writing to support or leave for a competitor. A service a business uses to take orders and money has to be built with an understanding of the client's day.",
+    issues: [
+      'The first screen asks for an API token and a webhook — a café owner has no idea what those are.',
+      'A dozen menu sections with no hints: it is unclear where to start.',
+      'Desktop only: you can’t accept an order from your phone in the kitchen.',
+    ],
+    issuesMobile: [
+      'The first screen asks for an API token and a webhook — a café owner has no idea what those are.',
+      'A dozen sections with no hints: on a small screen a new order gets lost among the menu items.',
+      'The mobile version is just a squeezed desktop dashboard: tiny fields and buttons, not made for work on the go.',
+    ],
+  },
+  vici: {
+    prompt: 'Make a website for a seafood producer',
+    intro: "The site looks neat, but the AI does what it has seen thousands of times — a catalog like everyone else's. It never asks why a person visits a producer's website: not for the pack weight, but for a dinner idea. Without that understanding the site doesn't bring buyers to the store and doesn't pay off. A big brand's website has to sell, and for that it is designed with an understanding of shopper behavior.",
+    issues: [
+      'A plain catalog with no recipes — visitors don’t know what to cook.',
+      'Product cards are dead ends: there is nowhere to go next.',
+      'No reason to come back to the site or take it to the store.',
+    ],
+  },
+}
+const EN = document.documentElement.lang === 'en'
+const L = EN
+  ? { title: 'If you decide to build the product yourself with AI', prompt: 'prompt', issues: 'What’s wrong with this example:' }
+  : { title: 'Если вы решите создать продукт самостоятельно в нейросети', prompt: 'промт', issues: 'Что не так в этом примере:' }
+
 /* ---------- маленький помощник: div со стилями ---------- */
 const UNITLESS = new Set(['fontWeight', 'opacity', 'lineHeight', 'flex', 'zIndex'])
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -226,13 +266,13 @@ const deviceOf = (w) => (w >= 1200 ? 'desktop' : w >= 810 ? 'tablet' : 'phone')
 
 function mount(el) {
   const key = el.getAttribute('data-case')
-  const data = CASES[key]
+  const data = (EN ? CASES_EN : CASES)[key]
   if (!data) return
   el.innerHTML =
-    '<p class="aic__title">Если вы решите создать продукт самостоятельно в нейросети</p>' +
-    '<div class="aic__shot"><p class="aic__prompt">промт: «' + esc(data.prompt) + '»</p><div class="aic__frame" aria-hidden="true"><div class="aic__mock"></div></div></div>' +
+    '<p class="aic__title">' + L.title + '</p>' +
+    '<div class="aic__shot"><p class="aic__prompt">' + L.prompt + (EN ? ': “' : ': «') + esc(data.prompt) + (EN ? '”' : '»') + '</p><div class="aic__frame" aria-hidden="true"><div class="aic__mock"></div></div></div>' +
     '<p class="aic__intro">' + esc(data.intro) + '</p>' +
-    '<div class="aic__issues"><p class="aic__issues-title">Что не так в этом примере:</p><ul></ul></div>'
+    '<div class="aic__issues"><p class="aic__issues-title">' + L.issues + '</p><ul></ul></div>'
   const frame = el.querySelector('.aic__frame')
   const mock = el.querySelector('.aic__mock')
   const list = el.querySelector('ul')

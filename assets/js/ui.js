@@ -4,6 +4,8 @@ import { initScramble, PIXEL_CHARS } from './ascii.js'
 import { initCursor } from './cursor.js'
 
 const root = document.documentElement
+const EN = root.lang === 'en'
+const T = EN ? { copy: 'copy', copied: 'copied!' } : { copy: 'копировать', copied: 'скопировано!' }
 
 // постоянный ASCII-эффект (telegram в меню на планшете и телефоне)
 function makeAlways(el, speed) {
@@ -69,7 +71,7 @@ function initCopy() {
     const tip = document.createElement('div')
     tip.className = 'copy-tip'
     tip.setAttribute('role', 'status')
-    tip.textContent = 'копировать'
+    tip.textContent = T.copy
     document.body.appendChild(tip)
     let copied = false
     let timer = 0
@@ -87,7 +89,7 @@ function initCopy() {
       tip.classList.remove('is-on')
       setTimeout(() => {
         copied = false
-        tip.textContent = 'копировать'
+        tip.textContent = T.copy
       }, 300)
     })
     el.addEventListener('click', (e) => {
@@ -100,7 +102,7 @@ function initCopy() {
       }
       const done = () => {
         copied = true
-        tip.textContent = 'скопировано!'
+        tip.textContent = T.copied
         for (let i = 0; i < 16; i++) {
           const a = (i / 16) * Math.PI * 2
           const d = 25 + Math.random() * 20
@@ -114,7 +116,7 @@ function initCopy() {
         clearTimeout(timer)
         timer = setTimeout(() => {
           copied = false
-          tip.textContent = 'копировать'
+          tip.textContent = T.copy
           if (!el.matches(':hover')) tip.classList.remove('is-on')
         }, 2000)
       }
@@ -124,7 +126,19 @@ function initCopy() {
   })
 }
 
+// переключатель языка: запоминаем выбор, чтобы первый экран открывался на нём же
+export function initLang() {
+  document.querySelectorAll('[data-lang]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try {
+        localStorage.setItem('lang', a.getAttribute('data-lang'))
+      } catch (e) {}
+    })
+  )
+}
+
 export function initChrome() {
+  initLang()
   initScramble()
   initContacts()
   initCopy()

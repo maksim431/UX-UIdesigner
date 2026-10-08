@@ -10,6 +10,8 @@
   <meta property="og:description" content="UX/UI-дизайн: портфолио Максима">
   <meta property="og:image" content="https://framerusercontent.com/images/cj21tiLG0LzbWV4oGkK3VhIKziU.png">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="alternate" hreflang="ru" href="https://maksim431.github.io/UX-UIdesigner/">
+  <link rel="alternate" hreflang="en" href="https://maksim431.github.io/UX-UIdesigner/en/">
   <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
   <script>
     // Прелоадер показываем при входе на сайт и при обновлении страницы,
@@ -24,6 +26,8 @@
       if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) play = false
       if (play) document.documentElement.classList.add('fs-loading')
       // страховка, если скрипт не загрузится
+      // выбран английский — сразу открываем английскую версию
+      try { if (localStorage.getItem('lang') === 'en') { location.replace('en/'); return } } catch (e) {}
       setTimeout(function () { if (!document.documentElement.classList.contains('fs-reveal')) document.documentElement.classList.remove('fs-loading') }, 6000)
     })()
   </script>
@@ -34,6 +38,7 @@
   <link rel="prefetch" href="assets/js/portrait.js">
 </head>
 <body>
+  <nav class="lang fs-lang" aria-label="Язык"><span aria-current="true">ru</span><i aria-hidden="true">/</i><a href="en/" hreflang="en" lang="en" data-lang="en" data-scramble="140">en</a></nav>
   <main class="fs">
     <div class="fs-wrap">
       <p class="fs-eyebrow" data-rv="1">приветствую! ответьте только на один вопрос, от него зависит какую версию портфолио вы увидите</p>
