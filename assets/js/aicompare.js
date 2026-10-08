@@ -2,6 +2,15 @@
 // Макеты — результат одного простого промта, без продумывания UX. Перенесено из компонента Framer AiCompare.
 
 const CASES = {
+  mytiger: {
+    prompt: 'Сделай лендинг ветеринарной клиники с грумингом',
+    intro: 'Лендинг выглядит дружелюбно, но нейросеть собирает его из самых частых шаблонов: яркий баннер со скидкой, мультяшные лапки, список услуг с ценами. Она не знает, что клиника работает в премиальном сегменте, где скидка роняет статус, и что груминг здесь — медицинская процедура. В итоге страница похожа на сотни других и привлекает тех, кто ищет подешевле, а не тех, ради кого клиника создавалась. Премиальный бренд нужно проектировать с пониманием того, за что клиенты готовы платить.',
+    issues: [
+      'Главный экран — скидка «−30%»: для премиальной клиники это сигнал дешевизны.',
+      'Груминг подан как «помыть и подстричь» — ни слова о здоровье и о врачах.',
+      'Стоковые иконки и мультяшные лапки вместо живых фотографий клиники и специалистов.',
+    ],
+  },
   scplab: {
     prompt: 'Сделай дизайн мобильного приложения для тренировок спортсменов',
     intro: 'Картинка получилась яркой, но нейросеть не знает, в каких условиях работает спортсмен: зал, сбитое дыхание, потные руки, секунды между подходами. Она не продумывает, когда предложить подписку и с чего начать тренировку. В итоге приложение красиво на скриншоте, но неудобно в зале — его бросают после пары тренировок и не покупают подписку. Приложение, за которое люди платят каждый месяц, нужно проектировать с пониманием пользователя.',
@@ -38,6 +47,15 @@ const CASES = {
 
 // английская версия текстов (макеты и так на английском)
 const CASES_EN = {
+  mytiger: {
+    prompt: 'Make a landing page for a vet clinic with grooming',
+    intro: "The landing page looks friendly, but the AI assembles it from the most common templates: a bright discount banner, cartoon paws, a list of services with prices. It doesn't know the clinic works in the premium segment, where a discount hurts the brand's status, and that grooming here is a medical procedure. As a result, the page looks like hundreds of others and attracts bargain hunters rather than the clients the clinic was built for. A premium brand has to be designed with an understanding of what clients are willing to pay for.",
+    issues: [
+      'The first screen is a “−30%” discount: for a premium clinic that signals cheapness.',
+      'Grooming is presented as “wash and trim” — not a word about health or vets.',
+      'Stock icons and cartoon paws instead of real photos of the clinic and its specialists.',
+    ],
+  },
   scplab: {
     prompt: 'Design a mobile workout app for athletes',
     intro: "The picture came out bright, but the AI doesn't know the conditions an athlete works in: the gym, heavy breathing, sweaty hands, seconds between sets. It doesn't think about when to offer a subscription or how to start a workout. As a result, the app looks great in a screenshot but is awkward in the gym — people drop it after a couple of workouts and never subscribe. An app people pay for every month has to be designed with an understanding of the user.",
@@ -256,8 +274,63 @@ function viciPhone() {
   )
 }
 
+/* ---------- лендинг ветклиники «как у всех» ---------- */
+const VET_SERVICES = [['✂️', 'Grooming', 'from $25'], ['💉', 'Vaccination', 'from $30'], ['🩺', 'Check-up', 'from $40'], ['🛁', 'Spa bath', 'from $20']]
+const vetLogo = (size) => t({ fontSize: size, fontWeight: 800, color: '#FF6B3D' }, '🐾 HappyPaws')
+const vetBadge = (size) => t({ display: 'inline-block', padding: '6px 14px', borderRadius: 999, background: '#FFE14D', color: '#1E1E1E', fontSize: size, fontWeight: 800 }, '−30% OFF GROOMING!')
+const vetCta = (pad, size) => t({ marginTop: 20, display: 'inline-block', padding: pad, borderRadius: 999, background: '#fff', color: '#FF4F7B', fontWeight: 800, fontSize: size }, 'Book now 🐶')
+const vetCard = ([e, n, p], small) =>
+  h(
+    { borderRadius: small ? 14 : 20, background: '#FFF3EC', padding: small ? 12 : 18, textAlign: 'center' },
+    t({ fontSize: small ? 30 : 44 }, e),
+    t({ fontSize: small ? 13 : 16, fontWeight: 800, color: '#1E1E1E', marginTop: 8 }, n),
+    t({ fontSize: small ? 11 : 13, color: '#FF6B3D', fontWeight: 700, marginTop: 2 }, p)
+  )
+const vetHero = { background: 'linear-gradient(120deg,#FF6B3D 0%,#FF4F7B 60%,#FF9EC0 100%)', color: '#fff' }
+
+function mytigerDesktop() {
+  return h(
+    { width: 1200, height: 760, background: '#fff', fontFamily: UI, overflow: 'hidden' },
+    h(
+      { height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', borderBottom: '1px solid #F2E6E0' },
+      vetLogo(22),
+      h({ display: 'flex', gap: 28, fontSize: 14, color: '#4A4A4A' }, ['Home', 'Services', 'Prices', 'Team', 'Contacts'].map(span)),
+      t({ padding: '9px 18px', borderRadius: 999, background: '#FF6B3D', color: '#fff', fontSize: 13, fontWeight: 700 }, 'Call us')
+    ),
+    h(
+      { ...vetHero, height: 330, padding: '0 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+      h({ maxWidth: 600 }, vetBadge(14), t({ fontSize: 48, fontWeight: 800, lineHeight: 1.08, marginTop: 14 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 16, opacity: 0.92, marginTop: 12 }, 'Grooming, vaccination & more at the lowest prices in town.'), vetCta('12px 26px', 15)),
+      t({ fontSize: 150, lineHeight: 1 }, '🐕')
+    ),
+    h({ padding: '30px 48px 0' }, t({ textAlign: 'center', fontSize: 26, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'flex', gap: 20, marginTop: 22 }, VET_SERVICES.map((c) => h({ flex: '1' }, vetCard(c, false)))))
+  )
+}
+
+function mytigerTablet() {
+  return h(
+    { width: 820, height: 1000, background: '#fff', fontFamily: UI, overflow: 'hidden' },
+    h({ height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', borderBottom: '1px solid #F2E6E0' }, vetLogo(22), h({ display: 'flex', gap: 18, alignItems: 'center' }, t({ padding: '9px 18px', borderRadius: 999, background: '#FF6B3D', color: '#fff', fontSize: 13, fontWeight: 700 }, 'Call us'), t({ fontSize: 24, color: '#1E1E1E' }, '☰'))),
+    h(
+      { ...vetHero, height: 380, padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+      h({ maxWidth: 500 }, vetBadge(14), t({ fontSize: 42, fontWeight: 800, lineHeight: 1.1, marginTop: 14 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 16, opacity: 0.92, marginTop: 12 }, 'Grooming, vaccination & more at the lowest prices in town.'), vetCta('12px 24px', 15)),
+      t({ fontSize: 110, lineHeight: 1 }, '🐕')
+    ),
+    h({ padding: '30px 32px 0' }, t({ textAlign: 'center', fontSize: 26, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginTop: 20 }, VET_SERVICES.map((c) => vetCard(c, false))))
+  )
+}
+
+function mytigerPhone() {
+  return h(
+    { width: 390, height: 780, background: '#fff', fontFamily: UI, overflow: 'hidden' },
+    h({ height: 96, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 18px 16px', boxSizing: 'border-box', borderBottom: '1px solid #F2E6E0' }, vetLogo(18), t({ fontSize: 22, color: '#1E1E1E' }, '☰')),
+    h({ ...vetHero, padding: '26px 18px' }, vetBadge(12), t({ fontSize: 56, lineHeight: 1, marginTop: 12 }, '🐕'), t({ fontSize: 28, fontWeight: 800, lineHeight: 1.12, marginTop: 10 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 13, opacity: 0.92, marginTop: 8 }, 'Lowest prices in town.'), vetCta('11px 20px', 13)),
+    h({ padding: '22px 18px 0' }, t({ textAlign: 'center', fontSize: 21, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }, VET_SERVICES.map((c) => vetCard(c, true))))
+  )
+}
+
 // какой макет на каком устройстве: [функция, ширина, высота]
 const MOCKS = {
+  mytiger: { desktop: [mytigerDesktop, 1200, 760], tablet: [mytigerTablet, 820, 1000], phone: [mytigerPhone, 390, 780] },
   scplab: { desktop: [fitnessPhone, 390, 780], tablet: [fitnessTablet, 820, 1000], phone: [fitnessPhone, 390, 780] },
   foodbot: { desktop: [foodbotDesktop, 1200, 760], tablet: [foodbotTablet, 820, 1000], phone: [foodbotPhone, 390, 780] },
   vici: { desktop: [viciDesktop, 1200, 760], tablet: [viciTablet, 820, 1000], phone: [viciPhone, 390, 780] },

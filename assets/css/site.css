@@ -621,3 +621,14 @@ html.cs-anim .cs-rise.is-in { opacity: 1; transform: none; transition: opacity .
 
 /* возврат из кейса: пока страница не прокручена к проектам, её не видно */
 html.rw body { visibility: hidden; }
+
+/* заглушка вместо картинки кейса (пока нет изображения) */
+.cs-fig__box--ph {
+  display: flex; align-items: center; justify-content: center;
+  background: repeating-linear-gradient(135deg, #ece7df 0 18px, #f4f0ea 18px 36px);
+}
+.cs-media .cs-fig__box--ph { aspect-ratio: 4 / 3; }
+.cs-fig__ph { padding: 8px 14px; background: #fff; color: #6b6b6b; font-size: 14px; line-height: 1.3; text-align: center; max-width: 80%; }
+.cs-fig__ph::before { content: "[ "; }
+.cs-fig__ph::after { content: " ]"; }
+.cs-fig__box--ph .cs-fig__tag { color: #000; }
