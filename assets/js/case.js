@@ -51,36 +51,49 @@ if (anim && 'IntersectionObserver' in window) {
   els.forEach((el) => rio.observe(el))
 }
 
-/* ---------- параллакс картинок внутри рамки ---------- */
-if (anim) {
-  const imgs = new Set()
-  let tick = false
-  const pio = new IntersectionObserver((entries) => {
-    entries.forEach((e) => (e.isIntersecting ? imgs.add(e.target) : imgs.delete(e.target)))
-    if (!tick) {
-      tick = true
-      requestAnimationFrame(para)
-    }
-  })
-  document.querySelectorAll('.cs-fig__box').forEach((b) => pio.observe(b))
-  const para = () => {
-    tick = false
-    const vh = window.innerHeight
-    imgs.forEach((box) => {
-      const r = box.getBoundingClientRect()
-      // -1 — картинка внизу экрана, 1 — вверху
-      const k = clamp((vh / 2 - (r.top + r.height / 2)) / (vh / 2 + r.height / 2), -1, 1)
-      box.firstElementChild.style.transform = 'translate3d(0,' + (k * 4).toFixed(2) + '%,0) scale(1.1)'
-    })
+/* ---------- правая колонка с картинками (десктоп) прокручивается на 20% быстрее текста ---------- */
+const media = document.querySelector('.cs-media')
+const hdrEl = document.querySelector('.hdr')
+if (anim && media) {
+  const SPEED = 0.2
+  const wide = window.matchMedia('(min-width: 1200px)')
+  let top0 = 0
+  let h0 = 0
+  let ticking = false
+  const measure = () => {
+    media.style.transform = ''
+    const r = media.getBoundingClientRect()
+    top0 = r.top + window.scrollY
+    h0 = media.offsetHeight
+    update()
   }
-  window.addEventListener('scroll', () => {
-    if (!tick) {
-      tick = true
-      requestAnimationFrame(para)
+  const update = () => {
+    ticking = false
+    if (!wide.matches) {
+      media.style.transform = ''
+      return
     }
-  }, { passive: true })
-  window.addEventListener('resize', para)
-  requestAnimationFrame(para)
+    const vh = window.innerHeight
+    const hh = hdrEl ? hdrEl.offsetHeight : 0
+    // сколько прокручено от начала колонки
+    const s = Math.max(0, window.scrollY - (top0 - hh))
+    let off = s * SPEED
+    // колонка не уезжает выше низа экрана: когда картинки кончаются, последняя «ждёт» внизу, пока догонит текст
+    off = Math.min(off, Math.max(0, top0 + h0 - window.scrollY - vh))
+    media.style.transform = off ? 'translate3d(0,' + (-off).toFixed(1) + 'px,0)' : ''
+  }
+  const req = () => {
+    if (!ticking) {
+      ticking = true
+      requestAnimationFrame(update)
+    }
+  }
+  window.addEventListener('scroll', req, { passive: true })
+  window.addEventListener('resize', measure)
+  wide.addEventListener ? wide.addEventListener('change', measure) : wide.addListener(measure)
+  // высота колонки меняется, когда догружаются картинки и блок про нейросеть
+  new ResizeObserver(measure).observe(media)
+  measure()
 }
 
 /* картинки появляются, когда доходят до экрана */

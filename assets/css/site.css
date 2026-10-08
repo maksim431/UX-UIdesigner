@@ -612,3 +612,9 @@ html.cs-anim .cs-rise.is-in { opacity: 1; transform: none; transition: opacity .
 .hero__dizain--en text { font-family: "Sedgwick Ave Display", var(--font); }
 /* телефон, страница кейса: в шапке «назад», логотип, язык и меню — подпись «portfolio» прячем, чтобы не было тесно */
 @media (max-width: 809.98px) { .hdr--case .logo span { display: none; } }
+
+/* картинки кейсов показываем целиком: без масштабирования внутри рамки, высота — по самой картинке */
+.cs-fig__box img { will-change: auto; }
+.cs-media .cs-fig__box { aspect-ratio: auto; }
+.cs-media .cs-fig__box img { height: auto; }
+.cs-media { will-change: transform; }
