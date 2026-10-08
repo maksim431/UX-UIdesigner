@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FOODBOT — кейс | UX/UI design</title>
+  <meta name="description" content="FoodBot — сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="FOODBOT — кейс">
+  <meta property="og:description" content="FoodBot — сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.">
+  <meta property="og:image" content="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml">
+  <script>
+    // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
+    try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
+    // картинки появляются при прокрутке (если в системе не выключено движение)
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    // страховка: если скрипты не загрузились, просто показываем страницу
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Mono:wght@400;500;700&display=swap">
+  <link rel="preconnect" href="https://framerusercontent.com">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body id="top">
+  <header class="hdr hdr--case">
+    <div class="hdr__bar">
+      <a class="hdr__back" href="../../web/" data-scramble="140"><svg viewBox="0 0 10.789 17.656" aria-hidden="true"><path d="M3.923 8.827 10.789 15.693 8.827 17.656 0 8.827 8.827 0 10.789 1.961Z" fill="currentColor"/></svg><span data-scramble-text>назад</span></a>
+      <a class="logo" href="../../web/" aria-label="Портфолио — на главную">
+        <img src="../../assets/img/logo.svg" alt="" width="39" height="29">
+        <span>portfolio</span>
+      </a>
+      <div class="hdr__right">
+        <button class="hdr__contacts" type="button" data-open-contacts data-scramble="140" aria-controls="contacts" aria-expanded="false">контакты</button>
+        <button class="hdr__burger" type="button" data-open-contacts aria-label="Открыть контакты" aria-controls="contacts" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+        </button>
+        <button class="hdr__close" type="button" data-close-contacts aria-label="Закрыть контакты">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="contacts" id="contacts" role="dialog" aria-modal="true" aria-label="Контакты" aria-hidden="true">
+    <a class="contacts__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" data-always>telegram</a>
+    <a class="contacts__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">вконтакте</a>
+    <button class="contacts__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button>
+    <a class="contacts__item" data-scramble="120" href="https://www.behance.net/cde6d3ad" target="_blank" rel="noopener">behance</a>
+    <a class="contacts__item" data-scramble="120" href="https://ru.pinterest.com/MaksimDesigner/" target="_blank" rel="noopener">pinterest</a>
+  </div>
+
+  <main class="cs">
+    <article class="cs-text">
+      <div class="cs-flow">
+        <h1 class="cs-title">FoodBot</h1>
+        <div class="rt rt--body"><p><strong>FoodBot</strong> — сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.</p></div>
+        <section class="cs-hooks">
+          <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
+          <div class="rt rt--hook"><p><strong>Рассказываю, что я сделал, чтобы владелец кафе запускал ботов сам </strong>за 5 простых шагов, без программиста и слова «API»</p><p><strong>Как уменьшил количество потерянных заказов на 40% меньше</strong></p><p><strong>Что сделать, чтобы было меньше вопросов в поддержку?</strong></p><p><strong>Рубрика "я сам смогу с нейросетями"</strong></p></div>
+        </section>
+        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">product design/b2b</span></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
+          <div class="rt rt--body"><p>Сделать личный кабинет, в котором разберётся владелец кафе без технических знаний. Настроить бота должно быть так же просто, как заполнить профиль в соцсети.</p></div>
+        </div>
+        <div class="rt rt--h3"><ol start="2"><li><h3>Решение</h3></li></ol></div>
+        <div class="cs-list">
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Аналитика</h4></div>
+            <div class="rt rt--body"><ol><li><p><strong>Кто пользователи.</strong> Владельцы кафе, бургерных, суши-баров и кофеен. Времени у них мало, они всё время на ногах и часто пропускают заказы, потому что не видят уведомлений.</p></li><li><p><strong>Что у конкурентов.</strong> Много функций, но нет подсказок. Владелец разбирается методом проб и ошибок и тратит часы на первый запуск.</p></li></ol></div>
+            <div class="rt rt--note"><p>Я загрузил в нейросеть инструкции и отзывы о сервисах конкурентов, и она за минуты выделила главные проблемы. Это сэкономило часы ручного анализа.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 1" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Гипотеза</h4></div>
+            <div class="rt rt--body"><p>Владельцев пугают слова вроде «API-токен» и запутанные настройки. Сделаем три вещи: превратим подключение в простую пошаговую инструкцию, меню — в наглядные карточки, а рядом с непонятными полями дадим подсказки. Тогда бота запустят быстрее, а в поддержку будут писать реже. А мобильная версия прямо в Telegram поможет не пропускать заказы.</p></div>
+          </div>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Что было сделано</h4></div>
+            <div class="rt rt--body"><ol><li><p><strong>Упростил подключение.</strong> Вместо одного пугающего поля — 5 понятных шагов, написанных человеческим языком.</p></li></ol></div>
+            <div class="rt rt--note"><p>Сухую техническую инструкцию Telegram нейросеть переписала простыми словами, мне осталось только отредактировать.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 2" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="2"><li><p><strong>Продумал экраны под разные ситуации.</strong> Пока ботов нет, на экране одна крупная кнопка «Создать бота». Когда боты появились, на первом плане их карточки и поиск.</p></li></ol></div>
+            <div class="rt rt--note"><p>С помощью нейросети я собрал собственный инструмент, который показывает, куда смотрит пользователь. Он подтвердил, что внимание идёт туда, куда нужно, и дорогое A/B-тестирование не понадобилось.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 3" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 4" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="3"><li><p><strong>Добавил подсказки.</strong> Рядом с непонятной настройкой есть значок: нажал и сразу видишь пример. Не нужно уходить с экрана и писать в поддержку.</p></li></ol></div>
+          </div>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 5" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="4"><li><p><strong>Перенёс управление в Telegram.</strong> Владелец ставит блюда в стоп-лист, меняет цены и принимает заказы прямо с телефона.</p></li></ol></div>
+            <div class="rt rt--note"><p>Черновые экраны для Telegram собрал ИИ-агент из готовых элементов Telegram, это в разы ускорило работу.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 6" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="5"><li><p><strong>Передал разработчикам аккуратный макет с дизайн-системой.</strong> Новые разделы добавляются быстро и в едином стиле.</p></li></ol></div>
+            <div class="rt rt--note"><p>Названия слоёв, стили и комментарии для разработчиков подготовил ИИ-агент в Figma, это сэкономило часы.</p></div>
+          </div>
+        </div>
+        <section class="aic" data-case="foodbot" data-d="4.5" aria-label="Пример дизайна из нейросети"></section>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 7" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp">
+          <div class="rt rt--h3"><ol start="3"><li><h3>Результат</h3></li></ol></div>
+          <div class="rt rt--body"><p><strong>На 25% меньше</strong> людей бросают сервис в самом начале: он перестал выглядеть как сложная база данных.</p><ul><li><p><strong>На 30% быстрее</strong> проходит первая настройка бота.</p></li><li><p><strong>На 20% меньше</strong> обращений в поддержку: подсказки отвечают на вопросы прямо в интерфейсе.</p></li><li><p><strong>На 40% меньше пропущенных заказов:</strong> управление доставкой теперь в кармане.</p></li><li><p><strong>На 20% быстрее</strong> разрабатываются новые разделы.</p></li></ul><ul><li><p>Платформы 3 (лендинг, админ-панель, мини-приложение)</p></li><li><p>Экранов админ-панели ~174 (94 + 80 адаптивных)</p></li><li><p>Экранов мини-приложения ~150+</p></li><li><p>Страниц лендинга 4 (desktop, mobile, блог, статья)</p></li><li><p>Страниц в Figma 12</p></li></ul></div>
+        </div>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: иллюстрация 8" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+      </div>
+      <div class="cs-btns">
+        <button class="btn btn--dark" type="button" data-open-contacts data-scramble aria-controls="contacts" aria-expanded="false">связаться со мной</button>
+      </div>
+    </article>
+    <aside class="cs-media" aria-label="Иллюстрации к кейсу"></aside>
+  </main>
+
+  <a class="totop" href="#top" aria-label="Наверх"><svg viewBox="0 0 12.729 7.778" aria-hidden="true"><path d="M6.364 2.828 1.414 7.778 0 6.364 6.364 0l6.365 6.364-1.415 1.414Z" fill="#fff"/></svg></a>
+
+  <script src="../../assets/js/case-layout.js"></script>
+  <script type="module" src="../../assets/js/case.js"></script>
+</body>
+</html>

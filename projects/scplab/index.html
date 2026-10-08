@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SCP LAB — кейс | UX/UI design</title>
+  <meta name="description" content="SCP LAB – мобильное приложение, выполняющее роль персонального тренера для профессиональных спортсменов. Оно анализирует физические данные пользователя и генерирует адаптивный план тренировок для…">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SCP LAB — кейс">
+  <meta property="og:description" content="SCP LAB – мобильное приложение, выполняющее роль персонального тренера для профессиональных спортсменов. Оно анализирует физические данные пользователя и генерирует адаптивный план тренировок для…">
+  <meta property="og:image" content="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml">
+  <script>
+    // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
+    try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
+    // картинки появляются при прокрутке (если в системе не выключено движение)
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    // страховка: если скрипты не загрузились, просто показываем страницу
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Mono:wght@400;500;700&display=swap">
+  <link rel="preconnect" href="https://framerusercontent.com">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body id="top">
+  <header class="hdr hdr--case">
+    <div class="hdr__bar">
+      <a class="hdr__back" href="../../product/" data-scramble="140"><svg viewBox="0 0 10.789 17.656" aria-hidden="true"><path d="M3.923 8.827 10.789 15.693 8.827 17.656 0 8.827 8.827 0 10.789 1.961Z" fill="currentColor"/></svg><span data-scramble-text>назад</span></a>
+      <a class="logo" href="../../product/" aria-label="Портфолио — на главную">
+        <img src="../../assets/img/logo.svg" alt="" width="39" height="29">
+        <span>portfolio</span>
+      </a>
+      <div class="hdr__right">
+        <button class="hdr__contacts" type="button" data-open-contacts data-scramble="140" aria-controls="contacts" aria-expanded="false">контакты</button>
+        <button class="hdr__burger" type="button" data-open-contacts aria-label="Открыть контакты" aria-controls="contacts" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+        </button>
+        <button class="hdr__close" type="button" data-close-contacts aria-label="Закрыть контакты">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="contacts" id="contacts" role="dialog" aria-modal="true" aria-label="Контакты" aria-hidden="true">
+    <a class="contacts__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" data-always>telegram</a>
+    <a class="contacts__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">вконтакте</a>
+    <button class="contacts__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button>
+    <a class="contacts__item" data-scramble="120" href="https://www.behance.net/cde6d3ad" target="_blank" rel="noopener">behance</a>
+    <a class="contacts__item" data-scramble="120" href="https://ru.pinterest.com/MaksimDesigner/" target="_blank" rel="noopener">pinterest</a>
+  </div>
+
+  <main class="cs">
+    <article class="cs-text">
+      <div class="cs-flow">
+        <h1 class="cs-title">sCPlab</h1>
+        <div class="rt rt--body"><p>SCP LAB – мобильное приложение, выполняющее роль персонального тренера для профессиональных спортсменов. Оно анализирует физические данные пользователя и генерирует адаптивный план тренировок для улучшения силовых качеств. Ключевой функционал - это видеоинструкции от профессионалов с подбором индивидуальной нагрузки, трекер прогресса, система смарт-напоминаний и еженедельная аналитика результатов.</p></div>
+        <section class="cs-hooks">
+          <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
+          <div class="rt rt--hook"><p><strong>+10% конверсии в full-price —</strong> без скидок, только за счёт того, где стоит пейвол.</p><p><strong>−30% time-to-value —</strong> тренировка начинается в пару тапов, даже с потными руками.</p><p><strong>+20% retention —</strong> приложением удобно пользоваться прямо между подходами.</p><p><strong>68 экранов и 10 UX-тестов —</strong> ни одного решения «на глаз».</p></div>
+        </section>
+        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">Ux/UI</span></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
+          <div class="rt rt--body"><p>Разработать UX/UI дизайн мобильного приложения. Цель — снизить время до старта тренировки и повысить конверсию из триала в платную full-price подписку. Пожелание клиента — использовать премиальный эффект стекла.</p></div>
+        </div>
+        <div class="rt rt--h3"><ol start="2"><li><h3>Решение</h3></li></ol></div>
+        <div class="cs-list">
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Аналитика</h4></div>
+            <div class="rt rt--body"><p>Аудит конкурентов. Зачем? Берём лучшее, не повторяем ошибки, делаем фишки в функционале и дизайне, чтобы выделяться. </p><p><strong>Анализ воронки конверсии. </strong>Стандартный путь пользователя в фитнес-приложениях. Обычно пейвол (экран оплаты) появляется либо сразу при запуске, либо после скучной текстовой анкеты (рост, вес, цель). Чтобы спортсмен оформил full-price подписку, он должен испытать «эффект владения» еще до оплаты.</p><p><strong>Контекст использования. </strong>В каких условиях PRO-спортсмен взаимодействует с телефоном во время тяжелой тренировки. У пользователя в зале потные руки, тремор после подхода, сбитое дыхание, а освещение может сильно бликовать. Ему некогда вчитываться в мелкий текст. </p><p><strong>Роль контента в удержании. </strong> За счет чего профессионал будет возвращаться в приложение (ведь базовую технику он и так знает). Ключевая ценность продукта — видеоинструкции от топовых профессионалов с уникальной техникой. </p></div>
+            <div class="rt rt--note"><p>С помощью нейросети спарсил массивы пользовательских отзывов на приложения конкурентов из App Store/Google Play и прогнал их через нейросеть для семантического анализа и кластеризации UX-болей. Как итог, ИИ помог за пару минут вытащить ключевые паттерны.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 1" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Гипотеза</h4></div>
+            <div class="rt rt--body"><p>Профессиональных спортсменов не удержать сухими обещаниями на экране пейвола. Если мы сместим пейвол и сначала вовлечем пользователя в бесплатное интерактивное тестирование с качественными видеоинструкциями, позволив ему инвестировать свои физические усилия в приложение, то ценность индивидуальной программы станет осязаемой (IKEA effect). А использование крупных видео-форматов, высококонтрастной индикации, снижение когнитивной нагрузки во время изучения качественных видеоуоков – всё это обосновывает стоимость подписки.</p></div>
+          </div>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Что было сделано</h4></div>
+            <div class="rt rt--body"><ol><li><p><strong>Смещение пейвола (UX-воронка):</strong> Перестроил архитектуру онбординга. Пользователь не сталкивается с жестким экраном оплаты на старте. Сначала он проходит этап первичного физического тестирования с метрономом, опираясь на профессиональные видеоуроки. Оплата запрашивается только после завершения тестового периода, когда система анализирует данные и сообщает о готовности индивидуальной программы.</p></li></ol></div>
+            <div class="rt rt--note"><p>Использовал LLM для анализа UX-паттернов в фитнес-сегменте и моделирования пользовательского пути (CJM). Нейросеть помогла быстро спроектировать логику воронки, структурировать экраны онбординга и математически обосновать оптимальный момент для показа пейвола.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 2" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="2"><li><p><strong>Фокус на видеоконтенте (UI):</strong> Поскольку главная ценность продукта кроется в экспертизе профессиональных тренеров, экраны активной тренировки спроектированы вокруг крупного видеоплеера. Он занимает доминирующую часть экрана, убирая визуальный шум и оставляя только само упражнение, таймер и базовые элементы управления.</p></li></ol></div>
+            <div class="rt rt--note"><p>На этапе сборки макетов я использовал нейросети для генерации реалистичных сток-кадров тренировок со сложным освещением и динамикой. Это позволило сразу протестировать читаемость UI-элементов поверх видео и откалибровать контрастность интерфейса еще до того, как клиент потратил бюджет на реальный видеопродакшен.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 3" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 4" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="3"><li><p><strong>Снижение трения при пользовании интерфейсом (UX):</strong> Во время тренировки спортсмену неудобно целиться в мелкие элементы экрана. Поэтому я ппроектировал UI-элементы крупными и высококонтрастными. </p></li></ol></div>
+            <div class="rt rt--note"><p>Использовал AI-плагины в Figma для тестирования (heatmap) и симуляции визуального восприятия. Как итог, рассчитал идеальные пропорции тап-зон, сэкономив часы на ручном тестировании контрастов.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 5" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="4"><li><p><strong>Адаптация Glassmorphism и liquid glass (UI):</strong> Использовал глубокий черный фон с агрессивным неоново-желтым акцентом. Это оптимальное сочетание для читаемости при любом освещении в тренажерном зале. Эффект стекла применил функционально: полупрозрачные подложки с размытием фона используются в карточках, модальных окнах и алертах. Это добавило интерфейсу премиальной глубины, не отвлекая внимание от видео.</p></li></ol></div>
+          </div>
+          <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 6" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="5"><li><p><strong>Developer-friendly передача макетов:</strong> Дизайн-проект выстроен системно. Все экраны, состояния элементов и модальные окна максимально упорядочены, собраны на Auto Layout и привязаны к глобальному UI-киту с дизайн-системой, стилями, компонентами со всеми состояниями. Оставлены комментарии в анимациях. Макеты передаются в чистом и предсказуемом виде, что делает процесс внедрения удобным для всех участников команды и кратно сокращает время на разработку.</p></li></ol></div>
+            <div class="rt rt--note"><p>С помощью AI-агента в figma автоматизировал организацию макетов (массовый нейминг слоев, создание стилей, дизайн-системы с описаниями) и проверки консистентности UI-кита на наличие всех необходимых состояний компонентов. Это позволило подготовить идеально чистый файл для разработчиков и дизайнеров в разы быстрее.</p></div>
+          </div>
+        </div>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 7" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp">
+          <div class="rt rt--h3"><ol start="3"><li><h3>Результат</h3></li></ol></div>
+          <div class="rt rt--body"><p><strong>Рост конверсии в full-price +10%:</strong> Перенос этапа оплаты в конец тестирования и после окончания тестового радикально повысил мотивацию к покупке. Спортсмен платит за конкретную, уже просчитанную под его физиологию программу, в которую он успел вложить собственные усилия на этапе триала.</p><p><strong>Сокращение Time-to-Value -30%:</strong> За счет доминирования видеоформатов и минималистичной навигации пользователи тратят минимум времени на настройку приложения перед подходом, сразу переходя к целевому действию.</p><p><strong>Удержание (Retention) +20%:</strong> Привлекательный дизайн в связке с безбарьерным UX (удобное управление потными руками, контрастные алерты) сформировали привычку использовать сервис не просто как трекер, а как полноценного дорогого тренера на каждой тренировке.</p><p>68 экранов · 10 UX тестов · 15 секций · 88 компонентов в 22 сетах · 47 стилей · 59 переменных · 5 983 инстанса · 117 020 нод · 27 изображений · 4 шрифтовых семейства</p></div>
+        </div>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 8" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+      </div>
+      <div class="cs-btns">
+        <button class="btn btn--dark" type="button" data-open-contacts data-scramble aria-controls="contacts" aria-expanded="false">связаться со мной</button>
+          <a class="btn btn--light" href="https://apps.apple.com/ru/app/scplab-pro/id6773645020" target="_blank" rel="noopener" data-scramble>к продукту</a>
+      </div>
+    </article>
+    <aside class="cs-media" aria-label="Иллюстрации к кейсу"></aside>
+  </main>
+
+  <a class="totop" href="#top" aria-label="Наверх"><svg viewBox="0 0 12.729 7.778" aria-hidden="true"><path d="M6.364 2.828 1.414 7.778 0 6.364 6.364 0l6.365 6.364-1.415 1.414Z" fill="#fff"/></svg></a>
+
+  <script src="../../assets/js/case-layout.js"></script>
+  <script type="module" src="../../assets/js/case.js"></script>
+</body>
+</html>

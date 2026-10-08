@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SCP LAB — кейс | UX/UI design</title>
+  <meta name="description" content="SCP LAB — мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профи и следит за прогрессом.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SCP LAB — кейс">
+  <meta property="og:description" content="SCP LAB — мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профи и следит за прогрессом.">
+  <meta property="og:image" content="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml">
+  <script>
+    // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
+    try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
+    // картинки появляются при прокрутке (если в системе не выключено движение)
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    // страховка: если скрипты не загрузились, просто показываем страницу
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Mono:wght@400;500;700&display=swap">
+  <link rel="preconnect" href="https://framerusercontent.com">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+</head>
+<body id="top">
+  <header class="hdr hdr--case">
+    <div class="hdr__bar">
+      <a class="hdr__back" href="../../web/" data-scramble="140"><svg viewBox="0 0 10.789 17.656" aria-hidden="true"><path d="M3.923 8.827 10.789 15.693 8.827 17.656 0 8.827 8.827 0 10.789 1.961Z" fill="currentColor"/></svg><span data-scramble-text>назад</span></a>
+      <a class="logo" href="../../web/" aria-label="Портфолио — на главную">
+        <img src="../../assets/img/logo.svg" alt="" width="39" height="29">
+        <span>portfolio</span>
+      </a>
+      <div class="hdr__right">
+        <button class="hdr__contacts" type="button" data-open-contacts data-scramble="140" aria-controls="contacts" aria-expanded="false">контакты</button>
+        <button class="hdr__burger" type="button" data-open-contacts aria-label="Открыть контакты" aria-controls="contacts" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+        </button>
+        <button class="hdr__close" type="button" data-close-contacts aria-label="Закрыть контакты">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="contacts" id="contacts" role="dialog" aria-modal="true" aria-label="Контакты" aria-hidden="true">
+    <a class="contacts__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" data-always>telegram</a>
+    <a class="contacts__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">вконтакте</a>
+    <button class="contacts__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button>
+    <a class="contacts__item" data-scramble="120" href="https://www.behance.net/cde6d3ad" target="_blank" rel="noopener">behance</a>
+    <a class="contacts__item" data-scramble="120" href="https://ru.pinterest.com/MaksimDesigner/" target="_blank" rel="noopener">pinterest</a>
+  </div>
+
+  <main class="cs">
+    <article class="cs-text">
+      <div class="cs-flow">
+        <h1 class="cs-title">sCPlab</h1>
+        <div class="rt rt--body"><p>SCP LAB — мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профи и следит за прогрессом.</p></div>
+        <section class="cs-hooks">
+          <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
+          <div class="rt rt--hook"><p><strong>Как получить +10% к покупке платных подписок?</strong></p><p><strong>Про удобство пользования телефоном прямо в зале</strong></p><p><strong>Что сделать, чтобы пользователи возвращались на 20% чаще?</strong></p><p><strong>Рубрика "я сам смогу с нейросетями"</strong></p></div>
+        </section>
+        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">Ux/UI</span></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
+          <div class="rt rt--body"><p>Клиент пришёл с понятной целью: чтобы после бесплатного пробного периода больше людей оформляли платную подписку, а начать тренировку было быстро и удобно. Отдельное пожелание — премиальный «стеклянный» стиль.</p></div>
+        </div>
+        <div class="rt rt--h3"><ol start="2"><li><h3>Решение</h3></li></ol></div>
+        <div class="cs-list">
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Аналитика</h4></div>
+            <div class="rt rt--body"><p>Изучил приложения конкурентов: что у них работает и на что жалуются пользователи.</p><p><strong>Путь клиента до оплаты. </strong>Обычно приложение просит деньги сразу при запуске или после скучной анкеты. Человек уходит, так и не поняв, за что платить.</p><p><strong>Где пользуются приложением. </strong>В зале, с потными руками, сбитым дыханием и бликами на экране. Мелкие кнопки и длинный текст там не работают.</p><p><strong>Ради чего возвращаются. </strong>Базовую технику профессионал и так знает, ему нужны видеоуроки от топовых тренеров.</p></div>
+            <div class="rt rt--note"><p>Нейросеть за пару минут разобрала сотни отзывов о приложениях конкурентов в App Store и Google Play и выделила главные жалобы. Вручную на это ушёл бы день, а клиент сэкономил бюджет.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 1" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Гипотеза</h4></div>
+            <div class="rt rt--body"><p>Люди охотнее платят за то, что уже попробовали. Если сначала дать спортсмену бесплатно пройти тест с видеоуроками и вложить в приложение свои силы, персональная программа станет для него ценной. Тогда оплата будет логичным следующим шагом.</p></div>
+          </div>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--h4"><h4>Что было сделано</h4></div>
+            <div class="rt rt--body"><ol><li><p><strong>Перенёс оплату в конец.</strong> Сначала человек бесплатно проходит тест с видеоуроками. Потом приложение сообщает, что персональная программа готова, и только тогда предлагает подписку.</p></li></ol></div>
+            <div class="rt rt--note"><p>Нейросеть помогла быстро выстроить и проверить этот путь и найти лучший момент для предложения оплаты.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 2" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="2"><li><p><strong>Сделал видео главным на экране тренировки.</strong> На экране крупный плеер, таймер и пара кнопок, ничего лишнего.</p></li></ol></div>
+            <div class="rt rt--note"><p>Реальные видео ещё не были сняты, поэтому я сгенерировал похожие кадры нейросетью. Так я заранее проверил, что текст и кнопки читаются поверх видео, и клиенту не пришлось платить за переделки после съёмки.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 3" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 4" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="3"><li><p><strong>Сделал кнопки крупными и контрастными.</strong> В них легко попасть даже посреди подхода.</p></li></ol></div>
+            <div class="rt rt--note"><p>ИИ-плагины в Figma показали, куда смотрит пользователь, и помогли подобрать размер кнопок без долгого ручного тестирования.</p></div>
+          </div>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 5" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="4"><li><p><strong>Стиль.</strong> Глубокий чёрный фон с ярким неоново-жёлтым акцентом хорошо читается при любом свете в зале. «Стекло» использовал в карточках и всплывающих окнах: выглядит дорого и не отвлекает от видео.</p></li></ol></div>
+          </div>
+          <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 6" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <div class="cs-grp cs-grp--pb">
+            <div class="rt rt--body"><ol start="5"><li><p><strong>Передал разработчикам аккуратный макет.</strong> Это готовая дизайн-система со всеми экранами и состояниями кнопок. Разработка идёт быстрее и без лишних вопросов, а значит, обходится клиенту дешевле.</p></li></ol></div>
+            <div class="rt rt--note"><p>Рутинную подготовку файла (названия слоёв, стили, проверку компонентов) сделал ИИ-агент в Figma, в разы быстрее, чем вручную.</p></div>
+          </div>
+        </div>
+        <section class="aic" data-case="scplab" data-d="4.5" aria-label="Пример дизайна из нейросети"></section>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 7" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp">
+          <div class="rt rt--h3"><ol start="3"><li><h3>Результат</h3></li></ol></div>
+          <div class="rt rt--body"><p><strong>+10% подписок:</strong> больше людей оформляют полную подписку после пробного периода, потому что платят за программу, которую уже попробовали.</p><p><strong>На 30% быстрее</strong> проходит путь от запуска приложения до начала тренировки.</p><p><strong>+20% возвратов:</strong> пользователи чаще возвращаются в приложение, им удобно пользоваться им прямо в зале.</p><p>68 экранов · 10 UX тестов · 15 секций · 88 компонентов в 22 сетах · 47 стилей · 59 переменных · 5 983 инстанса · 117 020 нод · 27 изображений · 4 шрифтовых семейства</p></div>
+        </div>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB: иллюстрация 8" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+      </div>
+      <div class="cs-btns">
+        <button class="btn btn--dark" type="button" data-open-contacts data-scramble aria-controls="contacts" aria-expanded="false">связаться со мной</button>
+          <a class="btn btn--light" href="https://apps.apple.com/ru/app/scplab-pro/id6773645020" target="_blank" rel="noopener" data-scramble>к продукту</a>
+      </div>
+    </article>
+    <aside class="cs-media" aria-label="Иллюстрации к кейсу"></aside>
+  </main>
+
+  <a class="totop" href="#top" aria-label="Наверх"><svg viewBox="0 0 12.729 7.778" aria-hidden="true"><path d="M6.364 2.828 1.414 7.778 0 6.364 6.364 0l6.365 6.364-1.415 1.414Z" fill="#fff"/></svg></a>
+
+  <script src="../../assets/js/case-layout.js"></script>
+  <script type="module" src="../../assets/js/case.js"></script>
+</body>
+</html>

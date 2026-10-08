@@ -426,3 +426,130 @@ html.fs-loading .fs-loader { display: block; }
 .fs-card__bar { font-size: clamp(13px, 2.2vw, 18px); }
 @container fs (max-width: 809px) { .fs-card { padding: 16px 20px; } }
 @media (max-width: 809.98px) { .fs-card { padding: 16px 20px; } }
+
+/* ==========================================================================
+   Страницы кейсов (/projects/...)
+   Desktop: текст слева 600px, картинки справа 1065px; 1200–1919: текст 479px, картинки — остальное;
+   планшет и телефон: одна колонка, картинки встают в текст.
+   ========================================================================== */
+.hdr--case .hdr__bar { display: grid; grid-template-columns: 1fr auto 1fr; }
+.hdr__back { display: inline-flex; align-items: center; gap: 20px; justify-self: start; font-size: 20px; line-height: 24px; white-space: pre; transition: color .2s; }
+.hdr__back:hover { color: #666; }
+.hdr__back svg { width: 11px; height: 18px; flex-shrink: 0; }
+.hdr__right { display: flex; align-items: center; justify-content: flex-end; }
+
+.cs {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 130px 40px 40px;
+}
+.cs-text {
+  width: 600px;
+  flex-shrink: 0;
+  padding-left: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 48px;
+  align-self: stretch;
+}
+.cs-flow { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 72px; }
+.cs-flow > *, .cs-list > * { width: 100%; }
+.cs-list { display: flex; flex-direction: column; gap: 56px; }
+.cs-grp { display: flex; flex-direction: column; gap: 16px; }
+.cs-grp--pb { padding-bottom: 48px; }
+.cs-media { width: 1065px; flex-shrink: 0; display: flex; flex-direction: column; }
+.cs-media:empty { display: none; }
+
+/* тексты */
+.rt p, .rt h2, .rt h3, .rt h4, .rt ol, .rt ul { margin: 0; }
+.rt ol, .rt ul { padding: 0; }
+.rt ol { list-style: none; counter-reset: li; }
+.rt ol[start="2"] { counter-reset: li 1; }
+.rt ol[start="3"] { counter-reset: li 2; }
+.rt ol[start="4"] { counter-reset: li 3; }
+.rt ol[start="5"] { counter-reset: li 4; }
+.rt ol[start="6"] { counter-reset: li 5; }
+.rt ol[start="7"] { counter-reset: li 6; }
+.rt ol[start="8"] { counter-reset: li 7; }
+.rt ol[start="9"] { counter-reset: li 8; }
+.rt ol > li { counter-increment: li; position: relative; padding-left: 3ch; }
+.rt ol > li::before { content: counter(li) "."; position: absolute; left: 0; top: 0; }
+.rt ul { list-style: disc; }
+.rt ul > li { margin-left: 1.2em; }
+.rt strong { font-weight: 700; }
+.rt a { text-decoration: underline; text-underline-offset: 3px; }
+.cs-title { margin: 0; font-size: 48px; line-height: 1; font-weight: 400; text-transform: lowercase; }
+.rt--body { font-family: "Fira Code", var(--font); font-size: 17px; line-height: 1.4; color: rgba(0, 0, 0, .7); --ps: 18px; }
+.rt--h3 { font-size: 32px; line-height: 1.4; font-weight: 500; }
+.rt--h3 h3 { font-weight: 500; font-size: inherit; }
+.rt--h4 h4 { font-size: 24px; line-height: 1.3; font-weight: 500; color: rgba(0, 0, 0, .69); }
+.rt--hook { font-size: 16px; line-height: 1.6; letter-spacing: -.02em; --ps: 20px; }
+.rt--note { padding-left: 32px; font-size: 14px; line-height: 1.6; letter-spacing: -.02em; --ps: 20px; }
+.rt > * + *, .rt li + li, .rt li > * + * { margin-top: var(--ps, 0); }
+
+.cs-hooks { background: #f2f2f2; padding: 24px; display: flex; flex-direction: column; justify-content: center; gap: 120px; }
+
+/* картинки: блок 4:3, внутри картинка на 80% ширины (обложка на десктопе — на всю) */
+.cs-fig { margin: 0; width: 100%; aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
+.cs-fig__box { position: relative; width: 80%; aspect-ratio: 4 / 3; background: #bfbfbf; }
+.cs-fig__box img { width: 100%; height: 100%; object-fit: cover; }
+.cs-media .cs-fig--cover .cs-fig__box { width: 100%; }
+.cs-fig__tag { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 20px; line-height: 1; text-transform: lowercase; }
+.cs-media .cs-fig__tag { top: 36px; right: 36px; }
+html.cs-anim .cs-fig__box { opacity: 0; transform: translateY(100px) scale(.8); transition: opacity .7s var(--ease), transform 1.1s cubic-bezier(.3, 1.25, .5, 1); }
+html.cs-anim .cs-fig__box.is-in { opacity: 1; transform: none; }
+
+/* кнопки внизу текста */
+.cs-btns { position: sticky; top: 200px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.cs-btns .btn { min-width: 160px; }
+
+/* кнопка «наверх» */
+.totop {
+  position: fixed; left: 22px; bottom: 56px; z-index: 50;
+  width: 24px; height: 48px; background: #000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.totop.is-on { opacity: 1; pointer-events: auto; }
+.totop svg { width: 13px; height: 8px; }
+
+/* блок «если вы решите сделать в нейросети» */
+.aic { background: #f2f2f2; padding: 40px; display: flex; flex-direction: column; gap: 24px; color: #000; }
+.aic p { margin: 0; }
+.aic__title { font-size: 22px; line-height: 1.3; font-weight: 500; }
+.aic__shot { display: flex; flex-direction: column; gap: 10px; }
+.aic__prompt { font-size: 12px; line-height: 1.5; color: #6b6b6b; }
+.aic__frame { position: relative; overflow: hidden; background: #fff; box-shadow: 0 8px 30px rgba(0, 0, 0, .12); }
+.aic__mock { transform-origin: left top; pointer-events: none; width: max-content; }
+.aic__intro { font-size: 15px; line-height: 1.6; }
+.aic__issues { display: flex; flex-direction: column; gap: 10px; }
+.aic__issues-title { font-size: 15px; font-weight: 700; }
+.aic ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.aic li { display: flex; gap: 10px; font-size: 14px; line-height: 1.55; }
+.aic li::before { content: "✕"; flex-shrink: 0; }
+.aic--small { padding: 24px; }
+.aic--small .aic__title { font-size: 18px; }
+
+@media (max-width: 1919.98px) {
+  .cs-text { width: 479px; padding-bottom: 700px; }
+  .cs-media { width: auto; flex: 1; min-width: 0; padding-left: 72px; }
+}
+@media (max-width: 1199.98px) {
+  .cs { display: block; padding: 130px 42px 180px; }
+  .cs-text { width: auto; padding: 0; align-items: flex-start; }
+  .cs-media { display: none; }
+  .rt:not(.rt--title), .cs-grp { max-width: 564px; }
+  .cs-hooks .rt { max-width: none; }
+  .cs-btns { position: static; }
+  .totop { left: auto; right: 56px; bottom: 136px; }
+}
+@media (max-width: 809.98px) {
+  .cs { padding: 100px 16px 150px; }
+  .totop { right: 24px; }
+  .hdr__back { gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.cs-anim .cs-fig__box { opacity: 1; transform: none; }
+}
