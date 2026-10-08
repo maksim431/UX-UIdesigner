@@ -37,7 +37,14 @@ export function scramble(el, { speed = 60, mode = 'hover', target } = {}) {
   }
   el.addEventListener('mouseenter', start)
   el.addEventListener('mouseleave', stop)
-  el.addEventListener('focus', start)
+  // фокус с клавиатуры — тоже «наведение»; программный фокус после клика мышью — нет
+  el.addEventListener('focus', () => {
+    try {
+      if (el.matches(':focus-visible')) start()
+    } catch (e) {
+      start()
+    }
+  })
   el.addEventListener('blur', stop)
 }
 

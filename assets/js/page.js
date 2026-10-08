@@ -59,7 +59,8 @@ function setMenu(open) {
   document.querySelectorAll('[data-open-contacts]').forEach((b) => b.setAttribute('aria-expanded', open ? 'true' : 'false'))
   if (open) {
     lastFocus = document.activeElement
-    tgFx && tgFx.start()
+    // постоянный ASCII-эффект на telegram — только на планшете и телефоне
+    if (tgFx && window.matchMedia('(max-width: 1199.98px)').matches) tgFx.start()
     const first = menu.querySelector('a, button')
     first && first.focus({ preventScroll: true })
   } else {
