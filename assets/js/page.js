@@ -102,6 +102,26 @@ window.addEventListener(
 
 /* ---------- блок проектов ---------- */
 const works = document.getElementById('works')
-initProjects(works, { smooth })
+const proj = initProjects(works, { smooth })
+
+// открыли кейс — запоминаем, какой; вернулись по «назад» — сразу показываем этот проект, без первого экрана
+if (works) works.querySelectorAll('.ps__panel').forEach((panel, i) =>
+  panel.querySelectorAll('a[href*="projects/"]').forEach((a) =>
+    a.addEventListener('click', () => {
+      try { sessionStorage.setItem('worksIndex', String(i)) } catch (e) {}
+    })
+  )
+)
+let back = null
+try {
+  back = sessionStorage.getItem('returnToWorks')
+  sessionStorage.removeItem('returnToWorks')
+} catch (e) {}
+if (back !== null && proj) {
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: proj.yFor(parseInt(back, 10) || 0), left: 0, behavior: 'instant' })
+    root.classList.remove('rw')
+  })
+} else root.classList.remove('rw')
 // стопор: сильная прокрутка с первого экрана останавливается на первом проекте, а не пролетает его
 if (smooth && works) smooth.addStop(() => works.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.getBoundingClientRect().height : 0))

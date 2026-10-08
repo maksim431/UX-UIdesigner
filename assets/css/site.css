@@ -618,3 +618,6 @@ html.cs-anim .cs-rise.is-in { opacity: 1; transform: none; transition: opacity .
 .cs-media .cs-fig__box { aspect-ratio: auto; }
 .cs-media .cs-fig__box img { height: auto; }
 .cs-media { will-change: transform; }
+
+/* возврат из кейса: пока страница не прокручена к проектам, её не видно */
+html.rw body { visibility: hidden; }

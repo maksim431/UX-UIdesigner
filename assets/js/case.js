@@ -11,6 +11,13 @@ const smooth = initSmoothScroll()
 initChrome()
 initAiCompare()
 
+// «назад» ведёт к блоку проектов на главной, на тот проект, который открыли
+document.querySelectorAll('.hdr__back').forEach((a) =>
+  a.addEventListener('click', () => {
+    try { sessionStorage.setItem('returnToWorks', sessionStorage.getItem('worksIndex') || '0') } catch (e) {}
+  })
+)
+
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 const anim = root.classList.contains('cs-anim')
 

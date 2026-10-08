@@ -19,7 +19,10 @@
     // arrived via the ASCII transition
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // intro animation
-    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('fx-pre')
+    // вернулись из кейса по «назад» — сразу к проектам, без анимации первого экрана
+    try { if (sessionStorage.getItem('returnToWorks') !== null) document.documentElement.classList.add('rw') } catch (e) {}
+    if (!document.documentElement.classList.contains('rw') && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('fx-pre')
+    setTimeout(function () { document.documentElement.classList.remove('rw') }, 3000)
     // fallback
     setTimeout(function () { document.documentElement.classList.remove('ascii-pending') }, 4000)
     setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)

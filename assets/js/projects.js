@@ -166,4 +166,13 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   }
 
   measure(true)
+
+  return {
+    // координата прокрутки, при которой полностью показана карточка i
+    yFor(i) {
+      const total = root.offsetHeight - box.innerH
+      const top = root.getBoundingClientRect().top + window.scrollY - box.hdr
+      return top + (total * clamp(i, 0, n - 1)) / Math.max(1, n - 1) + 2
+    },
+  }
 }
