@@ -14,6 +14,10 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
   let animating = false
   let raf = 0
   let tween = null
+  // «стопоры»: точки, через которые сильная прокрутка вниз не проскакивает
+  const stops = []
+  let lockUntil = 0
+  let lockMax = 0
   const maxY = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
   const go = (y) => window.scrollTo({ top: y, left: 0, behavior: 'instant' })
 
@@ -66,7 +70,25 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
       target = window.scrollY
     }
     const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY
-    target = clamp(target + dy, 0, maxY())
+    const now = performance.now()
+    // после остановки на стопоре недолго гасим инерцию тачпада/колеса, прокрутку вверх не держим
+    if (dy > 0 && now < lockUntil) {
+      lockUntil = Math.min(lockMax, Math.max(lockUntil, now + 120))
+      return
+    }
+    let next = clamp(target + dy, 0, maxY())
+    if (dy > 0) {
+      for (const fn of stops) {
+        const y = Math.round(fn())
+        if (target < y - 2 && next > y) {
+          next = y
+          lockUntil = now + Math.min(1200, Math.abs(y - current) * 1.2) + 450
+          lockMax = lockUntil + 1000
+          break
+        }
+      }
+    }
+    target = next
     start()
   }
   const onScroll = () => {
@@ -89,6 +111,10 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
   window.addEventListener('pointerdown', cancel)
 
   return {
+    // fn() возвращает координату стопора (пересчитывается на каждом шаге колеса)
+    addStop(fn) {
+      stops.push(fn)
+    },
     scrollTo(y, duration = 1.2) {
       cancelAnimationFrame(raf)
       tween = { from: window.scrollY, to: clamp(y, 0, maxY()), t0: performance.now(), d: duration * 1000 }

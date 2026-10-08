@@ -553,3 +553,24 @@ html.cs-anim .cs-fig__box.is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   html.cs-anim .cs-fig__box { opacity: 1; transform: none; }
 }
+
+/* при прокрутке синий фрейм раздвигается до краёв экрана: --gl/--gr задаёт page.js.
+   Портрет остаётся прежнего размера (canvas не пересоздаётся), раздвигается только фон. */
+.hero__box { left: calc(-1 * var(--gl, 0px)); right: calc(-1 * var(--gr, 0px)); }
+.hero__portrait { left: var(--gl, 0px); right: var(--gr, 0px); }
+html { overflow-x: clip; }
+
+/* на сенсорных экранах стопор перед блоком проектов делает браузер */
+@media (pointer: coarse) {
+  html { scroll-snap-type: y proximity; }
+  #works { scroll-snap-align: start; scroll-snap-stop: always; }
+}
+
+/* первый экран: весь контент по центру, в колонке не шире 1000px */
+.fs-wrap { max-width: 1000px; margin: 0 auto; align-items: center; text-align: center; }
+.fs-btns { justify-content: center; }
+@container fs (max-width: 809px) { .fs-btns { width: 100%; } }
+
+/* ASCII-след за курсором */
+.ascii-cursor { position: fixed; inset: 0; z-index: 2147482000; pointer-events: none; overflow: hidden; mix-blend-mode: difference; }
+.ascii-cursor span { position: absolute; left: 0; top: 0; opacity: 0; color: #fff; font: 500 13px/1 var(--font); will-change: transform, opacity; }

@@ -1,9 +1,11 @@
 // Первый экран: пиксельный ASCII-прелоадер, появление вопроса и переход по «да / нет».
 
 import { initScramble, makeAsciiGrid, drawAsciiFrame, coverAndGo } from './ascii.js'
+import { initCursor } from './cursor.js'
 
 const root = document.documentElement
 initScramble()
+initCursor()
 
 /* ---------- переход по «да / нет» ---------- */
 document.querySelectorAll('[data-go]').forEach((a) =>

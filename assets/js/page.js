@@ -57,6 +57,20 @@ revealIfNeeded().then(() => {
 const heroTexts = introEls.filter((el) => !el.classList.contains('hero__portrait'))
 let heroTick = false
 let lastP = -1
+// отступы фрейма от краёв экрана — на столько он раздвигается при прокрутке
+const frame = box && box.parentElement
+let gapL = 0
+let gapR = 0
+function measureGaps() {
+  if (!frame) return
+  const r = frame.getBoundingClientRect()
+  gapL = Math.max(0, r.left)
+  gapR = Math.max(0, document.documentElement.clientWidth - r.right)
+  lastP = -1
+  heroScroll()
+}
+window.addEventListener('resize', measureGaps)
+requestAnimationFrame(measureGaps)
 function heroScroll() {
   heroTick = false
   if (!box || reduce) return
@@ -67,7 +81,10 @@ function heroScroll() {
   lastP = p
   const e = easeOut(p)
   portraitHost && (portraitHost.style.translate = p ? '0 ' + (p * 22).toFixed(2) + '%' : '')
-  box.style.clipPath = p > 0 ? 'inset(0 ' + (e * 2.2).toFixed(3) + '% 0 ' + (e * 2.2).toFixed(3) + '% round ' + (e * 14).toFixed(1) + 'px)' : ''
+  // синий фрейм раздвигается до краёв экрана (без скруглений), к трети прокрутки — на всю ширину
+  const g = easeOut(clamp(p * 3, 0, 1))
+  box.style.setProperty('--gl', p > 0 ? (g * gapL).toFixed(1) + 'px' : '0px')
+  box.style.setProperty('--gr', p > 0 ? (g * gapR).toFixed(1) + 'px' : '0px')
   heroTexts.forEach((el, i) => {
     el.style.translate = p ? '0 ' + (-p * (90 + i * 22)).toFixed(1) + 'px' : ''
     el.style.opacity = p ? String(clamp(1 - p * 1.6, 0, 1)) : ''
@@ -84,4 +101,7 @@ window.addEventListener(
 )
 
 /* ---------- блок проектов ---------- */
-initProjects(document.getElementById('works'), { smooth })
+const works = document.getElementById('works')
+initProjects(works, { smooth })
+// стопор: сильная прокрутка с первого экрана останавливается на первом проекте, а не пролетает его
+if (smooth && works) smooth.addStop(() => works.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.getBoundingClientRect().height : 0))

@@ -1,6 +1,7 @@
 // Общее для всех страниц с шапкой: ASCII-кнопки, меню контактов, копирование почты.
 
 import { initScramble, PIXEL_CHARS } from './ascii.js'
+import { initCursor } from './cursor.js'
 
 const root = document.documentElement
 
@@ -127,4 +128,5 @@ export function initChrome() {
   initScramble()
   initContacts()
   initCopy()
+  initCursor()
 }
