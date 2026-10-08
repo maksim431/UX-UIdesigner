@@ -61,7 +61,8 @@ if (anim && 'IntersectionObserver' in window) {
 /* ---------- правая колонка с картинками (десктоп) прокручивается на 20% быстрее текста ---------- */
 const media = document.querySelector('.cs-media')
 const hdrEl = document.querySelector('.hdr')
-if (anim && media) {
+// в кейсах-историях картинки стоят на уровне своих абзацев — колонка едет вместе с текстом
+if (anim && media && !document.querySelector('.cs--story')) {
   const SPEED = 0.2
   const wide = window.matchMedia('(min-width: 1200px)')
   let top0 = 0

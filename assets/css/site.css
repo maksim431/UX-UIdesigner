@@ -645,3 +645,10 @@ html.rw body { visibility: hidden; }
 .hk__lead { margin: 0; opacity: .5; }
 .hk__go { text-decoration: underline; text-underline-position: from-font; overflow-wrap: anywhere; transition: color .2s; }
 .hk__go:hover { color: #666; }
+
+/* кейсы-истории: картинки в правой колонке стоят на уровне своих абзацев */
+.cs-slot { display: block; height: 0; }
+.cs-media--story { position: relative; display: block; }
+.cs-media--story > * { position: absolute; left: 72px; right: 0; }
+@media (min-width: 1920px) { .cs-media--story > * { left: 0; } }
+.cs--story { overflow: clip; }
