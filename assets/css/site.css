@@ -578,3 +578,18 @@ html { overflow-x: clip; }
 /* десктоп: в правой колонке все картинки во всю ширину колонки (как обложка), вплотную друг к другу */
 .cs-media .cs-fig { aspect-ratio: auto; display: block; }
 .cs-media .cs-fig__box { width: 100%; }
+
+/* кейсы: те же эффекты, что на главной.
+   1) при загрузке шапка выезжает, заголовок, вступление, «в этом кейсе» и обложка поднимаются из-под маски (fx-pre/fx-in);
+   2) тексты и блоки поднимаются при прокрутке, как тексты карточек проектов;
+   3) картинки внутри рамки слегка смещаются при прокрутке (параллакс, как портрет на первом экране). */
+.cs-fig__box { overflow: hidden; }
+.cs-fig__box img { will-change: transform; }
+html.cs-anim .cs-fig--cover .cs-fig__box { opacity: 1; transform: none; }
+html.fx-pre .cs-fig--cover img { scale: 1.08; }
+html.fx-in .cs-fig--cover img { scale: 1; transition: scale 1.8s var(--ease) var(--d, .15s); }
+html.cs-anim .cs-rise { opacity: 0; transform: translate3d(0, 48px, 0); }
+html.cs-anim .cs-rise.is-in { opacity: 1; transform: none; transition: opacity .9s var(--ease) var(--rd, 0s), transform 1.1s var(--ease) var(--rd, 0s); }
+@media (prefers-reduced-motion: reduce) {
+  html.cs-anim .cs-rise { opacity: 1; transform: none; }
+}

@@ -15,9 +15,10 @@
     // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // картинки появляются при прокрутке (если в системе не выключено движение)
-    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim', 'fx-pre')
     // страховка: если скрипты не загрузились, просто показываем страницу
-    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim', 'fx-pre') }, 4000)
+    setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,13 +57,13 @@
   <main class="cs">
     <article class="cs-text">
       <div class="cs-flow">
-        <h1 class="cs-title">vici</h1>
-        <div class="rt rt--body"><p><strong>VICI</strong> — это крупная пищевая компания, один из главных производителей рыбы и морепродуктов в Европе.</p><p>Больше всего бренд известен благодаря <strong>крабовым палочкам</strong> (из рыбного фарша сурими) — это их визитная карточка. Красные упаковки с логотипом VICI десятилетиями были самым популярным продуктом в этой категории на постсоветском пространстве.</p></div>
-        <section class="cs-hooks">
+        <h1 class="cs-title" data-intro>vici</h1>
+        <div class="rt rt--body" data-intro><p><strong>VICI</strong> — это крупная пищевая компания, один из главных производителей рыбы и морепродуктов в Европе.</p><p>Больше всего бренд известен благодаря <strong>крабовым палочкам</strong> (из рыбного фарша сурими) — это их визитная карточка. Красные упаковки с логотипом VICI десятилетиями были самым популярным продуктом в этой категории на постсоветском пространстве.</p></div>
+        <section class="cs-hooks" data-intro>
           <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
           <div class="rt rt--hook"><p><strong>+35% глубины просмотра и +40% времени на сайте —</strong> каталог замороженной рыбы стал кулинарным журналом.</p><p><strong>+25% переходов из рецептов в товары —</strong> сайт без корзины, который всё равно продаёт.</p><p><strong>−20% отказов на мобильных —</strong> сайт спроектирован для покупателя, который стоит у полки.</p><p><strong>+12 п.п. аудитории 18–34 —</strong> бренд «дешёвой заморозки» помолодел без смены продукта.</p></div>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="VICI — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">web-design</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="VICI — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">web-design</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
           <div class="rt rt--body"><p>Разработать минималистичный дизайн сайта на базе нового дизайн-кода бренда (после ребрендинга). Основная бизнес-цель: спроектировать интерфейс так, чтобы увеличить время нахождения пользователя на сайте и сформировать отложенный спрос (желание купить продукцию в офлайн-магазине). Адаптировать сайт под все устройства без потери визуальной привлекательности.</p></div>

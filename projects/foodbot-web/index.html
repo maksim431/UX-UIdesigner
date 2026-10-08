@@ -15,9 +15,10 @@
     // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // картинки появляются при прокрутке (если в системе не выключено движение)
-    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim', 'fx-pre')
     // страховка: если скрипты не загрузились, просто показываем страницу
-    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim', 'fx-pre') }, 4000)
+    setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,13 +57,13 @@
   <main class="cs">
     <article class="cs-text">
       <div class="cs-flow">
-        <h1 class="cs-title">FoodBot</h1>
-        <div class="rt rt--body"><p><strong>FoodBot</strong> — сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.</p></div>
-        <section class="cs-hooks">
+        <h1 class="cs-title" data-intro>FoodBot</h1>
+        <div class="rt rt--body" data-intro><p><strong>FoodBot</strong> — сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.</p></div>
+        <section class="cs-hooks" data-intro>
           <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
           <div class="rt rt--hook"><p><strong>Рассказываю, что я сделал, чтобы владелец кафе запускал ботов сам </strong>за 5 простых шагов, без программиста и слова «API»</p><p><strong>Как уменьшил количество потерянных заказов на 40% меньше</strong></p><p><strong>Что сделать, чтобы было меньше вопросов в поддержку?</strong></p><p><strong>Рубрика "я сам смогу с нейросетями"</strong></p></div>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">product design/b2b</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">product design/b2b</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
           <div class="rt rt--body"><p>Сделать личный кабинет, в котором разберётся владелец кафе без технических знаний. Настроить бота должно быть так же просто, как заполнить профиль в соцсети.</p></div>

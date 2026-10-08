@@ -15,9 +15,10 @@
     // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // картинки появляются при прокрутке (если в системе не выключено движение)
-    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim')
+    if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('cs-anim', 'fx-pre')
     // страховка: если скрипты не загрузились, просто показываем страницу
-    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim') }, 4000)
+    setTimeout(function () { document.documentElement.classList.remove('ascii-pending'); if (!window.__caseReady) document.documentElement.classList.remove('cs-anim', 'fx-pre') }, 4000)
+    setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,13 +57,13 @@
   <main class="cs">
     <article class="cs-text">
       <div class="cs-flow">
-        <h1 class="cs-title">sCPlab</h1>
-        <div class="rt rt--body"><p>SCP LAB — мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профи и следит за прогрессом.</p></div>
-        <section class="cs-hooks">
+        <h1 class="cs-title" data-intro>sCPlab</h1>
+        <div class="rt rt--body" data-intro><p>SCP LAB — мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профи и следит за прогрессом.</p></div>
+        <section class="cs-hooks" data-intro>
           <div class="rt rt--h4"><h4>в этом кейсе</h4></div>
           <div class="rt rt--hook"><p><strong>Как получить +10% к покупке платных подписок?</strong></p><p><strong>Про удобство пользования телефоном прямо в зале</strong></p><p><strong>Что сделать, чтобы пользователи возвращались на 20% чаще?</strong></p><p><strong>Рубрика "я сам смогу с нейросетями"</strong></p></div>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">Ux/UI</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024" srcset="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=1024 1024w, https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async"><span class="cs-fig__tag">Ux/UI</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3"><ol><li><h3>Задача</h3></li></ol></div>
           <div class="rt rt--body"><p>Клиент пришёл с понятной целью: чтобы после бесплатного пробного периода больше людей оформляли платную подписку, а начать тренировку было быстро и удобно. Отдельное пожелание — премиальный «стеклянный» стиль.</p></div>
