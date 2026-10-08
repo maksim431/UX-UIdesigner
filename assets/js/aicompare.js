@@ -4,11 +4,11 @@
 const CASES = {
   mytiger: {
     prompt: 'Сделай лендинг премиальной ветеринарной клиники с грумингом',
-    intro: 'Даже со словом «премиальной» в промте лендинг выглядит дружелюбно-дешёвым: нейросеть собирает его из самых частых шаблонов: яркий баннер со скидкой, мультяшные лапки, список услуг с ценами. Она не знает, что клиника работает в премиальном сегменте, где скидка роняет статус, и что груминг здесь — медицинская процедура. В итоге страница похожа на сотни других и привлекает тех, кто ищет подешевле, а не тех, ради кого клиника создавалась. Премиальный бренд нужно проектировать с пониманием того, за что клиенты готовы платить.',
+    intro: 'Нейросеть понимает «премиальный» буквально: чёрный фон, золото, вензеля и слово «Luxury» в каждом заголовке. А главный экран всё равно отдаёт под скидку «−30%». Она не знает, что в премиальном сегменте скидка роняет статус, а настоящая премиальность — это доверие к врачам, а не золотые рамки. Груминг она подаёт как «спа для питомца», ни слова о здоровье. В итоге страница похожа на сотни «люксовых» шаблонов и не объясняет, почему стоит выбрать именно эту клинику. Премиальный бренд нужно проектировать с пониманием того, за что клиенты готовы платить.',
     issues: [
       'Главный экран — скидка «−30%»: для премиальной клиники это сигнал дешевизны.',
-      'Груминг подан как «помыть и подстричь» — ни слова о здоровье и о врачах.',
-      'Стоковые иконки и мультяшные лапки вместо живых фотографий клиники и специалистов.',
+      '«Премиальность» — это золото и вензеля, а не доверие к врачам и подход клиники.',
+      'Груминг подан как «спа для питомца» — ни слова о здоровье и о связке с ветеринарами.',
     ],
   },
   scplab: {
@@ -49,11 +49,11 @@ const CASES = {
 const CASES_EN = {
   mytiger: {
     prompt: 'Make a landing page for a premium vet clinic with grooming',
-    intro: "Even with the word “premium” in the prompt, the page looks friendly and cheap: the AI assembles it from the most common templates: a bright discount banner, cartoon paws, a list of services with prices. It doesn't know the clinic works in the premium segment, where a discount hurts the brand's status, and that grooming here is a medical procedure. As a result, the page looks like hundreds of others and attracts bargain hunters rather than the clients the clinic was built for. A premium brand has to be designed with an understanding of what clients are willing to pay for.",
+    intro: "AI takes “premium” literally: a black background, gold, monograms and the word “Luxury” in every headline. And it still gives the first screen to a “−30%” discount. It doesn't know that in the premium segment a discount hurts the brand's status, and that real premium means trust in the vets, not golden frames. It presents grooming as a “pet spa” with not a word about health. As a result, the page looks like hundreds of “luxury” templates and doesn't explain why this particular clinic is worth choosing. A premium brand has to be designed with an understanding of what clients are willing to pay for.",
     issues: [
       'The first screen is a “−30%” discount: for a premium clinic that signals cheapness.',
-      'Grooming is presented as “wash and trim” — not a word about health or vets.',
-      'Stock icons and cartoon paws instead of real photos of the clinic and its specialists.',
+      '“Premium” means gold and monograms, not trust in the vets and the clinic’s approach.',
+      'Grooming is presented as a “pet spa” — not a word about health or the link with vets.',
     ],
   },
   scplab: {
@@ -274,57 +274,60 @@ function viciPhone() {
   )
 }
 
-/* ---------- лендинг ветклиники «как у всех» ---------- */
-const VET_SERVICES = [['✂️', 'Grooming', 'from $25'], ['💉', 'Vaccination', 'from $30'], ['🩺', 'Check-up', 'from $40'], ['🛁', 'Spa bath', 'from $20']]
-const vetLogo = (size) => t({ fontSize: size, fontWeight: 800, color: '#FF6B3D' }, '🐾 HappyPaws')
-const vetBadge = (size) => t({ display: 'inline-block', padding: '6px 14px', borderRadius: 999, background: '#FFE14D', color: '#1E1E1E', fontSize: size, fontWeight: 800 }, '−30% OFF GROOMING!')
-const vetCta = (pad, size) => t({ marginTop: 20, display: 'inline-block', padding: pad, borderRadius: 999, background: '#fff', color: '#FF4F7B', fontWeight: 800, fontSize: size }, 'Book now 🐶')
-const vetCard = ([e, n, p], small) =>
+/* ---------- «премиальный» лендинг ветклиники от нейросети: чёрный, золото, вензеля и всё равно скидка ---------- */
+const GOLD = '#C9A45C'
+const SERIF = "Georgia, 'Times New Roman', serif"
+const LUX_SERVICES = [['✂️', 'Luxury Grooming', 'from $120'], ['🛁', 'Royal Spa Bath', 'from $90'], ['💅', 'Paw Care Ritual', 'from $60'], ['🩺', 'VIP Check-up', 'from $150']]
+const luxLogo = (size) => t({ fontFamily: SERIF, fontSize: size, color: GOLD, letterSpacing: '0.12em' }, '♛ ROYAL PAWS')
+const luxBadge = (size) => t({ display: 'inline-block', padding: '6px 14px', border: '1px solid ' + GOLD, color: GOLD, fontSize: size, letterSpacing: '0.18em', fontWeight: 700 }, 'EXCLUSIVE −30% OFF')
+const luxCta = (pad, size) => t({ marginTop: 22, display: 'inline-block', padding: pad, background: 'linear-gradient(90deg,#B8913F,#E9CF8B,#B8913F)', color: '#111', fontWeight: 700, fontSize: size, letterSpacing: '0.12em' }, 'BOOK YOUR VIP VISIT')
+const luxCard = ([e, n, p], small) =>
   h(
-    { borderRadius: small ? 14 : 20, background: '#FFF3EC', padding: small ? 12 : 18, textAlign: 'center' },
-    t({ fontSize: small ? 30 : 44 }, e),
-    t({ fontSize: small ? 13 : 16, fontWeight: 800, color: '#1E1E1E', marginTop: 8 }, n),
-    t({ fontSize: small ? 11 : 13, color: '#FF6B3D', fontWeight: 700, marginTop: 2 }, p)
+    { border: '1px solid rgba(201,164,92,0.45)', padding: small ? 12 : 18, textAlign: 'center', background: '#141414' },
+    t({ fontSize: small ? 26 : 38 }, e),
+    t({ fontFamily: SERIF, fontSize: small ? 13 : 16, color: '#F3E7C9', marginTop: 8 }, n),
+    t({ fontSize: small ? 11 : 13, color: GOLD, marginTop: 3, letterSpacing: '0.08em' }, p)
   )
-const vetHero = { background: 'linear-gradient(120deg,#FF6B3D 0%,#FF4F7B 60%,#FF9EC0 100%)', color: '#fff' }
+const luxHero = { background: 'radial-gradient(circle at 75% 40%,#3A2E1A 0%,#0B0B0B 60%)', color: '#F3E7C9' }
+const luxTitle = (size) => t({ fontFamily: SERIF, fontSize: size, lineHeight: 1.1, marginTop: 16, fontStyle: 'italic' }, 'Luxury Care for Your Royal Pet')
 
 function mytigerDesktop() {
   return h(
-    { width: 1200, height: 760, background: '#fff', fontFamily: UI, overflow: 'hidden' },
+    { width: 1200, height: 760, background: '#0B0B0B', fontFamily: UI, overflow: 'hidden' },
     h(
-      { height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', borderBottom: '1px solid #F2E6E0' },
-      vetLogo(22),
-      h({ display: 'flex', gap: 28, fontSize: 14, color: '#4A4A4A' }, ['Home', 'Services', 'Prices', 'Team', 'Contacts'].map(span)),
-      t({ padding: '9px 18px', borderRadius: 999, background: '#FF6B3D', color: '#fff', fontSize: 13, fontWeight: 700 }, 'Call us')
+      { height: 70, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 48px', borderBottom: '1px solid rgba(201,164,92,0.3)' },
+      luxLogo(22),
+      h({ display: 'flex', gap: 30, fontSize: 13, color: '#CFC3A6', letterSpacing: '0.14em' }, ['HOME', 'SPA', 'GROOMING', 'VIP CLUB', 'CONTACT'].map(span)),
+      t({ padding: '9px 18px', border: '1px solid ' + GOLD, color: GOLD, fontSize: 12, letterSpacing: '0.14em' }, 'CALL NOW')
     ),
     h(
-      { ...vetHero, height: 330, padding: '0 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-      h({ maxWidth: 600 }, vetBadge(14), t({ fontSize: 48, fontWeight: 800, lineHeight: 1.08, marginTop: 14 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 16, opacity: 0.92, marginTop: 12 }, 'Grooming, vaccination & more at the lowest prices in town.'), vetCta('12px 26px', 15)),
-      t({ fontSize: 150, lineHeight: 1 }, '🐕')
+      { ...luxHero, height: 330, padding: '0 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+      h({ maxWidth: 620 }, luxBadge(13), luxTitle(52), t({ fontSize: 16, color: '#CFC3A6', marginTop: 12 }, 'Exclusive spa & grooming experience for discerning pet owners.'), luxCta('13px 28px', 13)),
+      t({ fontSize: 140, lineHeight: 1, filter: 'sepia(1) saturate(2)' }, '🐩')
     ),
-    h({ padding: '30px 48px 0' }, t({ textAlign: 'center', fontSize: 26, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'flex', gap: 20, marginTop: 22 }, VET_SERVICES.map((c) => h({ flex: '1' }, vetCard(c, false)))))
+    h({ padding: '30px 48px 0' }, t({ textAlign: 'center', fontFamily: SERIF, fontSize: 26, color: GOLD, letterSpacing: '0.1em' }, '— OUR SIGNATURE SERVICES —'), h({ display: 'flex', gap: 20, marginTop: 22 }, LUX_SERVICES.map((c) => h({ flex: '1' }, luxCard(c, false)))))
   )
 }
 
 function mytigerTablet() {
   return h(
-    { width: 820, height: 1000, background: '#fff', fontFamily: UI, overflow: 'hidden' },
-    h({ height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', borderBottom: '1px solid #F2E6E0' }, vetLogo(22), h({ display: 'flex', gap: 18, alignItems: 'center' }, t({ padding: '9px 18px', borderRadius: 999, background: '#FF6B3D', color: '#fff', fontSize: 13, fontWeight: 700 }, 'Call us'), t({ fontSize: 24, color: '#1E1E1E' }, '☰'))),
+    { width: 820, height: 1000, background: '#0B0B0B', fontFamily: UI, overflow: 'hidden' },
+    h({ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', borderBottom: '1px solid rgba(201,164,92,0.3)' }, luxLogo(22), h({ display: 'flex', gap: 18, alignItems: 'center' }, t({ padding: '9px 16px', border: '1px solid ' + GOLD, color: GOLD, fontSize: 12, letterSpacing: '0.14em' }, 'CALL NOW'), t({ fontSize: 24, color: GOLD }, '☰'))),
     h(
-      { ...vetHero, height: 380, padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-      h({ maxWidth: 500 }, vetBadge(14), t({ fontSize: 42, fontWeight: 800, lineHeight: 1.1, marginTop: 14 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 16, opacity: 0.92, marginTop: 12 }, 'Grooming, vaccination & more at the lowest prices in town.'), vetCta('12px 24px', 15)),
-      t({ fontSize: 110, lineHeight: 1 }, '🐕')
+      { ...luxHero, height: 400, padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+      h({ maxWidth: 520 }, luxBadge(13), luxTitle(44), t({ fontSize: 16, color: '#CFC3A6', marginTop: 12 }, 'Exclusive spa & grooming experience for discerning pet owners.'), luxCta('13px 24px', 13)),
+      t({ fontSize: 110, lineHeight: 1, filter: 'sepia(1) saturate(2)' }, '🐩')
     ),
-    h({ padding: '30px 32px 0' }, t({ textAlign: 'center', fontSize: 26, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginTop: 20 }, VET_SERVICES.map((c) => vetCard(c, false))))
+    h({ padding: '30px 32px 0' }, t({ textAlign: 'center', fontFamily: SERIF, fontSize: 24, color: GOLD, letterSpacing: '0.1em' }, '— OUR SIGNATURE SERVICES —'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginTop: 20 }, LUX_SERVICES.map((c) => luxCard(c, false))))
   )
 }
 
 function mytigerPhone() {
   return h(
-    { width: 390, height: 780, background: '#fff', fontFamily: UI, overflow: 'hidden' },
-    h({ height: 96, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 18px 16px', boxSizing: 'border-box', borderBottom: '1px solid #F2E6E0' }, vetLogo(18), t({ fontSize: 22, color: '#1E1E1E' }, '☰')),
-    h({ ...vetHero, padding: '26px 18px' }, vetBadge(12), t({ fontSize: 56, lineHeight: 1, marginTop: 12 }, '🐕'), t({ fontSize: 28, fontWeight: 800, lineHeight: 1.12, marginTop: 10 }, 'Best Care For Your Furry Friends!'), t({ fontSize: 13, opacity: 0.92, marginTop: 8 }, 'Lowest prices in town.'), vetCta('11px 20px', 13)),
-    h({ padding: '22px 18px 0' }, t({ textAlign: 'center', fontSize: 21, fontWeight: 800, color: '#1E1E1E' }, 'Our Services 🐾'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }, VET_SERVICES.map((c) => vetCard(c, true))))
+    { width: 390, height: 780, background: '#0B0B0B', fontFamily: UI, overflow: 'hidden' },
+    h({ height: 96, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 18px 16px', boxSizing: 'border-box', borderBottom: '1px solid rgba(201,164,92,0.3)' }, luxLogo(17), t({ fontSize: 22, color: GOLD }, '☰')),
+    h({ ...luxHero, padding: '26px 18px' }, luxBadge(11), t({ fontSize: 54, lineHeight: 1, marginTop: 12, filter: 'sepia(1) saturate(2)' }, '🐩'), luxTitle(30), t({ fontSize: 13, color: '#CFC3A6', marginTop: 8 }, 'Exclusive spa for discerning pet owners.'), luxCta('11px 18px', 11)),
+    h({ padding: '22px 18px 0' }, t({ textAlign: 'center', fontFamily: SERIF, fontSize: 18, color: GOLD, letterSpacing: '0.08em' }, 'SIGNATURE SERVICES'), h({ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }, LUX_SERVICES.map((c) => luxCard(c, true))))
   )
 }
 

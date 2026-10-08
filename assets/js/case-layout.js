@@ -1,14 +1,14 @@
 // Раскладка страницы кейса. Подключается обычным скриптом в конце <body>, чтобы сработать до первой отрисовки.
 // На экранах от 1200px картинки (и блок про нейросеть) уезжают в правую колонку в порядке data-d,
 // на планшете и телефоне возвращаются на свои места в тексте.
-// Кейсы-истории (.cs--story): в правой колонке каждая картинка стоит на уровне абзаца, к которому относится.
+// Кейсы-истории (.cs--story): картинки идут вплотную, а колонка едет со своей скоростью и заканчивается вместе с текстом.
 (function () {
   var media = document.querySelector('.cs-media')
   if (!media) return
   var story = !!document.querySelector('.cs--story')
   var items = Array.prototype.slice.call(document.querySelectorAll('.cs-flow [data-d]'))
   items.forEach(function (el) {
-    // метка места в тексте: на десктопе по ней выравниваем картинку, на мобильных возвращаем картинку сюда
+    // метка места в тексте: на мобильных картинка возвращается сюда
     var slot = document.createElement('span')
     slot.className = 'cs-slot'
     slot.setAttribute('aria-hidden', 'true')
@@ -19,24 +19,25 @@
   var mq = window.matchMedia('(min-width: 1200px)')
   var raf = 0
   var extra = 0
-  var flow = document.querySelector('.cs-flow')
+  // текстовая колонка целиком — вместе с кнопками внизу
+  var flow = document.querySelector('.cs-text') || document.querySelector('.cs-flow')
   var hdr = document.querySelector('.hdr')
 
   function place() {
     raf = 0
     if (!story || !mq.matches) return
-    var top0 = media.getBoundingClientRect().top
-    var bottom = 0
-    sorted.forEach(function (el, i) {
-      var want = i === 0 ? 0 : el._slot.getBoundingClientRect().top - top0
-      var y = Math.max(want, bottom)
+    // картинки идут вплотную друг к другу, без пустот
+    var y = 0
+    sorted.forEach(function (el) {
       el.style.top = Math.round(y) + 'px'
-      bottom = y + el.offsetHeight
+      y += el.offsetHeight
     })
-    // картинок больше, чем текста: колонка с картинками едет чуть быстрее, чтобы закончиться вместе с текстом
-    extra = Math.max(0, bottom - (flow.getBoundingClientRect().bottom - top0))
-    // высота колонки в раскладке — не больше текста, иначе внизу страницы остаётся пустое место
-    media.style.height = Math.round(bottom - extra) + 'px'
+    var textH = flow.offsetHeight
+    // разница с высотой текста: колонка едет быстрее (картинок больше) или медленнее (картинок меньше)
+    // и всегда заканчивается вместе с текстом
+    extra = y - textH
+    // в раскладке колонка не выше текста — иначе внизу страницы остаётся пустое место
+    media.style.height = Math.round(Math.min(y, textH)) + 'px'
     drift()
   }
   function drift() {
