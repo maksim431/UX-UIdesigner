@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UX/UI design</title>
+  <meta name="description" content="UX/UI-дизайн: портфолио Максима">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="UX/UI design">
+  <meta property="og:description" content="UX/UI-дизайн: портфолио Максима">
+  <meta property="og:image" content="https://framerusercontent.com/images/cj21tiLG0LzbWV4oGkK3VhIKziU.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <script>
+    // Прелоадер показываем при входе на сайт и при обновлении страницы,
+    // а при возврате на первый экран внутри сайта — нет (как во Framer).
+    (function () {
+      var play = true
+      try {
+        var nv = performance.getEntriesByType('navigation')[0]
+        var reload = nv && nv.type === 'reload'
+        if (!reload && sessionStorage.getItem('loaderPlayed')) play = false
+      } catch (e) {}
+      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) play = false
+      if (play) document.documentElement.classList.add('fs-loading')
+      // страховка, если скрипт не загрузится
+      setTimeout(function () { if (!document.documentElement.classList.contains('fs-reveal')) document.documentElement.classList.remove('fs-loading') }, 6000)
+    })()
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="prefetch" href="assets/js/portrait.js">
+</head>
+<body>
+  <main class="fs">
+    <div class="fs-wrap">
+      <p class="fs-eyebrow" data-rv="1">приветствую! ответьте только на один вопрос, от него зависит какую версию портфолио вы увидите</p>
+      <h1 class="fs-h1" data-rv="2">вам знакомы термины <span class="t">«cjm»</span>, <span class="t">«jtbd»</span>, <span class="t">«retention»</span>, <span class="t">«ltv»</span> и <span class="t">«a/b-тест»</span>?<span class="fs-caret" aria-hidden="true">_</span></h1>
+      <div class="fs-btns" data-rv="3">
+        <a class="btn fs-btn" href="product/" data-go data-scramble="90">да</a>
+        <a class="btn fs-btn" href="web/" data-go data-scramble="90">нет</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="fs-loader" aria-hidden="true">
+    <canvas></canvas>
+    <div class="fs-card" role="status">
+      <span class="fs-card__label">загрузка портфолио</span>
+      <span class="fs-card__bar">[░░░░░░░░░░░░░░░░] 000%</span>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/first.js"></script>
+</body>
+</html>
