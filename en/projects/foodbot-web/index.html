@@ -57,7 +57,7 @@
     <a class="contacts__item" data-scramble="120" href="https://ru.pinterest.com/MaksimDesigner/" target="_blank" rel="noopener">pinterest</a>
   </div>
 
-  <main class="cs">
+  <main class="cs cs--story">
     <article class="cs-text">
       <div class="cs-flow">
         <h1 class="cs-title" data-intro>FoodBot</h1>
@@ -67,19 +67,19 @@
           <ol class="hk__list">
             <li class="hk__item">
               <p class="hk__lead">Where does a café owner spend the day? Definitely not at a computer.</p>
-              <a class="hk__go" href="#s2" data-scramble>Management moved into Telegram — 40% fewer missed orders.</a>
+              <a class="hk__go" href="#s5" data-scramble>Management moved into Telegram — 40% fewer missed orders.</a>
             </li>
             <li class="hk__item">
-              <p class="hk__lead">A bot with no programmer and no word “API”.</p>
-              <a class="hk__go" href="#s2" data-scramble>5 clear steps instead of one scary field: 25% fewer people abandon the service.</a>
+              <p class="hk__lead">Two words that drove clients away.</p>
+              <a class="hk__go" href="#s5" data-scramble>How “API token” turned into 5 clear steps.</a>
             </li>
             <li class="hk__item">
               <p class="hk__lead">Support questions that were never asked.</p>
-              <a class="hk__go" href="#s3" data-scramble>Hints right in the interface — 20% fewer requests.</a>
+              <a class="hk__go" href="#s5" data-scramble>Hints right in the interface: 20% fewer requests.</a>
             </li>
             <li class="hk__item">
-              <p class="hk__lead">A tool that shows where users look — built with AI.</p>
-              <a class="hk__go" href="#ai" data-scramble>The “I can do it myself with AI” section: what AI can and can’t do.</a>
+              <p class="hk__lead">No A/B test needed.</p>
+              <a class="hk__go" href="#s9" data-scramble>AI helped build a tool that shows where users look.</a>
             </li>
           </ol>
         </section>
@@ -88,51 +88,58 @@
           <div class="rt rt--h3" id="s1"><ol><li><h3>Task</h3></li></ol></div>
           <div class="rt rt--body"><p>Build a dashboard that a café owner can figure out without technical knowledge. Setting up a bot should be as easy as filling in a social media profile.</p></div>
         </div>
-        <div class="rt rt--h3" id="s2"><ol start="2"><li><h3>Solution</h3></li></ol></div>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s2"><ol start="2"><li><h3>Research</h3></li></ol></div>
+          <div class="rt rt--body"><p><strong>Who the users are. </strong>Owners of cafés, burger joints, sushi bars and coffee shops. They’re always on their feet and often miss orders because they don’t see notifications. So management has to be on the phone.</p><p><strong>What competitors offer. </strong>Lots of features, but no hints — the first launch takes hours. So the interface has to guide by the hand.</p><p><strong>What scares people. </strong>Words like “API token”. So technical steps need to be explained in plain words.</p></div>
+        </div>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 1" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s3"><ol start="3"><li><h3>Hypotheses</h3></li></ol></div>
+          <div class="rt rt--body"><p><strong>A — more features than competitors.</strong> But it gets even more complicated.</p><p><strong>B — training videos and support.</strong> Helps, but loads support and doesn’t prevent missed orders.</p><p><strong>C — an interface that guides by itself.</strong> Simple steps, visual cards, hints and management right in Telegram.</p></div>
+        </div>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s4"><ol start="4"><li><h3>Which hypothesis I chose and why</h3></li></ol></div>
+          <div class="rt rt--body"><p>I chose <strong>hypothesis C</strong>: it’s the only one that speeds up bot launch, cuts support questions and saves orders at the same time by moving management to the phone.</p></div>
+        </div>
+        <div class="rt rt--h3" id="s5"><ol start="5"><li><h3>Designing the mockups</h3></li></ol></div>
         <div class="cs-list">
           <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--h4"><h4>Research</h4></div>
-            <div class="rt rt--body"><ol><li><p><strong>Who the users are.</strong> Owners of cafés, burger joints, sushi bars and coffee shops. They have little time, they’re always on their feet and often miss orders because they don’t see notifications.</p></li><li><p><strong>What competitors offer.</strong> Lots of features, but no hints. Owners figure things out by trial and error and spend hours on the first launch.</p></li></ol></div>
-            <div class="rt rt--note"><p>I fed competitor guides and reviews to AI, and within minutes it pulled out the main problems. That saved hours of manual analysis.</p></div>
+            <div class="rt rt--body"><ol><li><p><strong>Connecting in 5 steps.</strong> Instead of one scary field — a clear guide. <strong>Why:</strong> people don’t abandon the service at the very first step.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 1" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 2" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
           <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--h4"><h4>Hypothesis</h4></div>
-            <div class="rt rt--body"><p>Owners are scared by words like “API token” and confusing settings. Let’s do three things: turn the connection into a simple step-by-step guide, the menu into visual cards, and add hints next to unclear fields. Then bots will be launched faster and people will write to support less. And a mobile version right inside Telegram will help them stop missing orders.</p></div>
+            <div class="rt rt--body"><ol start="2"><li><p><strong>Screens for each situation.</strong> While there are no bots — one big “Create a bot” button, then cards and search come to the front. <strong>Why:</strong> a newcomer knows where to start, an experienced user works comfortably.</p></li></ol></div>
           </div>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 3" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 4" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
           <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--h4"><h4>What I did</h4></div>
-            <div class="rt rt--body"><ol><li><p><strong>Simplified the connection.</strong> Instead of one intimidating field — 5 clear steps written in plain language.</p></li></ol></div>
-            <div class="rt rt--note"><p>AI rewrote Telegram’s dry technical guide in simple words; I only had to edit it.</p></div>
+            <div class="rt rt--body"><ol start="3"><li><p><strong>Hints.</strong> Next to an unclear setting — an icon with an example. <strong>Why:</strong> no need to write to support.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 2" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 5" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
           <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--body"><ol start="2"><li><p><strong>Designed screens for different situations.</strong> While there are no bots, the screen shows one big “Create a bot” button. Once bots appear, their cards and search come to the front.</p></li></ol></div>
-            <div class="rt rt--note"><p>With AI I built my own tool that shows where users look. It confirmed that attention goes where it should, and expensive A/B testing wasn’t needed.</p></div>
+            <div class="rt rt--body"><ol start="4"><li><p><strong>Management in Telegram.</strong> Stop list, prices and orders — from the phone. <strong>Why:</strong> orders arrive where the owner already spends the whole day.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 3" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
-          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 4" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
-          <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--body"><ol start="3"><li><p><strong>Added hints.</strong> Next to an unclear setting there is an icon: tap it and you immediately see an example. No need to leave the screen or write to support.</p></li></ol></div>
-          </div>
-          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 5" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
-          <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--body"><ol start="4"><li><p><strong>Moved management into Telegram.</strong> The owner puts dishes on the stop list, changes prices and accepts orders right from their phone.</p></li></ol></div>
-            <div class="rt rt--note"><p>An AI agent assembled the draft Telegram screens from ready-made Telegram elements, which sped up the work several times over.</p></div>
-          </div>
-          <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 6" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
-          <div class="cs-grp cs-grp--pb">
-            <div class="rt rt--body"><ol start="5"><li><p><strong>Handed developers a clean file with a design system.</strong> New sections are added quickly and in a consistent style.</p></li></ol></div>
-            <div class="rt rt--note"><p>An AI agent in Figma prepared layer names, styles and comments for developers, saving hours.</p></div>
-          </div>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 6" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
         </div>
-        <section class="aic" id="ai" data-case="foodbot" data-d="4.5" aria-label="AI-generated design example"></section>
-        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 7" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s6"><ol start="6"><li><h3>Presentation and defense</h3></li></ol></div>
+          <div class="rt rt--body"><p>I showed the client the path from café owners’ pain points to the decisions. The main things to defend were the Telegram mobile version as a priority — extra work, but it’s what saves orders — and fewer settings in view: we win not on the number of features but because the service is clear without a programmer.</p></div>
+        </div>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s7"><ol start="7"><li><h3>Handoff to development</h3></li></ol></div>
+          <div class="rt rt--body"><p>I handed developers a clean file with a design system for all three platforms. New sections are added quickly and in a consistent style.</p></div>
+        </div>
+        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 7" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <div class="cs-grp cs-grp--pb">
+          <div class="rt rt--h3" id="s8"><ol start="8"><li><h3>Results</h3></li></ol></div>
+          <div class="rt rt--body"><ul><li><p><strong>25% fewer</strong> people abandon the service at the start.</p></li><li><p><strong>30% faster</strong> first bot setup.</p></li><li><p><strong>20% fewer</strong> support requests.</p></li><li><p><strong>40% fewer missed orders.</strong></p></li><li><p><strong>20% faster</strong> development of new sections.</p></li></ul></div>
+        </div>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 8" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
         <div class="cs-grp">
-          <div class="rt rt--h3" id="s3"><ol start="3"><li><h3>Result</h3></li></ol></div>
-          <div class="rt rt--body"><p><strong>25% fewer</strong> people abandon the service at the very start: it no longer looks like a complex database.</p><ul><li><p><strong>30% faster</strong> first bot setup.</p></li><li><p><strong>20% fewer</strong> support requests: hints answer questions right in the interface.</p></li><li><p><strong>40% fewer missed orders:</strong> delivery management is now in their pocket.</p></li><li><p><strong>20% faster</strong> development of new sections.</p></li></ul><ul><li><p>Platforms: 3 (landing page, admin panel, mini app)</p></li><li><p>Admin panel screens: ~174 (94 + 80 adaptive)</p></li><li><p>Mini app screens: ~150+</p></li><li><p>Landing pages: 4 (desktop, mobile, blog, article)</p></li><li><p>Pages in Figma: 12</p></li></ul></div>
+          <div class="rt rt--h3" id="s9"><ol start="9"><li><h3>Where and how I used AI</h3></li></ol></div>
+          <div class="rt rt--body"><ul><li><p><strong>Competitor analysis.</strong> Within minutes AI pulled the main problems out of guides and reviews — hours of manual analysis saved.</p></li><li><p><strong>Copy.</strong> It rewrote Telegram’s dry technical guide in simple words — I only had to edit it.</p></li><li><p><strong>Checking without an A/B test.</strong> With AI I built a tool that shows where users look. It confirmed the decisions — an expensive test wasn’t needed.</p></li><li><p><strong>Figma routine.</strong> An AI agent assembled draft Telegram screens and prepared the file for developers.</p></li></ul></div>
         </div>
-        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024" srcset="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=1024 1024w, https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=2048 2048w" sizes="(min-width: 1920px) 1065px, (min-width: 1200px) 55vw, 80vw" alt="FOODBOT: illustration 8" width="1704" height="1278" loading="lazy" decoding="async"></div></figure>
+        <section class="aic" id="ai" data-case="foodbot" data-d="8.5" aria-label="AI-generated design example"></section>
       </div>
       <div class="cs-btns">
         <button class="btn btn--dark" type="button" data-open-contacts data-scramble aria-controls="contacts" aria-expanded="false">contact me</button>

@@ -3,8 +3,8 @@
 
 const CASES = {
   mytiger: {
-    prompt: 'Сделай лендинг ветеринарной клиники с грумингом',
-    intro: 'Лендинг выглядит дружелюбно, но нейросеть собирает его из самых частых шаблонов: яркий баннер со скидкой, мультяшные лапки, список услуг с ценами. Она не знает, что клиника работает в премиальном сегменте, где скидка роняет статус, и что груминг здесь — медицинская процедура. В итоге страница похожа на сотни других и привлекает тех, кто ищет подешевле, а не тех, ради кого клиника создавалась. Премиальный бренд нужно проектировать с пониманием того, за что клиенты готовы платить.',
+    prompt: 'Сделай лендинг премиальной ветеринарной клиники с грумингом',
+    intro: 'Даже со словом «премиальной» в промте лендинг выглядит дружелюбно-дешёвым: нейросеть собирает его из самых частых шаблонов: яркий баннер со скидкой, мультяшные лапки, список услуг с ценами. Она не знает, что клиника работает в премиальном сегменте, где скидка роняет статус, и что груминг здесь — медицинская процедура. В итоге страница похожа на сотни других и привлекает тех, кто ищет подешевле, а не тех, ради кого клиника создавалась. Премиальный бренд нужно проектировать с пониманием того, за что клиенты готовы платить.',
     issues: [
       'Главный экран — скидка «−30%»: для премиальной клиники это сигнал дешевизны.',
       'Груминг подан как «помыть и подстричь» — ни слова о здоровье и о врачах.',
@@ -48,8 +48,8 @@ const CASES = {
 // английская версия текстов (макеты и так на английском)
 const CASES_EN = {
   mytiger: {
-    prompt: 'Make a landing page for a vet clinic with grooming',
-    intro: "The landing page looks friendly, but the AI assembles it from the most common templates: a bright discount banner, cartoon paws, a list of services with prices. It doesn't know the clinic works in the premium segment, where a discount hurts the brand's status, and that grooming here is a medical procedure. As a result, the page looks like hundreds of others and attracts bargain hunters rather than the clients the clinic was built for. A premium brand has to be designed with an understanding of what clients are willing to pay for.",
+    prompt: 'Make a landing page for a premium vet clinic with grooming',
+    intro: "Even with the word “premium” in the prompt, the page looks friendly and cheap: the AI assembles it from the most common templates: a bright discount banner, cartoon paws, a list of services with prices. It doesn't know the clinic works in the premium segment, where a discount hurts the brand's status, and that grooming here is a medical procedure. As a result, the page looks like hundreds of others and attracts bargain hunters rather than the clients the clinic was built for. A premium brand has to be designed with an understanding of what clients are willing to pay for.",
     issues: [
       'The first screen is a “−30%” discount: for a premium clinic that signals cheapness.',
       'Grooming is presented as “wash and trim” — not a word about health or vets.',
