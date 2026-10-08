@@ -574,3 +574,7 @@ html { overflow-x: clip; }
 /* ASCII-след за курсором */
 .ascii-cursor { position: fixed; inset: 0; z-index: 2147482000; pointer-events: none; overflow: hidden; mix-blend-mode: difference; }
 .ascii-cursor span { position: absolute; left: 0; top: 0; opacity: 0; color: #fff; font: 500 13px/1 var(--font); will-change: transform, opacity; }
+
+/* десктоп: в правой колонке все картинки во всю ширину колонки (как обложка), вплотную друг к другу */
+.cs-media .cs-fig { aspect-ratio: auto; display: block; }
+.cs-media .cs-fig__box { width: 100%; }
