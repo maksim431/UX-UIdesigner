@@ -652,3 +652,9 @@ html.rw body { visibility: hidden; }
 .cs-media--story > * { position: absolute; left: 72px; right: 0; }
 @media (min-width: 1920px) { .cs-media--story > * { left: 0; } }
 .cs--story { overflow: clip; }
+
+/* заглушка, вместо которой загрузили картинку в папку кейса */
+.cs-fig__box--ph img { position: absolute; inset: 0; opacity: 0; transition: opacity .3s; }
+.cs-fig__box--ph.is-loaded img { opacity: 1; }
+.cs-fig__box--ph.is-loaded .cs-fig__ph { display: none; }
+.ps__media.is-loaded .ps__soon { display: none; }
