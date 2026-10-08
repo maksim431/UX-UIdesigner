@@ -19,6 +19,69 @@ document.querySelectorAll('.hdr__back').forEach((a) =>
 )
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
+
+/* ---------- «в этом кейсе»: расшифровка спрятана под ASCII-блоками, раскрывается при наведении или нажатии ---------- */
+const GLYPHS = ['█', '▓', '▒', '░', '#', '0', '1', '*', '+']
+document.querySelectorAll('.cs-hooks .hk__list').forEach((list) => {
+  list.closest('.cs-hooks').classList.add('hk-js')
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  list.querySelectorAll('.hk__item').forEach((item) => {
+    const secret = item.querySelector('.hk__secret')
+    const text = secret.textContent
+    // настоящий текст остаётся для экранных читалок, глазами виден «засекреченный» вариант
+    const masked = [...text].map((c, i) => (c === ' ' ? ' ' : i % 7 === 3 ? '▓' : '█')).join('')
+    secret.innerHTML = ''
+    const sr = document.createElement('span')
+    sr.className = 'sr-only'
+    sr.textContent = text
+    const vis = document.createElement('span')
+    vis.className = 'hk__mask'
+    vis.setAttribute('aria-hidden', 'true')
+    vis.textContent = masked
+    secret.append(sr, vis)
+    item.tabIndex = 0
+    let open = false
+    const reveal = () => {
+      if (open) return
+      open = true
+      item.classList.add('is-open')
+      vis.classList.remove('hk__mask')
+      if (reduce) {
+        vis.textContent = text
+        return
+      }
+      // «расшифровка» слева направо: каждый символ пару кадров мерцает случайными знаками и встаёт на место
+      const t0 = performance.now()
+      const dur = Math.min(1100, 380 + text.length * 7)
+      const step = (now) => {
+        const k = (now - t0) / dur
+        let out = ''
+        for (let i = 0; i < text.length; i++) {
+          const c = text[i]
+          const at = (i / text.length) * 0.75
+          if (c === ' ' || k >= at + 0.2) out += c
+          else if (k >= at) out += GLYPHS[(Math.random() * GLYPHS.length) | 0]
+          else out += masked[i]
+        }
+        vis.textContent = out
+        if (k < 1) requestAnimationFrame(step)
+        else vis.textContent = text
+      }
+      requestAnimationFrame(step)
+    }
+    item.addEventListener('mouseenter', reveal)
+    item.addEventListener('focus', reveal)
+    item.addEventListener('click', (e) => {
+      if (!e.target.closest('a')) reveal()
+    })
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (!open) e.preventDefault()
+        reveal()
+      }
+    })
+  })
+})
 const anim = root.classList.contains('cs-anim')
 
 /* ---------- появление первого экрана (как на главной; после ASCII-перехода, если он был) ---------- */
@@ -102,6 +165,20 @@ if (anim && media) {
   new ResizeObserver(measure).observe(media)
   measure()
 }
+
+/* ссылки из «в этом кейсе» на разделы — плавная прокрутка с учётом шапки */
+document.addEventListener('click', (e) => {
+  const a = e.target.closest && e.target.closest('.hk__go')
+  if (!a) return
+  const target = document.querySelector(a.getAttribute('href'))
+  if (!target) return
+  e.preventDefault()
+  const hh = hdrEl ? hdrEl.offsetHeight : 0
+  // блок мог ещё не «подняться» (сдвинут вниз до появления) — сдвиг не учитываем
+  const tr = getComputedStyle(target).transform
+  const shift = tr && tr !== 'none' ? new DOMMatrixReadOnly(tr).m42 : 0
+  scrollToY(smooth, target.getBoundingClientRect().top - shift + window.scrollY - hh - 24, 1.4)
+})
 
 /* картинки появляются, когда доходят до экрана */
 const boxes = [...document.querySelectorAll('.cs-fig__box')].filter((b) => !b.closest('.cs-fig--cover'))

@@ -632,3 +632,34 @@ html.rw body { visibility: hidden; }
 .cs-fig__ph::before { content: "[ "; }
 .cs-fig__ph::after { content: " ]"; }
 .cs-fig__box--ph .cs-fig__tag { color: #000; }
+
+/* ==========================================================================
+   «в этом кейсе» — чёрная «терминальная» карточка: фраза-крючок видна,
+   расшифровка закрыта ASCII-блоками и раскрывается при наведении / нажатии
+   ========================================================================== */
+.cs-hooks { display: block; gap: 0; background: #0b0b0b; color: #fff; padding: 28px 28px 10px; }
+.hk__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; padding-bottom: 18px; border-bottom: 1px dashed rgba(255, 255, 255, .28); }
+.hk__title { margin: 0; font-size: 24px; line-height: 1.3; font-weight: 500; text-transform: lowercase; }
+.hk__hint { font-size: 12px; line-height: 1.4; color: rgba(255, 255, 255, .45); }
+.hk__hint--tap { display: none; }
+@media (hover: none) { .hk__hint--hover { display: none; } .hk__hint--tap { display: inline; } }
+.hk__list { list-style: none; margin: 0; padding: 0; }
+.hk__item { display: grid; grid-template-columns: 34px 1fr; column-gap: 10px; padding: 18px 0; border-bottom: 1px dashed rgba(255, 255, 255, .28); cursor: pointer; }
+.hk__item:last-child { border-bottom: 0; }
+.hk__item > :not(.hk__num) { grid-column: 2; }
+.hk__num { grid-row: 1 / span 3; padding-top: 4px; font-size: 13px; color: var(--accent); }
+.hk__lead { margin: 0; font-size: 19px; line-height: 1.32; font-weight: 500; }
+.hk__secret { margin: 8px 0 0; font-size: 14px; line-height: 1.6; letter-spacing: -.02em; color: rgba(255, 255, 255, .78); overflow-wrap: anywhere; }
+.hk__mask { color: rgba(255, 255, 255, .2); transition: color .3s; }
+.hk__item:hover .hk__mask, .hk__item:focus-visible .hk__mask { color: rgba(255, 255, 255, .34); }
+.hk__go { justify-self: start; margin-top: 10px; font-size: 13px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.hk-js .hk__item:not(.is-open) .hk__go { visibility: hidden; }
+.hk-js .hk__item.is-open .hk__go { animation: hkIn .4s var(--ease) both .45s; }
+@keyframes hkIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.hk__item:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media (max-width: 809.98px) {
+  .cs-hooks { padding: 22px 18px 6px; }
+  .hk__title { font-size: 20px; }
+  .hk__lead { font-size: 17px; }
+  .hk__item { grid-template-columns: 28px 1fr; }
+}
