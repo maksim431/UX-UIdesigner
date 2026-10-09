@@ -14,22 +14,8 @@
   <link rel="alternate" hreflang="en" href="https://maksim431.github.io/UX-UIdesigner/en/">
   <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
   <script>
-    // Прелоадер показываем при входе на сайт и при обновлении страницы,
-    // а при возврате на первый экран внутри сайта — нет (как во Framer).
-    (function () {
-      var play = true
-      try {
-        var nv = performance.getEntriesByType('navigation')[0]
-        var reload = nv && nv.type === 'reload'
-        if (!reload && sessionStorage.getItem('loaderPlayed')) play = false
-      } catch (e) {}
-      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) play = false
-      if (play) document.documentElement.classList.add('fs-loading')
-      // страховка, если скрипт не загрузится
-      // выбран английский — сразу открываем английскую версию
-      try { if (localStorage.getItem('lang') === 'en') { location.replace('en/'); return } } catch (e) {}
-      setTimeout(function () { if (!document.documentElement.classList.contains('fs-reveal')) document.documentElement.classList.remove('fs-loading') }, 6000)
-    })()
+    // выбран английский — сразу открываем английскую версию
+    try { if (localStorage.getItem('lang') === 'en') location.replace('en/') } catch (e) {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,14 +44,6 @@
     </div>
   </main>
 
-  <div class="fs-loader" aria-hidden="true">
-    <canvas></canvas>
-    <div class="fs-card" role="status">
-      <span class="fs-card__label">загрузка портфолио</span>
-      <span class="fs-card__bar">[░░░░░░░░░░░░░░░░] 000%</span>
-    </div>
-  </div>
-
-  <script type="module" src="assets/js/first.js?v=2"></script>
+  <script type="module" src="assets/js/first.js?v=3"></script>
 </body>
 </html>

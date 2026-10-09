@@ -13,22 +13,6 @@
   <link rel="alternate" hreflang="ru" href="https://maksim431.github.io/UX-UIdesigner/">
   <link rel="alternate" hreflang="en" href="https://maksim431.github.io/UX-UIdesigner/en/">
   <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
-  <script>
-    // preloader on entry and on reload,
-    // not when coming back within the site
-    (function () {
-      var play = true
-      try {
-        var nv = performance.getEntriesByType('navigation')[0]
-        var reload = nv && nv.type === 'reload'
-        if (!reload && sessionStorage.getItem('loaderPlayed')) play = false
-      } catch (e) {}
-      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) play = false
-      if (play) document.documentElement.classList.add('fs-loading')
-      // fallback
-      setTimeout(function () { if (!document.documentElement.classList.contains('fs-reveal')) document.documentElement.classList.remove('fs-loading') }, 6000)
-    })()
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
@@ -56,14 +40,6 @@
     </div>
   </main>
 
-  <div class="fs-loader" aria-hidden="true">
-    <canvas></canvas>
-    <div class="fs-card" role="status">
-      <span class="fs-card__label">loading portfolio</span>
-      <span class="fs-card__bar">[░░░░░░░░░░░░░░░░] 000%</span>
-    </div>
-  </div>
-
-  <script type="module" src="../assets/js/first.js?v=2"></script>
+  <script type="module" src="../assets/js/first.js?v=3"></script>
 </body>
 </html>
