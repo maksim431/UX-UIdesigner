@@ -2,7 +2,7 @@
 // светлые плитки с символами (S X 8 0 G…): белыми, красно-оранжевыми (узор кохаку) и голубыми,
 // с холодным свечением (bloom) у головы. Края силуэта мягко размыты.
 //
-// Карп плавает по всему фрейму: медленно петляет по плавной траектории, поворачивает по ходу движения,
+// Карп плывёт вперёд и плавно петляет; дойдя до края фрейма, уплывает за него и появляется с случайной стороны.
 // тело изгибается волной от головы к хвосту (чем быстрее плывёт — тем чаще бьёт хвостом),
 // грудные плавники слегка «гребут».
 //
@@ -70,45 +70,65 @@ export function mountWater(host, hud) {
   let dcell = 12
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
-  /* ---------- движение: плавная петляющая траектория по всему фрейму ---------- */
+  /* ---------- движение: карп плывёт вперёд и плавно петляет; дойдя до края — уплывает за него
+     и через мгновение появляется с случайной стороны фрейма ---------- */
   // фрейм в координатах canvas (canvas шире фрейма и стоит по центру)
   function frameBox() {
     const ox = (W - FW) / 2
     return { x0: ox, x1: ox + FW, y0: 0, y1: H }
   }
-  function pathAt(t) {
+  let px = -1, py = -1, entering = false, outside = 0, heading = 0, prevHeading = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
+  // заход в кадр: снаружи со случайной стороны, курс — на случайную точку в середине фрейма
+  function respawn() {
     const f = frameBox()
-    const mx = len * 0.32, my = len * 0.32
-    const cx = (f.x0 + f.x1) / 2, cy = (f.y0 + f.y1) / 2
-    const ax = (f.x1 - f.x0) / 2 - mx, ay = (f.y1 - f.y0) / 2 - my
-    // сумма медленных синусоид с «некратными» частотами — путь не повторяется на глаз
-    const x = cx + ax * (0.62 * Math.sin(t * 0.071 + 0.4) + 0.38 * Math.sin(t * 0.163 + 2.1))
-    const y = cy + ay * (0.58 * Math.sin(t * 0.093 + 1.3) + 0.42 * Math.cos(t * 0.137 + 0.2))
-    return [x, y]
+    const m = len * 0.6
+    const side = Math.floor(Math.random() * 4)
+    const k = 0.15 + Math.random() * 0.7
+    if (side === 0) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y0 - m }
+    else if (side === 1) { px = f.x1 + m; py = f.y0 + (f.y1 - f.y0) * k }
+    else if (side === 2) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y1 + m }
+    else { px = f.x0 - m; py = f.y0 + (f.y1 - f.y0) * k }
+    const tx = f.x0 + (f.x1 - f.x0) * (0.3 + Math.random() * 0.4)
+    const ty = f.y0 + (f.y1 - f.y0) * (0.3 + Math.random() * 0.4)
+    heading = prevHeading = Math.atan2(tx - px, -(ty - py))
+    seed = Math.random() * 100
+    entering = true
+    outside = 0
   }
-
-  let heading = 0, prevHeading = 0, phase = 0, lastT = -1, turn = 0
   function step(t) {
-    const [x, y] = pathAt(t)
-    const [x2, y2] = pathAt(t + 0.25)
-    const vx = x2 - x, vy = y2 - y
-    const sp = Math.hypot(vx, vy) / 0.25 // пикселей в секунду
-    const target = Math.atan2(vx, -vy)
-    if (lastT < 0) heading = target
-    let d = target - heading
-    while (d > Math.PI) d -= 2 * Math.PI
-    while (d < -Math.PI) d += 2 * Math.PI
+    const f = frameBox()
+    if (px < 0 && py < 0) {
+      // первый показ — в кадре, чуть ниже центра, курс случайный
+      px = (f.x0 + f.x1) / 2 + (Math.random() - 0.5) * FW * 0.2
+      py = H * 0.55
+      heading = prevHeading = Math.random() * Math.PI * 2
+    }
     const dt = lastT < 0 ? 0 : clamp(t - lastT, 0, 0.1)
-    heading += d * Math.min(1, dt * 3)
+    // плавные повороты: сумма медленных синусоид — путь не повторяется на глаз
+    // пока заходит в кадр — плывёт прямо, без петель
+    const inset = len * 0.22
+    const inside = px > f.x0 + inset && px < f.x1 - inset && py > f.y0 + inset && py < f.y1 - inset
+    if (entering && inside) entering = false
+    const w = entering ? 0 : 0.32 * Math.sin(t * 0.27 + seed) + 0.18 * Math.sin(t * 0.61 + seed * 1.7)
+    heading += w * dt
+    const sp = len * (0.17 + 0.06 * Math.sin(t * 0.41 + seed))
+    px += Math.sin(heading) * sp * dt
+    py += -Math.cos(heading) * sp * dt
+    // целиком ушёл за край — появляется с другой (случайной) стороны
+    const m = len * 0.62
+    // не тянем время, если он плывёт вдоль края снаружи
+    const out = px < f.x0 || px > f.x1 || py < f.y0 || py > f.y1
+    outside = out && !entering ? outside + dt : 0
+    if (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m || outside > 2.5) respawn()
     let dh = heading - prevHeading
     while (dh > Math.PI) dh -= 2 * Math.PI
     while (dh < -Math.PI) dh += 2 * Math.PI
-    turn = turn * 0.9 + (dt ? dh / dt : 0) * 0.1
+    turn = Math.abs(dh) > 1 ? turn : turn * 0.9 + (dt ? dh / dt : 0) * 0.1
     prevHeading = heading
     // частота взмахов хвоста растёт со скоростью
     phase += dt * (2.2 + 4 * clamp(sp / len, 0, 1.2))
     lastT = t
-    return { x, y, sp }
+    return { x: px, y: py, sp }
   }
 
   // поза: волна по телу (амплитуда растёт к хвосту) + изгиб на повороте + поворот по курсу
@@ -251,7 +271,6 @@ export function mountWater(host, hud) {
     spawnRipples(t, P)
     const rp = ripples.map((q) => { const age = t - q.t0; return { x: q.x, y: q.y, r: q.v * age + len * 0.04, w: len * (0.03 + 0.025 * age), a: q.a * Math.pow(1 - age / 3, 1.6) } })
     const ba = batlas.height
-    const btick = Math.floor(t * 6)
     for (let r = 0; r < brows; r++) {
       const cy = (r + 0.5) * dcell
       for (let c = 0; c < bcols; c++) {
@@ -274,7 +293,6 @@ export function mountWater(host, hud) {
         }
         const s = bseed[i]
         let l = s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length
-        if (hash(i, btick) < 0.006) l = BG.length + (s > 0.5 ? 1 : 0) // редкое мерцание пикселей
         if (wv > 0.04) l = Math.max(l, Math.min(BG.length + 1, Math.round(1.5 + wv * 8)))
         if (!l) continue
         ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round((c * dcell + ox) * sc), Math.round((r * dcell + oy) * sc), ba, ba)
