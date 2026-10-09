@@ -802,9 +802,9 @@ html.lb-open .ascii-cursor { display: none; }
 }
 
 /* главный экран ещё выше: 130% окна; низ с текстами — у нижнего края окна */
-.hero .hero__frame { height: 130svh; min-height: 700px; }
-.hero__foot { bottom: calc(30svh + 80px); }
-@media (max-width: 1199.98px) { .hero__foot { bottom: calc(30svh + 48px); } }
-@media (max-width: 809.98px) { .hero__foot { bottom: calc(30svh + 24px); } }
+.hero .hero__frame { height: 120svh; min-height: 700px; }
+.hero__foot { bottom: calc(20svh + 80px); }
+@media (max-width: 1199.98px) { .hero__foot { bottom: calc(20svh + 48px); } }
+@media (max-width: 809.98px) { .hero__foot { bottom: calc(20svh + 24px); } }
 /* плавный параллакс: двигаются только transform/opacity, на отдельных слоях */
 .hero__portrait, .hero__label, .hero__note { will-change: translate, opacity; }

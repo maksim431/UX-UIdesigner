@@ -94,7 +94,7 @@ export function mountWater(host, hud) {
   // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
   function viewBox() {
     const f = frameBox()
-    return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.3 }
+    return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.2 }
   }
   // новая цель «прогулки»: случайная точка внутри видимой области, не слишком близко к краю
   function pickWaypoint(t) {
