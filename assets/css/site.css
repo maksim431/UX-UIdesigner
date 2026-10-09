@@ -730,7 +730,7 @@ html.lb-open .ascii-cursor { display: none; }
 .ps--stack.ps--phone .ps__cta { margin-top: 32px; }
 
 /* первый экран: вода сверху — тёмно-синий фрейм, canvas шире фрейма (на всю ширину экрана) и по центру */
-:root { --deep: #0c1863; }
+:root { --deep: #071430; }
 .hero__box { background: var(--deep); }
 @media (max-width: 809.98px) { .hero__box { background: var(--deep); } }
 .hero__portrait canvas.water { left: 50%; right: auto; width: auto; transform: translateX(-50%); }
