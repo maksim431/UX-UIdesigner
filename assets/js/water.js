@@ -299,7 +299,7 @@ export function mountWater(host, hud) {
     FW = Math.max(1, host.clientWidth)
     const w = Math.max(FW, document.documentElement.clientWidth)
     const h = Math.max(1, host.clientHeight)
-    const d = Math.min(1.5, window.devicePixelRatio || 1)
+    const d = Math.min(1.25, window.devicePixelRatio || 1) // меньше пикселей — легче видеокарте при прокрутке
     if (w === W && h === H && d === dpr && tcols) return
     W = w; H = h; dpr = d
     canvas.style.width = W + 'px'

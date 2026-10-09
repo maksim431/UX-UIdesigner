@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountWater } from './water.js?v=19'
+import { mountWater } from './water.js?v=20'
 import { initProjects } from './projects.js'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=3'
 
@@ -133,3 +133,32 @@ if (back !== null && proj) {
 } else root.classList.remove('rw')
 // стопор: сильная прокрутка с первого экрана останавливается на первом проекте, а не пролетает его
 // стопор перед блоком кейсов убран: при прокрутке вниз он давал рывок, прокрутка теперь сплошная
+
+/* ---------- обложки кейсов готовим заранее ----------
+   Раньше они грузились и декодировались «лениво» — ровно в момент, когда при прокрутке вниз
+   появлялся блок кейсов: браузер распаковывал крупные картинки посреди прокрутки, и она дёргалась
+   (вверх — уже нет, картинки готовы). Теперь после загрузки страницы, в свободное время,
+   обложки грузятся и декодируются заранее. */
+function warmCovers() {
+  const imgs = [...document.querySelectorAll('.ps__media img')]
+  let i = 0
+  const next = () => {
+    const img = imgs[i++]
+    if (!img) return
+    img.loading = 'eager'
+    let fired = false
+    const done = () => { if (fired) return; fired = true; window.requestIdleCallback ? requestIdleCallback(next, { timeout: 800 }) : setTimeout(next, 120) }
+    if (img.complete && img.naturalWidth) {
+      if (img.decode) img.decode().then(done, done)
+      else done()
+    } else {
+      img.addEventListener('load', () => (img.decode ? img.decode().then(done, done) : done()), { once: true })
+      img.addEventListener('error', () => setTimeout(() => (img.complete && img.naturalWidth ? done() : null), 50), { once: true })
+      // запасной таймер: если картинку так и не удалось получить, не блокируем остальные
+      setTimeout(done, 4000)
+    }
+  }
+  next()
+}
+if (document.readyState === 'complete') setTimeout(warmCovers, 300)
+else window.addEventListener('load', () => setTimeout(warmCovers, 300), { once: true })
