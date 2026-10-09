@@ -198,7 +198,8 @@ export function mountWater(host, hud) {
     // резкий поворот корпусом сам добавляет силы — и скорости
     const turnV = clamp(Math.abs(omega) / 1.2, 0, 1)
     const drive = Math.max(ve, turnV)
-    ampK = 0.55 + 0.9 * drive
+    // размах волны по телу: широкий и меняется плавно
+    ampK += (0.85 + 0.6 * drive - ampK) * Math.min(1, dt * 1.5)
     const sp = len * (0.03 + 0.24 * drive)
     spCur = sp / (len * 0.12)
     px += Math.sin(heading) * sp * dt
@@ -209,7 +210,7 @@ export function mountWater(host, hud) {
     turn = omega
     pushTrail()
     // частота взмахов хвоста растёт со скоростью
-    phase += dt * (1.5 + 10 * drive) // частота взмахов — от силы движений
+    phase += dt * (0.9 + 4.5 * drive) // частота взмахов — от силы движений (спокойно — редкие широкие взмахи)
     lastT = t
     return { x: px, y: py, sp }
   }
@@ -284,8 +285,8 @@ export function mountWater(host, hud) {
     }
     return (x, y, k) => {
       const u = clamp(y + 0.5, 0, 1.1) // 0 у головы, 1 у хвоста
-      const amp = (0.012 + 0.085 * u * u) * ampK
-      let bx = x + amp * Math.sin(u * 5.2 - phase)
+      const amp = (0.02 + 0.13 * u * u) * ampK
+      let bx = x + amp * Math.sin(u * 3.8 - phase)
       if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
       const [sx, sy, tx, ty] = spine((y + 0.5) * len)
       // нормаль вправо от направления движения
