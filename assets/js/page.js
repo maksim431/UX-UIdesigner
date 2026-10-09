@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountWater } from './water.js?v=17'
+import { mountWater } from './water.js?v=18'
 import { initProjects } from './projects.js'
 import { initSmoothScroll, scrollToY } from './smooth.js'
 
@@ -81,10 +81,6 @@ function heroScroll() {
   lastP = p
   const e = easeOut(p)
   portraitHost && (portraitHost.style.translate = p ? '0 ' + (p * 22).toFixed(2) + '%' : '')
-  // синий фрейм раздвигается до краёв экрана (без скруглений), к трети прокрутки — на всю ширину
-  const g = easeOut(clamp(p * 3, 0, 1))
-  box.style.setProperty('--gl', p > 0 ? (g * gapL).toFixed(1) + 'px' : '0px')
-  box.style.setProperty('--gr', p > 0 ? (g * gapR).toFixed(1) + 'px' : '0px')
   heroTexts.forEach((el, i) => {
     // параллакс: каждый текст уезжает вверх со своей скоростью (data-par)
     const k = parseFloat(el.dataset.par || '') || 1 + i * 0.25
@@ -106,9 +102,8 @@ window.addEventListener('resize', hdrState)
 window.addEventListener(
   'scroll',
   () => {
-    if (heroTick) return
-    heroTick = true
-    requestAnimationFrame(heroScroll)
+    // сразу в обработчике прокрутки, без ожидания следующего кадра — элементы не отстают и не дёргаются
+    heroScroll()
   },
   { passive: true }
 )

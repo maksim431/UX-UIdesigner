@@ -94,7 +94,7 @@ export function mountWater(host, hud) {
   // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
   function viewBox() {
     const f = frameBox()
-    return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.2 }
+    return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.3 }
   }
   // новая цель «прогулки»: случайная точка внутри видимой области, не слишком близко к краю
   function pickWaypoint(t) {
@@ -590,7 +590,8 @@ export function mountWater(host, hud) {
     raf = 0
     if (!running) return
     raf = requestAnimationFrame(frame)
-    if (now - lastFrame < minDt - 2) return
+    // во время прокрутки рисуем реже — главный поток свободнее, прокрутка не дёргается
+    if (now - lastFrame < (now < scrollingUntil ? Math.max(minDt, 1000 / 15) : minDt) - 2) return
     lastFrame = now
     if (!t0) t0 = now - last * 1000
     const s = performance.now()
@@ -615,6 +616,8 @@ export function mountWater(host, hud) {
 
   const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
   ready.then(() => { font = getComputedStyle(document.body).fontFamily || font; lastT = -1; if (bcols) buildDots(); draw(last) })
+  let scrollingUntil = 0
+  window.addEventListener('scroll', () => { scrollingUntil = performance.now() + 220 }, { passive: true })
   const ro = new ResizeObserver(resize)
   ro.observe(host)
   window.addEventListener('resize', resize)
