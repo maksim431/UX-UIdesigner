@@ -66,9 +66,9 @@ function levels(img) {
 function place(w, h) {
   const phone = w < 810
   const tablet = !phone && w < 1200
-  const ww = phone ? w * 0.94 : tablet ? Math.min(w * 0.6, h * 0.56 * 4 / 3) : Math.min(w * 0.44, h * 0.62 * 4 / 3)
+  const ww = phone ? Math.min(w * 0.94, h * 0.42 * 4 / 3) : tablet ? Math.min(w * 0.5, h * 0.5 * 4 / 3) : Math.min(w * 0.44, h * 0.62 * 4 / 3)
   const hh = (ww * 3) / 4
-  const cy = phone ? h * 0.53 : h * 0.47
+  const cy = phone ? h * 0.53 : tablet ? h * 0.55 : h * 0.47
   return { w: ww, h: hh, x: (w - ww) / 2, y: cy - hh / 2, cell: phone ? 4.5 : tablet ? 5.5 : clamp(Math.round(ww / 150), 6, 8) }
 }
 
