@@ -86,7 +86,7 @@ export function mountWater(host, hud) {
   // шестом-седьмом выборе — уплывает за край, а через мгновение заплывает с случайной стороны.
   // В итоге около 80% времени карп в кадре и около 20% — за его пределами.
   let px = -1, py = -1, entering = false, leaving = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
-  let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0
+  let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0, segBurst = false, kick = 0
   // запас за краем, при котором карп (с плавниками, хвостом и свечением) уже целиком не виден
   const hidden = () => len * 0.68
   // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
@@ -104,10 +104,12 @@ export function mountWater(host, hud) {
       wy = v.y0 + my + Math.random() * (v.y1 - v.y0 - 2 * my)
       if (Math.hypot(wx - px, wy - py) > len * 0.6) break
     }
+    // ~30% отрезков — «рывок»: резкий поворот корпусом и ускорение; остальные — спокойные
     const r = Math.random()
-    if (r < 0.2) { segSp = 0.55 + Math.random() * 0.2; segTurn = 0.45 } // неспешное скольжение
-    else if (r < 0.35) { segSp = 1.5 + Math.random() * 0.4; segTurn = 1.15 } // рывок
-    else { segSp = 0.85 + Math.random() * 0.35; segTurn = 0.65 + Math.random() * 0.4 }
+    segBurst = r < 0.3
+    if (segBurst) { segSp = 1.25 + Math.random() * 0.3; segTurn = 1.15 }
+    else if (r < 0.55) { segSp = 0.55 + Math.random() * 0.2; segTurn = 0.4 } // неспешное скольжение
+    else { segSp = 0.8 + Math.random() * 0.3; segTurn = 0.45 + Math.random() * 0.2 }
     segUntil = t + 14 + Math.random() * 10 // если цель «не даётся» — выбираем новую
   }
   // уйти за край: цель — точка за ближайшим (или случайным) краем
@@ -181,7 +183,8 @@ export function mountWater(host, hud) {
     }
     const ang = wrap(Math.atan2(tx - hx0, -(ty - hy0)) - heading)
     // лёгкое «виляние» поверх курса — путь не идеально прямой
-    const wobble = 0.14 * Math.sin(t * 0.7 + seed) + 0.08 * Math.sin(t * 1.9 + seed * 2.3)
+    // лёгкое виляние курса; в спокойных отрезках — едва заметное, чтобы не было лишних резких движений
+    const wobble = (segBurst ? 1 : 0.45) * (0.14 * Math.sin(t * 0.7 + seed) + 0.08 * Math.sin(t * 1.9 + seed * 2.3))
     const want = clamp(ang * 0.9, -maxTurn, maxTurn) + (food ? 0 : wobble)
     // цель рядом, но сбоку — притормаживает и доворачивает, а не кружит вокруг
     const dist = Math.hypot(tx - hx0, ty - hy0)
@@ -193,8 +196,11 @@ export function mountWater(host, hud) {
     omega = clamp(omega, -maxO, maxO)
     heading = wrap(heading + omega * dt)
     // скорость тоже меняется плавно (разгон и торможение)
-    const target = (food ? 1.7 : segSp) * slow
-    spCur += (target - spCur) * Math.min(1, dt * 0.8)
+    // резкое движение корпусом (быстрый поворот) — короткое ускорение, которое затем плавно спадает
+    const sharp = clamp((Math.abs(omega) - 0.35) / 0.5, 0, 1)
+    kick = Math.max(kick * Math.pow(0.35, dt), sharp)
+    const target = (food ? 1.7 : segSp) * slow * (1 + 0.9 * kick)
+    spCur += (target - spCur) * Math.min(1, dt * (target > spCur ? 2.2 : 0.8)) // разгон быстрый, торможение плавное
     const sp = len * 0.12 * spCur * (1 + 0.12 * Math.sin(t * 0.37 + seed))
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
