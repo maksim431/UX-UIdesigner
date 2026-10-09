@@ -2,7 +2,7 @@
 // светлые плитки с символами (S X 8 0 G…): белыми, красно-оранжевыми (узор кохаку) и голубыми,
 // с холодным свечением (bloom) у головы. Края силуэта мягко размыты.
 //
-// Карп плывёт вперёд и плавно петляет; дойдя до края фрейма, уплывает за него и появляется с случайной стороны.
+// Карп плывёт вперёд и плавно петляет (поворачивает с инерцией, без резких разворотов); дойдя до края, уходит за него целиком и только тогда появляется с случайной стороны.
 // тело изгибается волной от головы к хвосту (чем быстрее плывёт — тем чаще бьёт хвостом),
 // грудные плавники слегка «гребут».
 //
@@ -79,11 +79,13 @@ export function mountWater(host, hud) {
   }
   const pellets = [] // корм: { x, y, t0, eaten }
   let chase = 0, gulp = -9
-  let px = -1, py = -1, entering = false, outside = 0, heading = 0, prevHeading = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
+  let px = -1, py = -1, entering = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
+  // запас за краем, при котором карп (с плавниками, хвостом и свечением) уже целиком не виден
+  const hidden = () => len * 0.75
   // заход в кадр: снаружи со случайной стороны, курс — на случайную точку в середине фрейма
   function respawn() {
     const f = frameBox()
-    const m = len * 0.6
+    const m = hidden()
     const side = Math.floor(Math.random() * 4)
     const k = 0.15 + Math.random() * 0.7
     if (side === 0) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y0 - m }
@@ -92,26 +94,20 @@ export function mountWater(host, hud) {
     else { px = f.x0 - m; py = f.y0 + (f.y1 - f.y0) * k }
     const tx = f.x0 + (f.x1 - f.x0) * (0.3 + Math.random() * 0.4)
     const ty = f.y0 + (f.y1 - f.y0) * (0.3 + Math.random() * 0.4)
-    heading = prevHeading = Math.atan2(tx - px, -(ty - py))
+    heading = Math.atan2(tx - px, -(ty - py))
+    omega = 0
     seed = Math.random() * 100
     entering = true
-    outside = 0
   }
+  const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
   function step(t) {
     const f = frameBox()
-    if (px < 0 && py < 0) {
-      // первый показ — в кадре, чуть ниже центра, курс случайный
-      px = (f.x0 + f.x1) / 2 + (Math.random() - 0.5) * FW * 0.2
-      py = H * 0.55
-      heading = prevHeading = Math.random() * Math.PI * 2
-    }
+    if (px < 0 && py < 0) respawn() // первый показ — тоже заплывает из-за края
     const dt = lastT < 0 ? 0 : clamp(t - lastT, 0, 0.1)
-    // плавные повороты: сумма медленных синусоид — путь не повторяется на глаз
-    // пока заходит в кадр — плывёт прямо, без петель
     const inset = len * 0.22
     const inside = px > f.x0 + inset && px < f.x1 - inset && py > f.y0 + inset && py < f.y1 - inset
     if (entering && inside) entering = false
-    // корм: если на воде есть пиксель — карп поворачивает к ближайшему и ускоряется
+    // голова и ближайший корм
     const hx0 = px + Math.sin(heading) * len * 0.45, hy0 = py - Math.cos(heading) * len * 0.45
     let food = null, best = Infinity
     for (const q of pellets) {
@@ -119,32 +115,38 @@ export function mountWater(host, hud) {
       const dd = Math.hypot(q.x - hx0, q.y - hy0)
       if (dd < best) { best = dd; food = q }
     }
-    chase += ((food ? 1 : 0) - chase) * Math.min(1, dt * 2)
+    chase += ((food ? 1 : 0) - chase) * Math.min(1, dt * 1.2)
+    // желаемая скорость поворота: за кормом — к корму, иначе — плавные петли;
+    // если центр уже за краем — продолжает уходить наружу (без разворота обратно в кадр)
+    let want, slow = 1
     if (food) {
       entering = false
-      let dd = Math.atan2(food.x - hx0, -(food.y - hy0)) - heading
-      while (dd > Math.PI) dd -= 2 * Math.PI
-      while (dd < -Math.PI) dd += 2 * Math.PI
-      heading += clamp(dd, -1.9 * dt, 1.9 * dt)
-      // доплыл — «съедает»
+      const ang = wrap(Math.atan2(food.x - hx0, -(food.y - hy0)) - heading)
+      want = clamp(ang * 0.9, -0.85, 0.85)
+      // корм рядом, но сбоку — притормаживает, чтобы развернуться, а не кружить вокруг
+      if (best < len * 0.8) slow = clamp(0.3 + 0.7 * Math.max(0, Math.cos(ang)), 0.3, 1)
       if (best < len * 0.09) { food.eaten = t; gulp = t }
+    } else if (entering) {
+      want = 0
+    } else {
+      want = 0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)
+      const out = px < f.x0 || px > f.x1 || py < f.y0 || py > f.y1
+      if (out) {
+        // направление «наружу» от фрейма: не даём завернуть обратно у самого края
+        const ox = px < f.x0 ? -1 : px > f.x1 ? 1 : 0, oy = py < f.y0 ? -1 : py > f.y1 ? 1 : 0
+        want = clamp(wrap(Math.atan2(ox, -oy) - heading) * 0.6, -0.5, 0.5)
+      }
     }
-    const w = entering ? 0 : (0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)) * (1 - 0.85 * chase)
-    heading += w * dt
-    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed)) * (1 + 0.8 * chase)
+    // инерция поворота: угловая скорость меняется плавно — никаких резких разворотов
+    omega += clamp(want - omega, -0.7 * dt, 0.7 * dt)
+    heading = wrap(heading + omega * dt)
+    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed)) * (1 + 0.7 * chase) * slow
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
-    // целиком ушёл за край — появляется с другой (случайной) стороны (но не пока плывёт за кормом)
-    const m = len * 0.62
-    // не тянем время, если он плывёт вдоль края снаружи
-    const out = px < f.x0 || px > f.x1 || py < f.y0 || py > f.y1
-    outside = out && !entering && !food ? outside + dt : 0
-    if (!food && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m || outside > 2.5)) respawn()
-    let dh = heading - prevHeading
-    while (dh > Math.PI) dh -= 2 * Math.PI
-    while (dh < -Math.PI) dh += 2 * Math.PI
-    turn = Math.abs(dh) > 1 ? turn : turn * 0.9 + (dt ? dh / dt : 0) * 0.1
-    prevHeading = heading
+    // новое появление — только когда карп целиком скрылся за краем (и не плывёт за кормом)
+    const m = hidden()
+    if (!food && !entering && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m)) respawn()
+    turn = omega
     // частота взмахов хвоста растёт со скоростью
     phase += dt * (2.4 + 5 * clamp(sp / len, 0, 1.2))
     lastT = t
