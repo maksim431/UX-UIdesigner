@@ -71,9 +71,11 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
     }
     const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY
     const now = performance.now()
-    // после остановки на стопоре недолго гасим инерцию тачпада/колеса, прокрутку вверх не держим
+    // после остановки на стопоре гасим ВСЮ оставшуюся инерцию тачпада/колеса этого жеста:
+    // пока события идут без паузы — держим; новый жест (после паузы) прокручивает дальше.
+    // Так страница не «дёргается», доезжая остаток инерции после остановки. Вверх не держим.
     if (dy > 0 && now < lockUntil) {
-      lockUntil = Math.min(lockMax, Math.max(lockUntil, now + 120))
+      lockUntil = Math.min(lockMax, now + 180)
       return
     }
     let next = clamp(target + dy, 0, maxY())
@@ -82,8 +84,8 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
         const y = Math.round(fn())
         if (target < y - 2 && next > y) {
           next = y
-          lockUntil = now + Math.min(1200, Math.abs(y - current) * 1.2) + 450
-          lockMax = lockUntil + 1000
+          lockUntil = now + Math.min(1200, Math.abs(y - current) * 1.2) + 300
+          lockMax = now + 5000
           break
         }
       }

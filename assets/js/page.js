@@ -3,9 +3,9 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountWater } from './water.js?v=18'
+import { mountWater } from './water.js?v=19'
 import { initProjects } from './projects.js'
-import { initSmoothScroll, scrollToY } from './smooth.js'
+import { initSmoothScroll, scrollToY } from './smooth.js?v=2'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 const easeOut = (t) => 1 - Math.pow(1 - t, 3)

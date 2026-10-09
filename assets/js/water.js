@@ -590,8 +590,7 @@ export function mountWater(host, hud) {
     raf = 0
     if (!running) return
     raf = requestAnimationFrame(frame)
-    // во время прокрутки рисуем реже — главный поток свободнее, прокрутка не дёргается
-    if (now - lastFrame < (now < scrollingUntil ? Math.max(minDt, 1000 / 15) : minDt) - 2) return
+    if (now - lastFrame < minDt - 2) return
     lastFrame = now
     if (!t0) t0 = now - last * 1000
     const s = performance.now()
@@ -616,8 +615,6 @@ export function mountWater(host, hud) {
 
   const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
   ready.then(() => { font = getComputedStyle(document.body).fontFamily || font; lastT = -1; if (bcols) buildDots(); draw(last) })
-  let scrollingUntil = 0
-  window.addEventListener('scroll', () => { scrollingUntil = performance.now() + 220 }, { passive: true })
   const ro = new ResizeObserver(resize)
   ro.observe(host)
   window.addEventListener('resize', resize)
