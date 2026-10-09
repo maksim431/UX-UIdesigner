@@ -132,4 +132,4 @@ if (back !== null && proj) {
   })
 } else root.classList.remove('rw')
 // стопор: сильная прокрутка с первого экрана останавливается на первом проекте, а не пролетает его
-if (smooth && works) smooth.addStop(() => works.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.getBoundingClientRect().height : 0))
+// стопор перед блоком кейсов убран: при прокрутке вниз он давал рывок, прокрутка теперь сплошная
