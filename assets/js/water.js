@@ -360,13 +360,45 @@ export function mountWater(host, hud) {
     const gs = bgStatic.getContext('2d')
     gs.fillStyle = '#2c40c7'
     gs.fillRect(0, 0, bgStatic.width, bgStatic.height)
+    bcur = new Uint8Array(bcols * brows)
+    const live = []
     for (let r = 0; r < brows; r++) for (let c = 0; c < bcols; c++) {
-      const lv = baseLevel(bseed[r * bcols + c])
+      const i = r * bcols + c
+      const lv = baseLevel(bseed[i])
+      bcur[i] = lv
       if (lv) gs.drawImage(batlas, lv * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
+      // 20% элементов фона «живые»: время от времени перебирают ASCII-символы
+      if (lv && hash(i, 71) < 0.2) live.push(i)
+    }
+    bliveIdx = Uint32Array.from(live)
+    bliveT = new Float32Array(live.length)
+    for (let k = 0; k < live.length; k++) bliveT[k] = hash(live[k], 5) * 2.5
+    bctx = gs
+    bliveInit = false
+  }
+  // смена символов у «живых» клеток: дорисовываем в готовый фон только изменившиеся клетки
+  function tickBg(t) {
+    if (!bliveIdx) return
+    if (!bliveInit) { for (let k = 0; k < bliveT.length; k++) bliveT[k] += t; bliveInit = true }
+    const a = batlas.height
+    for (let k = 0; k < bliveIdx.length; k++) {
+      if (t < bliveT[k]) continue
+      const i = bliveIdx[k]
+      // короткая серия быстрых смен символа, затем пауза
+      const burst = Math.random() < 0.7
+      bliveT[k] = t + (burst ? 0.06 + Math.random() * 0.12 : 0.8 + Math.random() * 2.6)
+      let lv = 1 + ((Math.random() * (BG.length - 2)) | 0)
+      if (lv === bcur[i]) lv = lv === 1 ? 2 : lv - 1
+      bcur[i] = lv
+      const r = (i / bcols) | 0, c = i - r * bcols
+      const x = Math.round(c * dcell * dpr), y = Math.round(r * dcell * dpr)
+      bctx.fillStyle = '#2c40c7'
+      bctx.fillRect(x, y, a, a)
+      bctx.drawImage(batlas, lv * a, 0, a, a, x, y, a, a)
     }
   }
   const baseLevel = (s) => (s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length)
-  let bgStatic = null
+  let bgStatic = null, bctx = null, bcur = null, bliveIdx = null, bliveT = null, bliveInit = false
 
   // след на воде клином (как у плывущей рыбы): от боков головы непрерывно отходят «частицы волны»,
   // каждая расходится в сторону от курса и гаснет — вместе они рисуют два расходящихся луча за карпом.
@@ -465,6 +497,7 @@ export function mountWater(host, hud) {
       }
     }
     // фон неподвижен: готовый холст одной операцией; перерисовываем только клетки, по которым идёт след
+    tickBg(t)
     ctx.drawImage(bgStatic, 0, 0)
     const ba = batlas.height
     for (let k = 0; k < touched.length; k++) {
@@ -472,7 +505,7 @@ export function mountWater(host, hud) {
       const wv = Math.min(1.2, field[i])
       if (wv <= 0.06) continue
       const r = (i / bcols) | 0, c = i - r * bcols
-      const base = baseLevel(bseed[i])
+      const base = bcur[i]
       const l = Math.max(base === BG.length ? 0 : base, Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
       const x = Math.round(c * dcell * sc), y = Math.round(r * dcell * sc)
       // стираем исходный символ клетки и ставим символ гребня волны (чуть сдвинутый по ходу волны)
