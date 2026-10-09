@@ -1,6 +1,6 @@
 // Первый экран: пиксельный ASCII-прелоадер, появление вопроса и переход по «да / нет».
 
-import { initScramble, makeAsciiGrid, drawAsciiFrame, coverAndGo } from './ascii.js'
+import { initScramble, makeAsciiGrid, drawAsciiFrame } from './ascii.js'
 import { initCursor } from './cursor.js'
 import { initLang } from './ui.js'
 
@@ -9,14 +9,7 @@ initScramble()
 initCursor()
 initLang()
 
-/* ---------- переход по «да / нет» ---------- */
-document.querySelectorAll('[data-go]').forEach((a) =>
-  a.addEventListener('click', (e) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return // новая вкладка — как обычная ссылка
-    e.preventDefault()
-    coverAndGo(a.getAttribute('href'), { coverMs: 500, revealMs: 600, cellSize: 40 })
-  })
-)
+/* переход по выбору версии — обычная ссылка, без ASCII-шторки */
 
 /* ---------- прелоадер ---------- */
 function ease(x) {
