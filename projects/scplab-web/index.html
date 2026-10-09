@@ -15,7 +15,7 @@
   <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml">
   <script>
     // картинка не нашлась в папке кейса: пробуем .png, потом прежнюю картинку с Framer, иначе остаётся заглушка
-    window.__img = function (i) { var d = i.dataset; if (d.alt) { var a = d.alt; delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
+    window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // пришли через ASCII-переход — закрываем экран, чтобы ничего не мелькнуло
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // картинки появляются при прокрутке (если в системе не выключено движение)
@@ -85,7 +85,7 @@
             </li>
           </ol>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../assets/cases/scplab/01.jpg" data-alt="../../assets/cases/scplab/01.png" data-fb="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">Ux/UI</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../assets/cases/scplab/01.jpg" data-alt="../../assets/cases/scplab/01.png|../../assets/cases/scplab/01.jpeg|../../assets/cases/scplab/01.webp" data-fb="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048" alt="SCP LAB — обложка кейса" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">Ux/UI</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s1"><ol><li><h3>Задача</h3></li></ol></div>
           <div class="rt rt--body"><p>Клиент пришёл с понятной целью: чтобы после бесплатного пробного периода больше людей оформляли платную подписку, а начать тренировку было быстро и удобно. Отдельное пожелание — премиальный «стеклянный» стиль.</p></div>
@@ -94,7 +94,7 @@
           <div class="rt rt--h3" id="s2"><ol start="2"><li><h3>Аналитика</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>Путь до оплаты. </strong>Обычно приложение просит деньги сразу или после скучной анкеты — человек уходит, не поняв, за что платить. Значит, ценность нужно показать до оплаты.</p><p><strong>Где пользуются. </strong>В зале: потные руки, сбитое дыхание, блики. Значит, кнопки крупные, текста минимум.</p><p><strong>Ради чего возвращаются. </strong>Базу профи знает — ему нужны видеоуроки от топовых тренеров. Значит, видео — главное в продукте.</p></div>
         </div>
-        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../assets/cases/scplab/02.jpg" data-alt="../../assets/cases/scplab/02.png" data-fb="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../assets/cases/scplab/02.jpg" data-alt="../../assets/cases/scplab/02.png|../../assets/cases/scplab/02.jpeg|../../assets/cases/scplab/02.webp" data-fb="https://framerusercontent.com/images/JZF0Buhcy8Zqqdt4vL6uW73Bi0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s3"><ol start="3"><li><h3>Гипотезы</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>А — скидка на первый месяц.</strong> Быстро, но приучает ждать скидок, а клиенту нужны оплаты по полной цене.</p><p><strong>Б — короче анкета, оплата там же.</strong> Проще, но человек всё ещё платит, не попробовав.</p><p><strong>В — сначала попробовать, потом платить.</strong> Бесплатный тест с видеоуроками, а подписка — когда личная программа уже готова.</p></div>
@@ -108,20 +108,20 @@
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol><li><p><strong>Оплата в конце.</strong> Сначала бесплатный тест с видеоуроками, потом сообщение «ваша программа готова» и только затем подписка. <strong>Зачем:</strong> человек платит за своё, а не за обещание.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../assets/cases/scplab/03.jpg" data-alt="../../assets/cases/scplab/03.png" data-fb="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../assets/cases/scplab/03.jpg" data-alt="../../assets/cases/scplab/03.png|../../assets/cases/scplab/03.jpeg|../../assets/cases/scplab/03.webp" data-fb="https://framerusercontent.com/images/EKlkxcSBueXCFE01IfE6wP0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="2"><li><p><strong>Видео — главное на экране тренировки.</strong> Крупный плеер, таймер и пара кнопок. <strong>Зачем:</strong> ценность всегда на виду, и тренировка начинается быстрее.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../assets/cases/scplab/04.jpg" data-alt="../../assets/cases/scplab/04.png" data-fb="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
-          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../assets/cases/scplab/05.jpg" data-alt="../../assets/cases/scplab/05.png" data-fb="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../assets/cases/scplab/04.jpg" data-alt="../../assets/cases/scplab/04.png|../../assets/cases/scplab/04.jpeg|../../assets/cases/scplab/04.webp" data-fb="https://framerusercontent.com/images/4ktONIEPcyjujLE99HimJSSlqM.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../assets/cases/scplab/05.jpg" data-alt="../../assets/cases/scplab/05.png|../../assets/cases/scplab/05.jpeg|../../assets/cases/scplab/05.webp" data-fb="https://framerusercontent.com/images/LbRUFVOAyL6xj7q0Yaeb02kdRQ.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="3"><li><p><strong>Крупные контрастные кнопки.</strong> <strong>Зачем:</strong> в них легко попасть посреди подхода — приложением удобно пользоваться прямо в зале, и к нему возвращаются.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../assets/cases/scplab/06.jpg" data-alt="../../assets/cases/scplab/06.png" data-fb="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../assets/cases/scplab/06.jpg" data-alt="../../assets/cases/scplab/06.png|../../assets/cases/scplab/06.jpeg|../../assets/cases/scplab/06.webp" data-fb="https://framerusercontent.com/images/wsPhXnJy0moONW4jqJ9qqFiJTZo.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="4"><li><p><strong>Стиль.</strong> Чёрный фон, неоново-жёлтый акцент, «стекло» в карточках и окнах. <strong>Зачем:</strong> выглядит дорого — подписку по полной цене покупать не жалко, — и читается при любом свете.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../assets/cases/scplab/07.jpg" data-alt="../../assets/cases/scplab/07.png" data-fb="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../assets/cases/scplab/07.jpg" data-alt="../../assets/cases/scplab/07.png|../../assets/cases/scplab/07.jpeg|../../assets/cases/scplab/07.webp" data-fb="https://framerusercontent.com/images/wO0inzdo7Ir2NHP0gLqHTG6WTg.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         </div>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s6"><ol start="6"><li><h3>Презентация и защита</h3></li></ol></div>
@@ -131,12 +131,12 @@
           <div class="rt rt--h3" id="s7"><ol start="7"><li><h3>Передача в разработку</h3></li></ol></div>
           <div class="rt rt--body"><p>Передал разработчикам аккуратный макет — готовую дизайн-систему со всеми экранами и состояниями кнопок. Разработка идёт быстрее и без лишних вопросов, а значит, обходится клиенту дешевле.</p></div>
         </div>
-        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../assets/cases/scplab/08.jpg" data-alt="../../assets/cases/scplab/08.png" data-fb="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../assets/cases/scplab/08.jpg" data-alt="../../assets/cases/scplab/08.png|../../assets/cases/scplab/08.jpeg|../../assets/cases/scplab/08.webp" data-fb="https://framerusercontent.com/images/ACeXIn5kE0nUBVQuc8dOJTZbe0.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s8"><ol start="8"><li><h3>Результаты</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>+10% подписок:</strong> больше людей оформляют полную подписку, потому что платят за программу, которую уже попробовали.</p><p><strong>На 30% быстрее</strong> проходит путь от запуска приложения до начала тренировки.</p><p><strong>+20% возвратов:</strong> приложением удобно пользоваться прямо в зале.</p></div>
         </div>
-        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../assets/cases/scplab/09.jpg" data-alt="../../assets/cases/scplab/09.png" data-fb="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../assets/cases/scplab/09.jpg" data-alt="../../assets/cases/scplab/09.png|../../assets/cases/scplab/09.jpeg|../../assets/cases/scplab/09.webp" data-fb="https://framerusercontent.com/images/t7NeoTj3Gdw295SQjA09OEzvLv8.png?scale-down-to=2048" alt="SCP LAB: иллюстрация 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp">
           <div class="rt rt--h3" id="s9"><ol start="9"><li><h3>Где и как использовал нейросети</h3></li></ol></div>
           <div class="rt rt--body"><ul><li><p><strong>Анализ отзывов.</strong> Нейросеть за пару минут разобрала сотни отзывов о конкурентах и выделила главные жалобы. Вручную на это ушёл бы день.</p></li><li><p><strong>Путь пользователя.</strong> Помогла быстро выстроить и проверить путь до оплаты и найти лучший момент для предложения подписки.</p></li><li><p><strong>Кадры для макетов.</strong> Реальные видео ещё не сняли — сгенерировал похожие кадры и заранее проверил, что текст и кнопки читаются поверх видео. Клиенту не пришлось платить за переделки после съёмки.</p></li><li><p><strong>Тесты и рутина в Figma.</strong> ИИ-плагины показали, куда смотрит пользователь, а ИИ-агент подготовил файл для разработчиков в разы быстрее.</p></li></ul></div>
@@ -155,5 +155,6 @@
 
   <script src="../../assets/js/case-layout.js"></script>
   <script type="module" src="../../assets/js/case.js"></script>
+  <script src="../../assets/js/lightbox.js" defer></script>
 </body>
 </html>

@@ -15,7 +15,7 @@
   <link rel="icon" href="../../../assets/img/logo.svg" type="image/svg+xml">
   <script>
     // image fallback: .png, then the old Framer image, else the placeholder
-    window.__img = function (i) { var d = i.dataset; if (d.alt) { var a = d.alt; delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
+    window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // arrived via the ASCII transition
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // scroll animations
@@ -85,7 +85,7 @@
             </li>
           </ol>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../../assets/cases/vici/01.jpg" data-alt="../../../assets/cases/vici/01.png" data-fb="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048" alt="VICI — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">web-design</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../../assets/cases/vici/01.jpg" data-alt="../../../assets/cases/vici/01.png|../../../assets/cases/vici/01.jpeg|../../../assets/cases/vici/01.webp" data-fb="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048" alt="VICI — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">web-design</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s1"><ol><li><h3>Task</h3></li></ol></div>
           <div class="rt rt--body"><p>After a rebrand, build a new website: minimalist, easy to use on any device, and one that makes people stay longer and then buy the products in a store. The site has no cart.</p></div>
@@ -94,7 +94,7 @@
           <div class="rt rt--h3" id="s2"><ol start="2"><li><h3>Research</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>Why people visit. </strong>Not for the specs of herring, but for an answer to “what should I cook for dinner”. So we need to sell not the product but a delicious dish.</p><p><strong>Where shoppers got lost. </strong>The catalog and recipes weren’t connected: people opened the catalog, hit a dead end and left. So the sections need to be linked.</p><p><strong>Where they visit from. </strong>Often from a phone, right at the shelf. So the site must be easy to use with one hand.</p></div>
         </div>
-        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../../assets/cases/vici/02.jpg" data-alt="../../../assets/cases/vici/02.png" data-fb="https://framerusercontent.com/images/r8Z1ZVacnH913xFU3o8Bze00TVM.jpeg?scale-down-to=2048" alt="VICI: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../../assets/cases/vici/02.jpg" data-alt="../../../assets/cases/vici/02.png|../../../assets/cases/vici/02.jpeg|../../../assets/cases/vici/02.webp" data-fb="https://framerusercontent.com/images/r8Z1ZVacnH913xFU3o8Bze00TVM.jpeg?scale-down-to=2048" alt="VICI: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s3"><ol start="3"><li><h3>Hypotheses</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>A — just a beautiful catalog.</strong> Modern, but the dead ends remain.</p><p><strong>B — a separate recipe blog.</strong> Inspiring, but doesn’t lead to a purchase.</p><p><strong>C — a cooking magazine where recipes and products lead to each other.</strong></p></div>
@@ -108,20 +108,20 @@
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol><li><p><strong>Products and recipes are linked.</strong> A product has “What to cook with it”, a recipe has “Ingredients from VICI”. <strong>Why:</strong> people move from inspiration to purchase and back, and the site ranks better in search.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../../assets/cases/vici/03.jpg" data-alt="../../../assets/cases/vici/03.png" data-fb="https://framerusercontent.com/images/0Y4vBgKF1w3St15Z0DI30RWtVXI.png?scale-down-to=2048" alt="VICI: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../../assets/cases/vici/03.jpg" data-alt="../../../assets/cases/vici/03.png|../../../assets/cases/vici/03.jpeg|../../../assets/cases/vici/03.webp" data-fb="https://framerusercontent.com/images/0Y4vBgKF1w3St15Z0DI30RWtVXI.png?scale-down-to=2048" alt="VICI: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="2"><li><p><strong>Similar recipes.</strong> Similar dishes below each recipe. <strong>Why:</strong> there’s always a next step, so people don’t leave.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../../assets/cases/vici/04.jpg" data-alt="../../../assets/cases/vici/04.png" data-fb="https://framerusercontent.com/images/OcH2MQxUEAIwqqtDEJaKzvz9OA.png?scale-down-to=2048" alt="VICI: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
-          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../../assets/cases/vici/05.jpg" data-alt="../../../assets/cases/vici/05.png" data-fb="https://framerusercontent.com/images/X6bER3PwoVwWt8wD9oZQ5Y7P70.png?scale-down-to=2048" alt="VICI: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../../assets/cases/vici/04.jpg" data-alt="../../../assets/cases/vici/04.png|../../../assets/cases/vici/04.jpeg|../../../assets/cases/vici/04.webp" data-fb="https://framerusercontent.com/images/OcH2MQxUEAIwqqtDEJaKzvz9OA.png?scale-down-to=2048" alt="VICI: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../../assets/cases/vici/05.jpg" data-alt="../../../assets/cases/vici/05.png|../../../assets/cases/vici/05.jpeg|../../../assets/cases/vici/05.webp" data-fb="https://framerusercontent.com/images/X6bER3PwoVwWt8wD9oZQ5Y7P70.png?scale-down-to=2048" alt="VICI: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="3"><li><p><strong>Tags like “Quick”, “For breakfast”, “Seafood”.</strong> <strong>Why:</strong> the right recipe is a couple of taps away.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../../assets/cases/vici/06.jpg" data-alt="../../../assets/cases/vici/06.png" data-fb="https://framerusercontent.com/images/Rn1ofWUs3dlpcjdVCrd1sYxv3Y.png?scale-down-to=2048" alt="VICI: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../../assets/cases/vici/06.jpg" data-alt="../../../assets/cases/vici/06.png|../../../assets/cases/vici/06.jpeg|../../../assets/cases/vici/06.webp" data-fb="https://framerusercontent.com/images/Rn1ofWUs3dlpcjdVCrd1sYxv3Y.png?scale-down-to=2048" alt="VICI: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="4"><li><p><strong>A mobile version for the shopper at the shelf.</strong> Large buttons, the menu always at hand, recipes easy to scroll with one hand. <strong>Why:</strong> the site helps right at the moment of choice.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../../assets/cases/vici/07.jpg" data-alt="../../../assets/cases/vici/07.png" data-fb="https://framerusercontent.com/images/M1v1vM6rmsZdG7ukIX4CaDzZg.png?scale-down-to=2048" alt="VICI: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../../assets/cases/vici/07.jpg" data-alt="../../../assets/cases/vici/07.png|../../../assets/cases/vici/07.jpeg|../../../assets/cases/vici/07.webp" data-fb="https://framerusercontent.com/images/M1v1vM6rmsZdG7ukIX4CaDzZg.png?scale-down-to=2048" alt="VICI: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         </div>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s6"><ol start="6"><li><h3>Presentation and defense</h3></li></ol></div>
@@ -131,12 +131,12 @@
           <div class="rt rt--h3" id="s7"><ol start="7"><li><h3>Handoff to development</h3></li></ol></div>
           <div class="rt rt--body"><p>I handed developers a clean file with a design system and a ready map of which recipes lead to which products — so the site was built quickly.</p></div>
         </div>
-        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../../assets/cases/vici/08.jpg" data-alt="../../../assets/cases/vici/08.png" data-fb="https://framerusercontent.com/images/cnApfsffdNGemzGWbLZSWAaVl5Q.png?scale-down-to=2048" alt="VICI: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../../assets/cases/vici/08.jpg" data-alt="../../../assets/cases/vici/08.png|../../../assets/cases/vici/08.jpeg|../../../assets/cases/vici/08.webp" data-fb="https://framerusercontent.com/images/cnApfsffdNGemzGWbLZSWAaVl5Q.png?scale-down-to=2048" alt="VICI: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s8"><ol start="8"><li><h3>Results</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>More pages per visit:</strong> people move from products to recipes and back.</p><p><strong>More purchases in stores:</strong> people leave the site with a dinner plan and know which pack to look for.</p><p><strong>The site became a “cookbook in your pocket”</strong> that people want to come back to.</p><p><strong>The brand got younger:</strong> modern design and beautiful food attracted a younger audience.</p></div>
         </div>
-        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../../assets/cases/vici/09.jpg" data-alt="../../../assets/cases/vici/09.png" data-fb="https://framerusercontent.com/images/uHphYboJkGivNXpEIQFKBKUFfuk.png?scale-down-to=2048" alt="VICI: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../../assets/cases/vici/09.jpg" data-alt="../../../assets/cases/vici/09.png|../../../assets/cases/vici/09.jpeg|../../../assets/cases/vici/09.webp" data-fb="https://framerusercontent.com/images/uHphYboJkGivNXpEIQFKBKUFfuk.png?scale-down-to=2048" alt="VICI: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp">
           <div class="rt rt--h3" id="s9"><ol start="9"><li><h3>Where and how I used AI</h3></li></ol></div>
           <div class="rt rt--body"><ul><li><p><strong>Analysis.</strong> AI went through customer reviews, popular queries and the old site structure in hours instead of days.</p></li><li><p><strong>Content links.</strong> It quickly matched recipes with the brand’s products — I showed the client a prototype with real content.</p></li><li><p><strong>Tags.</strong> It tagged the whole recipe database.</p></li><li><p><strong>Mobile grids and routine.</strong> AI built the basic grids and prepared the file, and I spent the time saved on details that affect usability.</p></li></ul></div>
@@ -155,5 +155,6 @@
 
   <script src="../../../assets/js/case-layout.js"></script>
   <script type="module" src="../../../assets/js/case.js"></script>
+  <script src="../../../assets/js/lightbox.js" defer></script>
 </body>
 </html>

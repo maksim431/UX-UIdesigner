@@ -658,3 +658,64 @@ html.rw body { visibility: hidden; }
 .cs-fig__box--ph.is-loaded img { opacity: 1; }
 .cs-fig__box--ph.is-loaded .cs-fig__ph { display: none; }
 .ps__media.is-loaded .ps__soon { display: none; }
+
+/* картинки кейсов показываем целиком, загруженная вместо заглушки — тоже со своими пропорциями */
+.cs-fig__box--ph.is-loaded { aspect-ratio: auto !important; background: none; }
+.cs-fig__box--ph.is-loaded img { position: static; height: auto; }
+
+/* планшет и телефон: картинки кейса во всю ширину экрана, без обрезки */
+@media (max-width: 1199.98px) {
+  .cs .cs-fig { width: calc(100% + 84px); margin-inline: -42px; aspect-ratio: auto; display: block; }
+  .cs .cs-fig__box { width: 100%; aspect-ratio: auto; }
+  .cs .cs-fig__box img { height: auto; display: block; }
+  .cs .cs-fig__box--ph:not(.is-loaded) { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 809.98px) {
+  .cs .cs-fig { width: calc(100% + 32px); margin-inline: -16px; }
+  .cs-fig__tag { top: 16px; right: 16px; font-size: 16px; }
+}
+
+/* просмотр картинки на весь экран (lightbox.js) */
+.cs-fig img { cursor: zoom-in; }
+.cs-fig img:focus-visible { outline: 2px solid #000; outline-offset: 4px; }
+.lb {
+  position: fixed; inset: 0; z-index: 2147481000;
+  background: rgba(12, 12, 12, .94); color: #fff;
+  opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s;
+  touch-action: none; user-select: none; -webkit-user-select: none; overscroll-behavior: contain;
+}
+.lb.is-open { opacity: 1; visibility: visible; transition: opacity .3s; }
+.lb__img {
+  position: absolute; left: 50%; top: 50%; max-width: none;
+  transform: translate(-50%, -50%); transform-origin: center; will-change: transform;
+  cursor: zoom-in; -webkit-user-drag: none; transition: opacity .25s;
+}
+.lb__img.is-anim { transition: transform .3s var(--ease), opacity .25s; }
+.lb.is-zoomed .lb__img { cursor: grab; }
+.lb.is-zoomed .lb__img:active { cursor: grabbing; }
+.lb__btn {
+  position: absolute; z-index: 1; display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; padding: 0; border: 0; border-radius: 0;
+  background: rgba(0, 0, 0, .55); color: #fff; font: 400 26px/1 var(--font); cursor: pointer; transition: background .2s;
+}
+.lb__btn:hover { background: #000; }
+.lb__btn:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+.lb__btn svg { width: 18px; height: 18px; }
+.lb__close { top: 16px; right: 16px; }
+.lb__prev, .lb__next { top: 50%; margin-top: -24px; }
+.lb__prev { left: 16px; }
+.lb__next { right: 16px; }
+.lb__zoom { position: absolute; z-index: 1; right: 16px; bottom: 16px; display: flex; gap: 2px; }
+.lb__zoom .lb__btn { position: static; }
+.lb__count { position: absolute; left: 16px; top: 16px; height: 48px; display: flex; align-items: center; font-size: 16px; color: rgba(255, 255, 255, .7); pointer-events: none; }
+.lb.is-zoomed .lb__prev, .lb.is-zoomed .lb__next { opacity: 0; pointer-events: none; }
+@media (pointer: coarse) {
+  .lb__prev, .lb__next { display: none; }
+}
+html.lb-open .ascii-cursor { display: none; }
+
+/* десктоп: правая колонка с картинками доходит до правого края экрана; ширина картинки = колонка без левого отступа */
+.cs-media--story > * { width: auto; }
+@media (min-width: 1200px) { .cs-media { margin-right: -40px; } }
+.lb__btn[hidden] { display: none; }
+.cs-fig__box--ph.is-loaded .cs-fig__tag { color: #fff; }

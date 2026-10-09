@@ -15,7 +15,7 @@
   <link rel="icon" href="../../../assets/img/logo.svg" type="image/svg+xml">
   <script>
     // image fallback: .png, then the old Framer image, else the placeholder
-    window.__img = function (i) { var d = i.dataset; if (d.alt) { var a = d.alt; delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
+    window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // arrived via the ASCII transition
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // scroll animations
@@ -85,7 +85,7 @@
             </li>
           </ol>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/01.jpg" data-alt="../../../assets/cases/mytiger/01.png" alt="MY TIGER — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">case cover</span><span class="cs-fig__tag">web-design</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/01.jpg" data-alt="../../../assets/cases/mytiger/01.png|../../../assets/cases/mytiger/01.jpeg|../../../assets/cases/mytiger/01.webp" alt="MY TIGER — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">case cover</span><span class="cs-fig__tag">web-design</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s1"><ol><li><h3>Task</h3></li></ol></div>
           <div class="rt rt--body"><p>The client needed a landing page that brings in requests from ads — in addition to the main website. The wishes: brand patterns with tiger silhouettes and claw marks, real photos, a premium style and unusual solutions. And most importantly — to show that grooming here isn’t just about looks but a medical procedure done by professionals.</p></div>
@@ -102,35 +102,35 @@
           <div class="rt rt--h3" id="s4"><ol start="4"><li><h3>Which hypothesis I chose and why</h3></li></ol></div>
           <div class="rt rt--body"><p>I chose <strong>hypothesis C</strong>: it’s the only one that accounts for clients choosing by trust, makes the “groomer + vet” combination a reason to book, keeps special offers without discounts and differs from the main website enough for a fair comparison.</p></div>
         </div>
-        <figure class="cs-fig" data-d="1"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/02.jpg" data-alt="../../../assets/cases/mytiger/02.png" alt="MY TIGER: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">concept: panel and content</span></div></figure>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/02.jpg" data-alt="../../../assets/cases/mytiger/02.png|../../../assets/cases/mytiger/02.jpeg|../../../assets/cases/mytiger/02.webp" alt="MY TIGER: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">concept: panel and content</span></div></figure>
         <div class="rt rt--h3" id="s5"><ol start="5"><li><h3>Designing the mockups</h3></li></ol></div>
         <div class="cs-list">
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol><li><p><strong>A clear first screen.</strong> The logo, “pet beauty and health clinic”, a real photo and a booking button. <strong>Why:</strong> it’s immediately clear where you are and what to do.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="2"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/03.jpg" data-alt="../../../assets/cases/mytiger/03.png" alt="MY TIGER: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">landing page first screen</span></div></figure>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/03.jpg" data-alt="../../../assets/cases/mytiger/03.png|../../../assets/cases/mytiger/03.jpeg|../../../assets/cases/mytiger/03.webp" alt="MY TIGER: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">landing page first screen</span></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="2"><li><p><strong>The “Compliment” panel always in view.</strong> On the left is a dark panel with the tiger pattern and the special offer. <strong>Why:</strong> a reason to book is always in sight, without annoying banners.</p></li></ol></div>
           </div>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="3"><li><p><strong>Booking on top of the page.</strong> The form opens over a photo of an exam room. <strong>Why:</strong> no need to go anywhere, and the visitor already “sees” the clinic while deciding.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="3"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/04.jpg" data-alt="../../../assets/cases/mytiger/04.png" alt="MY TIGER: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">booking on top of the page</span></div></figure>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/04.jpg" data-alt="../../../assets/cases/mytiger/04.png|../../../assets/cases/mytiger/04.jpeg|../../../assets/cases/mytiger/04.webp" alt="MY TIGER: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">booking on top of the page</span></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="4"><li><p><strong>A short form.</strong> Minimal fields, contact wherever it’s convenient: phone, Telegram or another messenger, or just a callback. <strong>Why:</strong> the less effort, the more requests.</p></li></ol></div>
           </div>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="5"><li><p><strong>Grooming next to veterinary care.</strong> Vets and groomers are one team with experience and profiles, and the clinic’s philosophy says every haircut is also a health check. <strong>Why:</strong> the owner isn’t afraid to trust their pet and understands what they pay for.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="4"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/05.jpg" data-alt="../../../assets/cases/mytiger/05.png" alt="MY TIGER: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">vets and groomers, specialist profile</span></div></figure>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/05.jpg" data-alt="../../../assets/cases/mytiger/05.png|../../../assets/cases/mytiger/05.jpeg|../../../assets/cases/mytiger/05.webp" alt="MY TIGER: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">vets and groomers, specialist profile</span></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="6"><li><p><strong>“Compliments” instead of discounts.</strong> A special price and dates without percentages, and inside — a useful article: what to watch out for and what the program includes. <strong>Why:</strong> there’s a reason to book now, and the brand doesn’t look cheaper.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="5"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/06.jpg" data-alt="../../../assets/cases/mytiger/06.png" alt="MY TIGER: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">compliments: list and expert article</span></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/06.jpg" data-alt="../../../assets/cases/mytiger/06.png|../../../assets/cases/mytiger/06.jpeg|../../../assets/cases/mytiger/06.webp" alt="MY TIGER: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">compliments: list and expert article</span></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="7"><li><p><strong>Online consultation.</strong> You can start with a conversation with a vet without leaving home. <strong>Why:</strong> an easy first step for those not ready to visit yet.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="6"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/07.jpg" data-alt="../../../assets/cases/mytiger/07.png" alt="MY TIGER: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">online consultation flow</span></div></figure>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/07.jpg" data-alt="../../../assets/cases/mytiger/07.png|../../../assets/cases/mytiger/07.jpeg|../../../assets/cases/mytiger/07.webp" alt="MY TIGER: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">online consultation flow</span></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="8"><li><p><strong>Reviews and clinics on a map.</strong> The Yandex Maps rating, addresses and directions — at the end of the page. <strong>Why:</strong> the last doubts disappear right before the decision.</p></li></ol></div>
           </div>
@@ -139,12 +139,12 @@
           <div class="rt rt--h3" id="s6"><ol start="6"><li><h3>Presentation and defense</h3></li></ol></div>
           <div class="rt rt--body"><p>On a live prototype, I showed the client the whole chain: research, hypotheses, the choice and the purpose of every decision. The main thing to defend was dropping discounts: a “Compliment” gives the same reason to book but doesn’t scare away premium clients. After the discussion we simplified booking even further — removing the choice of vet and clinic from the flow — and added online consultations.</p></div>
         </div>
-        <figure class="cs-fig" data-d="7"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/08.jpg" data-alt="../../../assets/cases/mytiger/08.png" alt="MY TIGER: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">changes after the presentation: booking steps</span></div></figure>
+        <figure class="cs-fig" data-d="7"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/08.jpg" data-alt="../../../assets/cases/mytiger/08.png|../../../assets/cases/mytiger/08.jpeg|../../../assets/cases/mytiger/08.webp" alt="MY TIGER: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">changes after the presentation: booking steps</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s7"><ol start="7"><li><h3>Handoff to development</h3></li></ol></div>
           <div class="rt rt--body"><p>I handed developers the mockups for desktop and phone, all windows and booking steps. Changes are annotated right in the mockups, so the developer doesn’t need to ask anything.</p></div>
         </div>
-        <figure class="cs-fig" data-d="8"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/09.jpg" data-alt="../../../assets/cases/mytiger/09.png" alt="MY TIGER: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">mobile version</span></div></figure>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box cs-fig__box--ph"><img src="../../../assets/cases/mytiger/09.jpg" data-alt="../../../assets/cases/mytiger/09.png|../../../assets/cases/mytiger/09.jpeg|../../../assets/cases/mytiger/09.webp" alt="MY TIGER: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><span class="cs-fig__ph" aria-hidden="true">mobile version</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s8"><ol start="8"><li><h3>Results</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>Metrics are being collected:</strong> the landing page is live, and we’re now comparing it with the main website by the number of requests and looking at which paths bring more clients. The results will appear here as soon as they are ready.</p></div>
@@ -166,5 +166,6 @@
 
   <script src="../../../assets/js/case-layout.js"></script>
   <script type="module" src="../../../assets/js/case.js"></script>
+  <script src="../../../assets/js/lightbox.js" defer></script>
 </body>
 </html>

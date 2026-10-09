@@ -15,7 +15,7 @@
   <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
   <script>
     // картинка не нашлась в папке кейса: пробуем .png, потом прежнюю картинку с Framer
-    window.__img = function (i) { var d = i.dataset; if (d.alt) { var a = d.alt; delete d.alt; i.removeAttribute('srcset'); i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
+    window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.removeAttribute('srcset'); i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // обновили страницу с работами (F5 / ⌘R) — ведём на первый экран, как во Framer
     try { var nv = performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') location.replace('../') } catch (e) {}
     // пришли с первого экрана через ASCII-переход — сразу закрываем экран, чтобы ничего не мелькнуло
@@ -92,7 +92,7 @@
         <article class="ps__panel" aria-label="SCP LAB">
           <div class="ps__inner">
             <a class="ps__media" href="../projects/scplab/" aria-label="SCP LAB — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/scplab/01.jpg" data-alt="../assets/cases/scplab/01.png" data-fb="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="SCP LAB" loading="lazy" decoding="async">
+              <img src="../assets/cases/scplab/01.jpg" data-alt="../assets/cases/scplab/01.png|../assets/cases/scplab/01.jpeg|../assets/cases/scplab/01.webp" data-fb="https://framerusercontent.com/images/fqULlKVm54YGwLPSVUXGLnoKniw.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="SCP LAB" loading="lazy" decoding="async">
             </a>
             <div class="ps__top">
               <div class="ps__row"><span class="ps__num" data-rise>01</span><span class="ps__tag" data-rise>(Ux/ui design/b2c)</span></div>
@@ -105,7 +105,7 @@
         <article class="ps__panel" aria-label="FOODBOT">
           <div class="ps__inner">
             <a class="ps__media" href="../projects/foodbot/" aria-label="FOODBOT — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/foodbot/01.jpg" data-alt="../assets/cases/foodbot/01.png" data-fb="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="FOODBOT" loading="lazy" decoding="async">
+              <img src="../assets/cases/foodbot/01.jpg" data-alt="../assets/cases/foodbot/01.png|../assets/cases/foodbot/01.jpeg|../assets/cases/foodbot/01.webp" data-fb="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="FOODBOT" loading="lazy" decoding="async">
             </a>
             <div class="ps__top">
               <div class="ps__row"><span class="ps__num" data-rise>02</span><span class="ps__tag" data-rise>(Product design/b2b)</span></div>
@@ -117,7 +117,7 @@
         </article>
         <article class="ps__panel" aria-label="МОЙ ТИГР">
           <div class="ps__inner">
-            <a class="ps__media" href="../projects/mytiger/" aria-label="МОЙ ТИГР — открыть кейс" tabindex="-1"><img src="../assets/cases/mytiger/01.jpg" data-alt="../assets/cases/mytiger/01.png" alt="" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><div class="ps__soon">[ обложка скоро ]</div></a>
+            <a class="ps__media" href="../projects/mytiger/" aria-label="МОЙ ТИГР — открыть кейс" tabindex="-1"><img src="../assets/cases/mytiger/01.jpg" data-alt="../assets/cases/mytiger/01.png|../assets/cases/mytiger/01.jpeg|../assets/cases/mytiger/01.webp" alt="" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><div class="ps__soon">[ обложка скоро ]</div></a>
             <div class="ps__top">
               <div class="ps__row"><span class="ps__num" data-rise>03</span><span class="ps__tag" data-rise>(Web-design/b2c)</span></div>
               <div class="ps__tw"><h3 class="ps__title" data-rise>МОЙ ТИГР</h3></div>
@@ -129,7 +129,7 @@
         <article class="ps__panel" aria-label="VICI">
           <div class="ps__inner">
             <a class="ps__media" href="../projects/vici/" aria-label="VICI — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/vici/01.jpg" data-alt="../assets/cases/vici/01.png" data-fb="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="VICI" loading="lazy" decoding="async">
+              <img src="../assets/cases/vici/01.jpg" data-alt="../assets/cases/vici/01.png|../assets/cases/vici/01.jpeg|../assets/cases/vici/01.webp" data-fb="https://framerusercontent.com/images/tNWIAJEnslMHueEoKPUEZQmebic.jpeg?scale-down-to=2048" onerror="__img(this)" sizes="(min-width: 810px) 58vw, 100vw" alt="VICI" loading="lazy" decoding="async">
             </a>
             <div class="ps__top">
               <div class="ps__row"><span class="ps__num" data-rise>04</span><span class="ps__tag" data-rise>(Web-design/b2c)</span></div>

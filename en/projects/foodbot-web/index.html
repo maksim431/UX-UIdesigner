@@ -15,7 +15,7 @@
   <link rel="icon" href="../../../assets/img/logo.svg" type="image/svg+xml">
   <script>
     // image fallback: .png, then the old Framer image, else the placeholder
-    window.__img = function (i) { var d = i.dataset; if (d.alt) { var a = d.alt; delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
+    window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // arrived via the ASCII transition
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // scroll animations
@@ -85,7 +85,7 @@
             </li>
           </ol>
         </section>
-        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/01.jpg" data-alt="../../../assets/cases/foodbot/01.png" data-fb="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048" alt="FOODBOT — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">product design/b2b</span></div></figure>
+        <figure class="cs-fig cs-fig--cover" data-d="0" data-intro><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/01.jpg" data-alt="../../../assets/cases/foodbot/01.png|../../../assets/cases/foodbot/01.jpeg|../../../assets/cases/foodbot/01.webp" data-fb="https://framerusercontent.com/images/baR9Z3pLG3MyMmrmVvMf049rFGE.jpeg?scale-down-to=2048" alt="FOODBOT — case cover" width="1704" height="1278" fetchpriority="high" decoding="async" onerror="__img(this)"><span class="cs-fig__tag">product design/b2b</span></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s1"><ol><li><h3>Task</h3></li></ol></div>
           <div class="rt rt--body"><p>Build a dashboard that a café owner can figure out without technical knowledge. Setting up a bot should be as easy as filling in a social media profile.</p></div>
@@ -94,7 +94,7 @@
           <div class="rt rt--h3" id="s2"><ol start="2"><li><h3>Research</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>Who the users are. </strong>Owners of cafés, burger joints, sushi bars and coffee shops. They’re always on their feet and often miss orders because they don’t see notifications. So management has to be on the phone.</p><p><strong>What competitors offer. </strong>Lots of features, but no hints — the first launch takes hours. So the interface has to guide by the hand.</p><p><strong>What scares people. </strong>Words like “API token”. So technical steps need to be explained in plain words.</p></div>
         </div>
-        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/02.jpg" data-alt="../../../assets/cases/foodbot/02.png" data-fb="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=2048" alt="FOODBOT: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="1"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/02.jpg" data-alt="../../../assets/cases/foodbot/02.png|../../../assets/cases/foodbot/02.jpeg|../../../assets/cases/foodbot/02.webp" data-fb="https://framerusercontent.com/images/cUFcNgQduk3dOvTIRHBZWR2T9U.png?scale-down-to=2048" alt="FOODBOT: illustration 1" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s3"><ol start="3"><li><h3>Hypotheses</h3></li></ol></div>
           <div class="rt rt--body"><p><strong>A — more features than competitors.</strong> But it gets even more complicated.</p><p><strong>B — training videos and support.</strong> Helps, but loads support and doesn’t prevent missed orders.</p><p><strong>C — an interface that guides by itself.</strong> Simple steps, visual cards, hints and management right in Telegram.</p></div>
@@ -108,20 +108,20 @@
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol><li><p><strong>Connecting in 5 steps.</strong> Instead of one scary field — a clear guide. <strong>Why:</strong> people don’t abandon the service at the very first step.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/03.jpg" data-alt="../../../assets/cases/foodbot/03.png" data-fb="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=2048" alt="FOODBOT: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="2"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/03.jpg" data-alt="../../../assets/cases/foodbot/03.png|../../../assets/cases/foodbot/03.jpeg|../../../assets/cases/foodbot/03.webp" data-fb="https://framerusercontent.com/images/tSv1BUn5jHNPKGwNlQo6bd8YjPU.png?scale-down-to=2048" alt="FOODBOT: illustration 2" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="2"><li><p><strong>Screens for each situation.</strong> While there are no bots — one big “Create a bot” button, then cards and search come to the front. <strong>Why:</strong> a newcomer knows where to start, an experienced user works comfortably.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/04.jpg" data-alt="../../../assets/cases/foodbot/04.png" data-fb="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=2048" alt="FOODBOT: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
-          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/05.jpg" data-alt="../../../assets/cases/foodbot/05.png" data-fb="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=2048" alt="FOODBOT: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="3"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/04.jpg" data-alt="../../../assets/cases/foodbot/04.png|../../../assets/cases/foodbot/04.jpeg|../../../assets/cases/foodbot/04.webp" data-fb="https://framerusercontent.com/images/uIMFcluHSNt3rYOJ9l1YHyO7oJY.png?scale-down-to=2048" alt="FOODBOT: illustration 3" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="4"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/05.jpg" data-alt="../../../assets/cases/foodbot/05.png|../../../assets/cases/foodbot/05.jpeg|../../../assets/cases/foodbot/05.webp" data-fb="https://framerusercontent.com/images/GWKNdF7qipunGtKCmK1qTnMFw.png?scale-down-to=2048" alt="FOODBOT: illustration 4" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="3"><li><p><strong>Hints.</strong> Next to an unclear setting — an icon with an example. <strong>Why:</strong> no need to write to support.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/06.jpg" data-alt="../../../assets/cases/foodbot/06.png" data-fb="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=2048" alt="FOODBOT: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="5"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/06.jpg" data-alt="../../../assets/cases/foodbot/06.png|../../../assets/cases/foodbot/06.jpeg|../../../assets/cases/foodbot/06.webp" data-fb="https://framerusercontent.com/images/aUnJteA2LY7MAx5EKlLgHJeW6A.png?scale-down-to=2048" alt="FOODBOT: illustration 5" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
           <div class="cs-grp cs-grp--pb">
             <div class="rt rt--body"><ol start="4"><li><p><strong>Management in Telegram.</strong> Stop list, prices and orders — from the phone. <strong>Why:</strong> orders arrive where the owner already spends the whole day.</p></li></ol></div>
           </div>
-          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/07.jpg" data-alt="../../../assets/cases/foodbot/07.png" data-fb="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=2048" alt="FOODBOT: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+          <figure class="cs-fig" data-d="6"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/07.jpg" data-alt="../../../assets/cases/foodbot/07.png|../../../assets/cases/foodbot/07.jpeg|../../../assets/cases/foodbot/07.webp" data-fb="https://framerusercontent.com/images/Y0XEVBROjoccKRbHknu9Il5NFxQ.png?scale-down-to=2048" alt="FOODBOT: illustration 6" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         </div>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s6"><ol start="6"><li><h3>Presentation and defense</h3></li></ol></div>
@@ -131,12 +131,12 @@
           <div class="rt rt--h3" id="s7"><ol start="7"><li><h3>Handoff to development</h3></li></ol></div>
           <div class="rt rt--body"><p>I handed developers a clean file with a design system for all three platforms. New sections are added quickly and in a consistent style.</p></div>
         </div>
-        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/08.jpg" data-alt="../../../assets/cases/foodbot/08.png" data-fb="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=2048" alt="FOODBOT: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="7"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/08.jpg" data-alt="../../../assets/cases/foodbot/08.png|../../../assets/cases/foodbot/08.jpeg|../../../assets/cases/foodbot/08.webp" data-fb="https://framerusercontent.com/images/RUDYr51XZOzE3IeYUgegXhIYKIE.png?scale-down-to=2048" alt="FOODBOT: illustration 7" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp cs-grp--pb">
           <div class="rt rt--h3" id="s8"><ol start="8"><li><h3>Results</h3></li></ol></div>
           <div class="rt rt--body"><ul><li><p><strong>25% fewer</strong> people abandon the service at the start.</p></li><li><p><strong>30% faster</strong> first bot setup.</p></li><li><p><strong>20% fewer</strong> support requests.</p></li><li><p><strong>40% fewer missed orders.</strong></p></li><li><p><strong>20% faster</strong> development of new sections.</p></li></ul></div>
         </div>
-        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/09.jpg" data-alt="../../../assets/cases/foodbot/09.png" data-fb="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=2048" alt="FOODBOT: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
+        <figure class="cs-fig" data-d="8"><div class="cs-fig__box"><img src="../../../assets/cases/foodbot/09.jpg" data-alt="../../../assets/cases/foodbot/09.png|../../../assets/cases/foodbot/09.jpeg|../../../assets/cases/foodbot/09.webp" data-fb="https://framerusercontent.com/images/ydxqsNGwKRzaIfwlcusNXPoWGDA.png?scale-down-to=2048" alt="FOODBOT: illustration 8" width="1704" height="1278" loading="lazy" decoding="async" onerror="__img(this)"></div></figure>
         <div class="cs-grp">
           <div class="rt rt--h3" id="s9"><ol start="9"><li><h3>Where and how I used AI</h3></li></ol></div>
           <div class="rt rt--body"><ul><li><p><strong>Competitor analysis.</strong> Within minutes AI pulled the main problems out of guides and reviews — hours of manual analysis saved.</p></li><li><p><strong>Copy.</strong> It rewrote Telegram’s dry technical guide in simple words — I only had to edit it.</p></li><li><p><strong>Checking without an A/B test.</strong> With AI I built a tool that shows where users look. It confirmed the decisions — an expensive test wasn’t needed.</p></li><li><p><strong>Figma routine.</strong> An AI agent assembled draft Telegram screens and prepared the file for developers.</p></li></ul></div>
@@ -154,5 +154,6 @@
 
   <script src="../../../assets/js/case-layout.js"></script>
   <script type="module" src="../../../assets/js/case.js"></script>
+  <script src="../../../assets/js/lightbox.js" defer></script>
 </body>
 </html>
