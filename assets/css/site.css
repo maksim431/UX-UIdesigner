@@ -734,3 +734,5 @@ html.lb-open .ascii-cursor { display: none; }
 .hero__box { background: var(--deep); }
 @media (max-width: 809.98px) { .hero__box { background: var(--deep); } }
 .hero__portrait canvas.water { left: 50%; right: auto; width: auto; transform: translateX(-50%); }
+/* первый экран: по клику по воде можно бросить корм карпу */
+.hero__box.can-feed { cursor: pointer; }

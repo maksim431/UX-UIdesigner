@@ -77,6 +77,8 @@ export function mountWater(host, hud) {
     const ox = (W - FW) / 2
     return { x0: ox, x1: ox + FW, y0: 0, y1: H }
   }
+  const pellets = [] // корм: { x, y, t0, eaten }
+  let chase = 0, gulp = -9
   let px = -1, py = -1, entering = false, outside = 0, heading = 0, prevHeading = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
   // заход в кадр: снаружи со случайной стороны, курс — на случайную точку в середине фрейма
   function respawn() {
@@ -109,17 +111,35 @@ export function mountWater(host, hud) {
     const inset = len * 0.22
     const inside = px > f.x0 + inset && px < f.x1 - inset && py > f.y0 + inset && py < f.y1 - inset
     if (entering && inside) entering = false
-    const w = entering ? 0 : 0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)
+    // корм: если на воде есть пиксель — карп поворачивает к ближайшему и ускоряется
+    const hx0 = px + Math.sin(heading) * len * 0.45, hy0 = py - Math.cos(heading) * len * 0.45
+    let food = null, best = Infinity
+    for (const q of pellets) {
+      if (q.eaten >= 0) continue
+      const dd = Math.hypot(q.x - hx0, q.y - hy0)
+      if (dd < best) { best = dd; food = q }
+    }
+    chase += ((food ? 1 : 0) - chase) * Math.min(1, dt * 2)
+    if (food) {
+      entering = false
+      let dd = Math.atan2(food.x - hx0, -(food.y - hy0)) - heading
+      while (dd > Math.PI) dd -= 2 * Math.PI
+      while (dd < -Math.PI) dd += 2 * Math.PI
+      heading += clamp(dd, -1.9 * dt, 1.9 * dt)
+      // доплыл — «съедает»
+      if (best < len * 0.09) { food.eaten = t; gulp = t }
+    }
+    const w = entering ? 0 : (0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)) * (1 - 0.85 * chase)
     heading += w * dt
-    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed))
+    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed)) * (1 + 0.8 * chase)
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
-    // целиком ушёл за край — появляется с другой (случайной) стороны
+    // целиком ушёл за край — появляется с другой (случайной) стороны (но не пока плывёт за кормом)
     const m = len * 0.62
     // не тянем время, если он плывёт вдоль края снаружи
     const out = px < f.x0 || px > f.x1 || py < f.y0 || py > f.y1
-    outside = out && !entering ? outside + dt : 0
-    if (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m || outside > 2.5) respawn()
+    outside = out && !entering && !food ? outside + dt : 0
+    if (!food && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m || outside > 2.5)) respawn()
     let dh = heading - prevHeading
     while (dh > Math.PI) dh -= 2 * Math.PI
     while (dh < -Math.PI) dh += 2 * Math.PI
@@ -369,6 +389,29 @@ export function mountWater(host, hud) {
       }
     }
     lctx.globalAlpha = 1
+    // корм: маленький светящийся пиксель; появляется с лёгким «плюхом», при поедании вспыхивает и исчезает
+    for (let k = pellets.length - 1; k >= 0; k--) {
+      const q = pellets[k]
+      const age = t - q.t0
+      let sz = tile * 0.72 * Math.min(1, age * 4) * (1 + 0.08 * Math.sin(t * 5 + q.t0))
+      let a = 1
+      if (q.eaten >= 0) {
+        const e = (t - q.eaten) / 0.35
+        if (e >= 1 || e < 0) { pellets.splice(k, 1); continue }
+        sz *= 1 + e * 0.6
+        a = 1 - e
+      }
+      const x = q.x * sc, y = q.y * sc, r = sz * sc
+      const hg = lctx.createRadialGradient(x, y, 0, x, y, r * 3)
+      hg.addColorStop(0, 'rgba(200,250,255,' + (0.55 * a).toFixed(3) + ')')
+      hg.addColorStop(1, 'rgba(120,200,255,0)')
+      lctx.fillStyle = hg
+      lctx.fillRect(x - r * 3, y - r * 3, r * 6, r * 6)
+      lctx.globalAlpha = a
+      lctx.fillStyle = '#f2fdff'
+      lctx.fillRect(Math.round(x - r / 2), Math.round(y - r / 2), Math.round(r), Math.round(r))
+      lctx.globalAlpha = 1
+    }
 
     // мягкий ореол-размытие под плитками (края силуэта расплываются)
     g2.clearRect(0, 0, b2.width, b2.height)
@@ -443,6 +486,23 @@ export function mountWater(host, hud) {
   const ro = new ResizeObserver(resize)
   ro.observe(host)
   window.addEventListener('resize', resize)
+  // клик/тап по фрейму — бросить корм (не больше трёх пикселей одновременно)
+  const box = host.parentElement || host
+  box.classList.add('can-feed')
+  box.addEventListener('click', (e) => {
+    if (e.target.closest && e.target.closest('a, button')) return
+    if (reduce && reduce.matches) return
+    if (pellets.filter((q) => q.eaten < 0).length >= 3) return
+    const r = canvas.getBoundingClientRect()
+    const x = ((e.clientX - r.left) / r.width) * W
+    const y = ((e.clientY - r.top) / r.height) * H
+    pellets.push({ x, y, t0: last, eaten: -1 })
+    // от упавшего пикселя расходится маленький круг
+    for (let k = 0; k < 14; k++) {
+      const a = (k / 14) * Math.PI * 2
+      wake.push({ x, y, nx: Math.cos(a), ny: Math.sin(a), v: len * 0.12, t0: last, a: 0.5, life: 1.6 })
+    }
+  })
   const io = new IntersectionObserver((e) => { visible = e[0].isIntersecting; update() })
   io.observe(host)
   document.addEventListener('visibilitychange', update)
