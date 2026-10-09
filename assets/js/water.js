@@ -106,8 +106,8 @@ export function mountWater(host, hud) {
     }
     const r = Math.random()
     if (r < 0.2) { segSp = 0.55 + Math.random() * 0.2; segTurn = 0.45 } // неспешное скольжение
-    else if (r < 0.35) { segSp = 1.5 + Math.random() * 0.4; segTurn = 0.95 } // рывок
-    else { segSp = 0.85 + Math.random() * 0.35; segTurn = 0.6 + Math.random() * 0.3 }
+    else if (r < 0.35) { segSp = 1.5 + Math.random() * 0.4; segTurn = 1.15 } // рывок
+    else { segSp = 0.85 + Math.random() * 0.35; segTurn = 0.65 + Math.random() * 0.4 }
     segUntil = t + 14 + Math.random() * 10 // если цель «не даётся» — выбираем новую
   }
   // уйти за край: цель — точка за ближайшим (или случайным) краем
@@ -146,6 +146,7 @@ export function mountWater(host, hud) {
     entering = true
     leaving = false
     segSp = 1.2; segTurn = 0.6; segUntil = t + 30
+    resetTrail()
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
   function step(t) {
@@ -186,7 +187,10 @@ export function mountWater(host, hud) {
     const dist = Math.hypot(tx - hx0, ty - hy0)
     if (dist < len * 0.9) slow = clamp(0.35 + 0.65 * Math.max(0, Math.cos(ang)), 0.35, 1)
     // инерция поворота: угловая скорость меняется плавно — никаких резких разворотов
-    omega += clamp(want - omega, -0.7 * dt, 0.7 * dt)
+    omega += clamp(want - omega, -1.5 * dt, 1.5 * dt)
+    // радиус поворота не меньше ~четверти длины тела — тело гнётся дугой, а не складывается
+    const maxO = 0.5 * Math.max(0.5, spCur)
+    omega = clamp(omega, -maxO, maxO)
     heading = wrap(heading + omega * dt)
     // скорость тоже меняется плавно (разгон и торможение)
     const target = (food ? 1.7 : segSp) * slow
@@ -198,24 +202,79 @@ export function mountWater(host, hud) {
     const m = hidden()
     if (!food && !entering && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m)) respawn(t)
     turn = omega
+    pushTrail()
     // частота взмахов хвоста растёт со скоростью
     phase += dt * (2.4 + 5 * clamp(sp / len, 0, 1.2))
     lastT = t
     return { x: px, y: py, sp }
   }
 
-  // поза: волна по телу (амплитуда растёт к хвосту) + изгиб на повороте + поворот по курсу
-  function poseFn(st) {
-    const c = Math.cos(heading), s = Math.sin(heading)
-    const bendTurn = clamp(-turn * 0.55, -0.18, 0.18)
-    return (x, y, k) => {
-      const u = y + 0.5 // 0 у головы, 1 у хвоста
-      const amp = 0.018 + 0.11 * u * u
-      let bx = x + amp * Math.sin(u * 5.2 - phase) + bendTurn * u * u
-      if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
-      return [st.x + (bx * c - y * s) * len, st.y + (bx * s + y * c) * len]
+  // тело следует за головой по её пути (как у настоящей рыбы): позвоночник — это след головы.
+  // Поворачивает влево — тело выгибается вправо, частые смены курса — тело гибко «змеится».
+  // Поверх — волна от головы к хвосту (амплитуда растёт к хвосту).
+  const trail = [] // точки пути кончика головы, новые — в конце
+  function headTip() { return [px + Math.sin(heading) * len * 0.5, py - Math.cos(heading) * len * 0.5] }
+  function resetTrail() {
+    trail.length = 0
+    const [hx, hy] = headTip()
+    const dx = Math.sin(heading), dy = -Math.cos(heading)
+    for (let k = 40; k >= 0; k--) trail.push([hx - dx * k * len * 0.03, hy - dy * k * len * 0.03])
+  }
+  function pushTrail() {
+    const h = headTip()
+    const l = trail[trail.length - 1]
+    if (!l) { resetTrail(); return }
+    const d = Math.hypot(h[0] - l[0], h[1] - l[1])
+    if (d > len * 0.5) { resetTrail(); return } // скачок (новое появление) — путь заново
+    if (d > len * 0.008) trail.push(h)
+    else trail[trail.length - 1] = h
+    // храним путь чуть длиннее тела
+    let acc = 0
+    for (let i = trail.length - 1; i > 0; i--) {
+      acc += Math.hypot(trail[i][0] - trail[i - 1][0], trail[i][1] - trail[i - 1][1])
+      if (acc > len * 1.35) { trail.splice(0, i - 1); break }
     }
   }
+  function poseFn(st) {
+    // накопленная длина пути от головы назад
+    const n = trail.length
+    const cum = new Float32Array(n)
+    for (let i = n - 2; i >= 0; i--) cum[i] = cum[i + 1] + Math.hypot(trail[i + 1][0] - trail[i][0], trail[i + 1][1] - trail[i][1])
+    const total = cum[0]
+    const bx0 = -Math.sin(heading), by0 = Math.cos(heading) // назад по курсу (если пути не хватает)
+    let j = n - 1
+    // точка позвоночника на расстоянии d от головы и касательная там
+    const spine = (d) => {
+      if (d >= total) {
+        const e = d - total, q = trail[0]
+        const q2 = trail[Math.min(1, n - 1)]
+        let tx = q2[0] - q[0], ty = q2[1] - q[1]
+        const tl = Math.hypot(tx, ty) || 1
+        tx = tl > 0.001 ? tx / tl : -bx0; ty = tl > 0.001 ? ty / tl : -by0
+        return [q[0] - tx * e, q[1] - ty * e, tx, ty]
+      }
+      let i = n - 1
+      while (i > 0 && cum[i - 1] < d) i--
+      // между trail[i-1] (дальше) и trail[i] (ближе к голове)
+      const a = trail[i - 1] || trail[i], b = trail[i]
+      const seg = (cum[i - 1] - cum[i]) || 1
+      const f = (d - cum[i]) / seg
+      let tx = b[0] - a[0], ty = b[1] - a[1]
+      const tl = Math.hypot(tx, ty) || 1
+      tx /= tl; ty /= tl
+      return [b[0] + (a[0] - b[0]) * f, b[1] + (a[1] - b[1]) * f, tx, ty]
+    }
+    return (x, y, k) => {
+      const u = clamp(y + 0.5, 0, 1.1) // 0 у головы, 1 у хвоста
+      const amp = 0.012 + 0.085 * u * u
+      let bx = x + amp * Math.sin(u * 5.2 - phase)
+      if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
+      const [sx, sy, tx, ty] = spine((y + 0.5) * len)
+      // нормаль вправо от направления движения
+      return [sx - ty * bx * len, sy + tx * bx * len]
+    }
+  }
+
 
   function resize() {
     FW = Math.max(1, host.clientWidth)

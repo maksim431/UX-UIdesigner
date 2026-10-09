@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountWater } from './water.js?v=12'
+import { mountWater } from './water.js?v=13'
 import { initProjects } from './projects.js'
 import { initSmoothScroll, scrollToY } from './smooth.js'
 
@@ -85,7 +85,6 @@ function heroScroll() {
   const g = easeOut(clamp(p * 3, 0, 1))
   box.style.setProperty('--gl', p > 0 ? (g * gapL).toFixed(1) + 'px' : '0px')
   box.style.setProperty('--gr', p > 0 ? (g * gapR).toFixed(1) + 'px' : '0px')
-  if (hint) hint.style.translate = p ? '0 ' + (-p * 60).toFixed(1) + 'px' : ''
   heroTexts.forEach((el, i) => {
     // параллакс: каждый текст уезжает вверх со своей скоростью (data-par)
     const k = parseFloat(el.dataset.par || '') || 1 + i * 0.25
@@ -103,7 +102,6 @@ function hdrState() {
 hdrState()
 window.addEventListener('scroll', hdrState, { passive: true })
 window.addEventListener('resize', hdrState)
-const hint = document.querySelector('.hero__hint')
 
 window.addEventListener(
   'scroll',

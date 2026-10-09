@@ -788,3 +788,15 @@ html.lb-open .ascii-cursor { display: none; }
 .hdr--home.is-hero:not(.is-open) .hdr__burger svg { stroke: #fff; }
 @media (max-width: 1199.98px) { .hdr--home.is-hero:not(.is-open) .hdr__bar { gap: 32px; transform: translateY(8px); } }
 @media (max-width: 809.98px) { .hdr--home.is-hero:not(.is-open) .hdr__bar { gap: 24px; transform: translateY(4px); } }
+
+/* подсказка про корм — под текстом справа (Figma 1899:1243) */
+.hero__note { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.hero .hero__note .hero__hint { position: static; transform: none; left: auto; top: auto; margin: 0; font-size: 12px; line-height: 1.2; text-transform: lowercase; white-space: normal; }
+@media (max-width: 809.98px) { .hero__note { gap: 8px; } }
+
+/* планшет и телефон: выбор языка — в открытом меню, в шапке его нет */
+.contacts__lang { display: none; margin-top: 8px; font-size: 24px; line-height: 1.2; }
+@media (max-width: 1199.98px) {
+  .hdr .lang { display: none; }
+  .contacts .contacts__lang { display: flex; margin-right: 0; }
+}
