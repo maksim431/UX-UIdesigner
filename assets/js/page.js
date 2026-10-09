@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountCovers } from './covers.js'
+import { mountCovers } from './covers.js?v=1'
 import { initProjects } from './projects.js'
 import { initSmoothScroll, scrollToY } from './smooth.js'
 
