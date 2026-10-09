@@ -75,38 +75,86 @@ export function mountWater(host, hud) {
   // фрейм в координатах canvas (canvas шире фрейма и стоит по центру)
   function frameBox() {
     const ox = (W - FW) / 2
-    return { x0: ox, x1: ox + FW, y0: 0, y1: H }
+    // видимая часть: по высоте — не ниже окна (первый экран выше окна на 20%)
+    return { x0: ox, x1: ox + FW, y0: 0, y1: Math.min(H, window.innerHeight || H) }
   }
   const pellets = [] // корм: { x, y, t0, eaten }
   let chase = 0, gulp = -9
-  let px = -1, py = -1, entering = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
+  // ~80% времени карп гуляет в кадре (у краёв мягко отворачивает), затем уплывает за край и заходит снова
+  // поведение: «гуляет» по видимой части фрейма между случайными точками (разная скорость и характер
+  // каждого отрезка: неспешное скольжение, рывок, почти зависание с лёгким дрейфом); примерно в каждом
+  // шестом-седьмом выборе — уплывает за край, а через мгновение заплывает с случайной стороны.
+  // В итоге около 80% времени карп в кадре и около 20% — за его пределами.
+  let px = -1, py = -1, entering = false, leaving = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
+  let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0
   // запас за краем, при котором карп (с плавниками, хвостом и свечением) уже целиком не виден
-  const hidden = () => len * 0.75
-  // заход в кадр: снаружи со случайной стороны, курс — на случайную точку в середине фрейма
-  function respawn() {
+  const hidden = () => len * 0.68
+  // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
+  function viewBox() {
     const f = frameBox()
+    return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.2 }
+  }
+  // новая цель «прогулки»: случайная точка внутри видимой области, не слишком близко к краю
+  function pickWaypoint(t) {
+    const v = viewBox()
+    const mx = Math.min(len * 0.55, (v.x1 - v.x0) * 0.3), my = Math.min(len * 0.55, (v.y1 - v.y0) * 0.3)
+    // не ближе ~0.6 длины тела к текущей точке, чтобы получался заметный путь
+    for (let k = 0; k < 8; k++) {
+      wx = v.x0 + mx + Math.random() * (v.x1 - v.x0 - 2 * mx)
+      wy = v.y0 + my + Math.random() * (v.y1 - v.y0 - 2 * my)
+      if (Math.hypot(wx - px, wy - py) > len * 0.6) break
+    }
+    const r = Math.random()
+    if (r < 0.2) { segSp = 0.55 + Math.random() * 0.2; segTurn = 0.45 } // неспешное скольжение
+    else if (r < 0.35) { segSp = 1.5 + Math.random() * 0.4; segTurn = 0.95 } // рывок
+    else { segSp = 0.85 + Math.random() * 0.35; segTurn = 0.6 + Math.random() * 0.3 }
+    segUntil = t + 14 + Math.random() * 10 // если цель «не даётся» — выбираем новую
+  }
+  // уйти за край: цель — точка за ближайшим (или случайным) краем
+  function pickExit() {
+    const f = frameBox()
+    const m = hidden() * 1.6
+    const side = Math.random() < 0.6 ? nearestSide() : Math.floor(Math.random() * 4)
+    const k = 0.2 + Math.random() * 0.6
+    if (side === 0) { wx = f.x0 + (f.x1 - f.x0) * k; wy = f.y0 - m }
+    else if (side === 1) { wx = f.x1 + m; wy = f.y0 + (f.y1 - f.y0) * k }
+    else if (side === 2) { wx = f.x0 + (f.x1 - f.x0) * k; wy = f.y1 + m }
+    else { wx = f.x0 - m; wy = f.y0 + (f.y1 - f.y0) * k }
+    segSp = 1.15; segTurn = 0.6
+    leaving = true
+  }
+  function nearestSide() {
+    const v = viewBox()
+    const d = [py - v.y0, v.x1 - px, v.y1 - py, px - v.x0]
+    return d.indexOf(Math.min(...d))
+  }
+  // заход в кадр: снаружи со случайной стороны, курс — на случайную точку в видимой части
+  function respawn(t) {
+    const f = frameBox(), v = viewBox()
     const m = hidden()
     const side = Math.floor(Math.random() * 4)
     const k = 0.15 + Math.random() * 0.7
     if (side === 0) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y0 - m }
-    else if (side === 1) { px = f.x1 + m; py = f.y0 + (f.y1 - f.y0) * k }
+    else if (side === 1) { px = f.x1 + m; py = v.y0 + (v.y1 - v.y0) * k }
     else if (side === 2) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y1 + m }
-    else { px = f.x0 - m; py = f.y0 + (f.y1 - f.y0) * k }
-    const tx = f.x0 + (f.x1 - f.x0) * (0.3 + Math.random() * 0.4)
-    const ty = f.y0 + (f.y1 - f.y0) * (0.3 + Math.random() * 0.4)
-    heading = Math.atan2(tx - px, -(ty - py))
+    else { px = f.x0 - m; py = v.y0 + (v.y1 - v.y0) * k }
+    wx = v.x0 + (v.x1 - v.x0) * (0.3 + Math.random() * 0.4)
+    wy = v.y0 + (v.y1 - v.y0) * (0.3 + Math.random() * 0.4)
+    heading = Math.atan2(wx - px, -(wy - py))
     omega = 0
     seed = Math.random() * 100
     entering = true
+    leaving = false
+    segSp = 1.2; segTurn = 0.6; segUntil = t + 30
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
   function step(t) {
-    const f = frameBox()
-    if (px < 0 && py < 0) respawn() // первый показ — тоже заплывает из-за края
+    const f = frameBox(), v = viewBox()
+    if (px < 0 && py < 0) respawn(t) // первый показ — тоже заплывает из-за края
     const dt = lastT < 0 ? 0 : clamp(t - lastT, 0, 0.1)
-    const inset = len * 0.22
-    const inside = px > f.x0 + inset && px < f.x1 - inset && py > f.y0 + inset && py < f.y1 - inset
-    if (entering && inside) entering = false
+    const inset = len * 0.3
+    const inside = px > v.x0 + inset && px < v.x1 - inset && py > v.y0 + inset && py < v.y1 - inset
+    if (entering && inside) { entering = false; pickWaypoint(t) }
     // голова и ближайший корм
     const hx0 = px + Math.sin(heading) * len * 0.45, hy0 = py - Math.cos(heading) * len * 0.45
     let food = null, best = Infinity
@@ -116,36 +164,39 @@ export function mountWater(host, hud) {
       if (dd < best) { best = dd; food = q }
     }
     chase += ((food ? 1 : 0) - chase) * Math.min(1, dt * 1.2)
-    // желаемая скорость поворота: за кормом — к корму, иначе — плавные петли;
-    // если центр уже за краем — продолжает уходить наружу (без разворота обратно в кадр)
-    let want, slow = 1
+    let tx, ty, maxTurn, slow = 1
     if (food) {
       entering = false
-      const ang = wrap(Math.atan2(food.x - hx0, -(food.y - hy0)) - heading)
-      want = clamp(ang * 0.9, -0.85, 0.85)
-      // корм рядом, но сбоку — притормаживает, чтобы развернуться, а не кружить вокруг
-      if (best < len * 0.8) slow = clamp(0.3 + 0.7 * Math.max(0, Math.cos(ang)), 0.3, 1)
-      if (best < len * 0.09) { food.eaten = t; gulp = t }
-    } else if (entering) {
-      want = 0
+      leaving = false
+      tx = food.x; ty = food.y; maxTurn = 0.85
+      if (best < len * 0.09) { food.eaten = t; gulp = t; pickWaypoint(t) }
     } else {
-      want = 0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)
-      const out = px < f.x0 || px > f.x1 || py < f.y0 || py > f.y1
-      if (out) {
-        // направление «наружу» от фрейма: не даём завернуть обратно у самого края
-        const ox = px < f.x0 ? -1 : px > f.x1 ? 1 : 0, oy = py < f.y0 ? -1 : py > f.y1 ? 1 : 0
-        want = clamp(wrap(Math.atan2(ox, -oy) - heading) * 0.6, -0.5, 0.5)
+      // цель прогулки достигнута (или «не даётся» слишком долго) — следующая цель или уход
+      if (!entering && !leaving && (Math.hypot(wx - hx0, wy - hy0) < len * 0.35 || t > segUntil)) {
+        if (Math.random() < 0.14) pickExit()
+        else pickWaypoint(t)
       }
+      tx = wx; ty = wy; maxTurn = segTurn
     }
+    const ang = wrap(Math.atan2(tx - hx0, -(ty - hy0)) - heading)
+    // лёгкое «виляние» поверх курса — путь не идеально прямой
+    const wobble = 0.14 * Math.sin(t * 0.7 + seed) + 0.08 * Math.sin(t * 1.9 + seed * 2.3)
+    const want = clamp(ang * 0.9, -maxTurn, maxTurn) + (food ? 0 : wobble)
+    // цель рядом, но сбоку — притормаживает и доворачивает, а не кружит вокруг
+    const dist = Math.hypot(tx - hx0, ty - hy0)
+    if (dist < len * 0.9) slow = clamp(0.35 + 0.65 * Math.max(0, Math.cos(ang)), 0.35, 1)
     // инерция поворота: угловая скорость меняется плавно — никаких резких разворотов
     omega += clamp(want - omega, -0.7 * dt, 0.7 * dt)
     heading = wrap(heading + omega * dt)
-    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed)) * (1 + 0.7 * chase) * slow
+    // скорость тоже меняется плавно (разгон и торможение)
+    const target = (food ? 1.7 : segSp) * slow
+    spCur += (target - spCur) * Math.min(1, dt * 0.8)
+    const sp = len * 0.12 * spCur * (1 + 0.12 * Math.sin(t * 0.37 + seed))
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
     // новое появление — только когда карп целиком скрылся за краем (и не плывёт за кормом)
     const m = hidden()
-    if (!food && !entering && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m)) respawn()
+    if (!food && !entering && (px < f.x0 - m || px > f.x1 + m || py < f.y0 - m || py > f.y1 + m)) respawn(t)
     turn = omega
     // частота взмахов хвоста растёт со скоростью
     phase += dt * (2.4 + 5 * clamp(sp / len, 0, 1.2))
@@ -184,7 +235,8 @@ export function mountWater(host, hud) {
     b16.width = Math.max(1, canvas.width >> 4); b16.height = Math.max(1, canvas.height >> 4)
     const phone = FW < 810
     tile = phone ? 9 : FW < 1200 ? 11 : 12
-    len = phone ? Math.min(H * 0.4, FW * 0.95) : Math.min(H * 0.5, FW * 0.34)
+    const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
+    len = phone ? Math.min(visH * 0.42, FW * 0.78) : Math.min(visH * 0.46, FW * 0.3)
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     mask.width = tcols
