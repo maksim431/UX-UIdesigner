@@ -86,7 +86,9 @@ export function mountWater(host, hud) {
   // шестом-седьмом выборе — уплывает за край, а через мгновение заплывает с случайной стороны.
   // В итоге около 80% времени карп в кадре и около 20% — за его пределами.
   let px = -1, py = -1, entering = false, leaving = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
-  let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0, segBurst = false, kick = 0
+  let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0
+  // vigor — сила движений тела (0…1): от неё жёстко зависят и взмахи хвоста, и резкость поворотов, и скорость
+  let vigor = 0.2, calm = 0.2, burstUntil = -1, ampK = 1
   // запас за краем, при котором карп (с плавниками, хвостом и свечением) уже целиком не виден
   const hidden = () => len * 0.68
   // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
@@ -104,12 +106,9 @@ export function mountWater(host, hud) {
       wy = v.y0 + my + Math.random() * (v.y1 - v.y0 - 2 * my)
       if (Math.hypot(wx - px, wy - py) > len * 0.6) break
     }
-    // ~30% отрезков — «рывок»: резкий поворот корпусом и ускорение; остальные — спокойные
-    const r = Math.random()
-    segBurst = r < 0.3
-    if (segBurst) { segSp = 1.25 + Math.random() * 0.3; segTurn = 1.15 }
-    else if (r < 0.55) { segSp = 0.55 + Math.random() * 0.2; segTurn = 0.4 } // неспешное скольжение
-    else { segSp = 0.8 + Math.random() * 0.3; segTurn = 0.45 + Math.random() * 0.2 }
+    // «бодрость» отрезка: чаще всего спокойное плавание, изредка — рывок всем телом
+    calm = 0.12 + Math.random() * 0.2
+    if (Math.random() < 0.16) burstUntil = t + 0.9 + Math.random() * 0.8
     segUntil = t + 14 + Math.random() * 10 // если цель «не даётся» — выбираем новую
   }
   // уйти за край: цель — точка за ближайшим (или случайным) краем
@@ -122,7 +121,7 @@ export function mountWater(host, hud) {
     else if (side === 1) { wx = f.x1 + m; wy = f.y0 + (f.y1 - f.y0) * k }
     else if (side === 2) { wx = f.x0 + (f.x1 - f.x0) * k; wy = f.y1 + m }
     else { wx = f.x0 - m; wy = f.y0 + (f.y1 - f.y0) * k }
-    segSp = 1.15; segTurn = 0.6
+    calm = 0.3
     leaving = true
   }
   function nearestSide() {
@@ -147,7 +146,7 @@ export function mountWater(host, hud) {
     seed = Math.random() * 100
     entering = true
     leaving = false
-    segSp = 1.2; segTurn = 0.6; segUntil = t + 30
+    calm = 0.3; segUntil = t + 30
     resetTrail()
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
@@ -167,11 +166,11 @@ export function mountWater(host, hud) {
       if (dd < best) { best = dd; food = q }
     }
     chase += ((food ? 1 : 0) - chase) * Math.min(1, dt * 1.2)
-    let tx, ty, maxTurn, slow = 1
+    let tx, ty, slow = 1, vT
     if (food) {
       entering = false
       leaving = false
-      tx = food.x; ty = food.y; maxTurn = 0.85
+      tx = food.x; ty = food.y; vT = 0.65
       if (best < len * 0.09) { food.eaten = t; gulp = t; pickWaypoint(t) }
     } else {
       // цель прогулки достигнута (или «не даётся» слишком долго) — следующая цель или уход
@@ -179,29 +178,29 @@ export function mountWater(host, hud) {
         if (Math.random() < 0.14) pickExit()
         else pickWaypoint(t)
       }
-      tx = wx; ty = wy; maxTurn = segTurn
+      tx = wx; ty = wy
+      vT = t < burstUntil ? 1 : entering || leaving ? Math.max(calm, 0.35) : calm
     }
     const ang = wrap(Math.atan2(tx - hx0, -(ty - hy0)) - heading)
-    // лёгкое «виляние» поверх курса — путь не идеально прямой
-    // лёгкое виляние курса; в спокойных отрезках — едва заметное, чтобы не было лишних резких движений
-    const wobble = (segBurst ? 1 : 0.45) * (0.14 * Math.sin(t * 0.7 + seed) + 0.08 * Math.sin(t * 1.9 + seed * 2.3))
-    const want = clamp(ang * 0.9, -maxTurn, maxTurn) + (food ? 0 : wobble)
-    // цель рядом, но сбоку — притормаживает и доворачивает, а не кружит вокруг
     const dist = Math.hypot(tx - hx0, ty - hy0)
-    if (dist < len * 0.9) slow = clamp(0.35 + 0.65 * Math.max(0, Math.cos(ang)), 0.35, 1)
-    // инерция поворота: угловая скорость меняется плавно — никаких резких разворотов
-    omega += clamp(want - omega, -1.5 * dt, 1.5 * dt)
-    // радиус поворота не меньше ~четверти длины тела — тело гнётся дугой, а не складывается
-    const maxO = 0.5 * Math.max(0.5, spCur)
-    omega = clamp(omega, -maxO, maxO)
+    // цель рядом, но сбоку — тело работает тише (и он медленнее), доворачивая к цели
+    if (dist < len * 0.9) slow = clamp(0.45 + 0.55 * Math.max(0, Math.cos(ang)), 0.45, 1)
+    // сила движений: рывок разгоняется быстро, успокоение — плавное
+    vigor += (vT - vigor) * Math.min(1, dt * (vT > vigor ? 5 : 0.9))
+    const ve = clamp(vigor * slow, 0.06, 1)
+    // ЖЁСТКАЯ СВЯЗЬ: резкость поворота, взмахи хвоста и скорость — всё от одной силы движений v
+    const maxTurn = 0.18 + 1.05 * ve
+    const wobble = ve * (0.12 * Math.sin(t * 0.7 + seed) + 0.07 * Math.sin(t * 1.9 + seed * 2.3))
+    const want = clamp(ang * 0.9, -maxTurn, maxTurn) + (food ? 0 : wobble)
+    omega += clamp(want - omega, -(0.4 + 2.2 * ve) * dt, (0.4 + 2.2 * ve) * dt)
+    omega = clamp(omega, -maxTurn, maxTurn)
     heading = wrap(heading + omega * dt)
-    // скорость тоже меняется плавно (разгон и торможение)
-    // резкое движение корпусом (быстрый поворот) — короткое ускорение, которое затем плавно спадает
-    const sharp = clamp((Math.abs(omega) - 0.35) / 0.5, 0, 1)
-    kick = Math.max(kick * Math.pow(0.35, dt), sharp)
-    const target = (food ? 1.7 : segSp) * slow * (1 + 0.9 * kick)
-    spCur += (target - spCur) * Math.min(1, dt * (target > spCur ? 2.2 : 0.8)) // разгон быстрый, торможение плавное
-    const sp = len * 0.12 * spCur * (1 + 0.12 * Math.sin(t * 0.37 + seed))
+    // резкий поворот корпусом сам добавляет силы — и скорости
+    const turnV = clamp(Math.abs(omega) / 1.2, 0, 1)
+    const drive = Math.max(ve, turnV)
+    ampK = 0.55 + 0.9 * drive
+    const sp = len * (0.03 + 0.24 * drive)
+    spCur = sp / (len * 0.12)
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
     // новое появление — только когда карп целиком скрылся за краем (и не плывёт за кормом)
@@ -210,7 +209,7 @@ export function mountWater(host, hud) {
     turn = omega
     pushTrail()
     // частота взмахов хвоста растёт со скоростью
-    phase += dt * (2.4 + 5 * clamp(sp / len, 0, 1.2))
+    phase += dt * (1.5 + 10 * drive) // частота взмахов — от силы движений
     lastT = t
     return { x: px, y: py, sp }
   }
@@ -285,7 +284,7 @@ export function mountWater(host, hud) {
     }
     return (x, y, k) => {
       const u = clamp(y + 0.5, 0, 1.1) // 0 у головы, 1 у хвоста
-      const amp = 0.012 + 0.085 * u * u
+      const amp = (0.012 + 0.085 * u * u) * ampK
       let bx = x + amp * Math.sin(u * 5.2 - phase)
       if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
       const [sx, sy, tx, ty] = spine((y + 0.5) * len)
