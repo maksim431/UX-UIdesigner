@@ -34,18 +34,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/site.css?v=3">
   <link rel="prefetch" href="assets/js/water.js">
 </head>
 <body>
   <nav class="lang fs-lang" aria-label="Язык"><span aria-current="true">ru</span><i aria-hidden="true">/</i><a href="en/" hreflang="en" lang="en" data-lang="en" data-scramble="140">en</a></nav>
   <main class="fs">
-    <div class="fs-wrap">
-      <p class="fs-eyebrow" data-rv="1">приветствую! ответьте только на один вопрос, от него зависит какую версию портфолио вы увидите</p>
-      <h1 class="fs-h1" data-rv="2">вам знакомы термины <span class="t">«cjm»</span>, <span class="t">«jtbd»</span>, <span class="t">«retention»</span>, <span class="t">«ltv»</span> и <span class="t">«a/b-тест»</span>?<span class="fs-caret" aria-hidden="true">_</span></h1>
-      <div class="fs-btns" data-rv="3">
-        <a class="btn fs-btn" href="product/" data-go data-scramble="90">да</a>
-        <a class="btn fs-btn" href="web/" data-go data-scramble="90">нет</a>
+    <div class="fs-wrap fs-choice">
+      <div class="fs-head" data-rv="1">
+        <h1 class="fs-hi">привет!</h1>
+        <p class="fs-sub">выберите версию портфолио по интересам</p>
+      </div>
+      <div class="fs-cards" data-rv="2">
+        <a class="fs-opt" href="product/" data-go data-scramble="90">
+          <span class="fs-opt__txt">мне интересны последовательность действий в работе, метрики, «cjm», «jtbd», «retention», «ltv»<br>и другие термины</span>
+          <span class="btn fs-btn fs-opt__btn" data-scramble-text>выбрать</span>
+        </a>
+        <a class="fs-opt" href="web/" data-go data-scramble="90">
+          <span class="fs-opt__txt">я хочу просто покормить карпа<br>и посмотреть картинки</span>
+          <span class="btn fs-btn fs-opt__btn" data-scramble-text>выбрать</span>
+        </a>
       </div>
     </div>
   </main>

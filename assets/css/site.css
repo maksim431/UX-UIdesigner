@@ -808,3 +808,34 @@ html.lb-open .ascii-cursor { display: none; }
 @media (max-width: 809.98px) { .hero__foot { bottom: calc(20svh + 24px); } }
 /* плавный параллакс: двигаются только transform/opacity, на отдельных слоях */
 .hero__portrait, .hero__label, .hero__note { will-change: translate, opacity; }
+
+/* первый экран (макет 1899:1246): «привет!» + две карточки выбора версии портфолио */
+.fs-choice { max-width: none; width: auto; gap: 56px; padding: 96px 16px; align-items: stretch; text-align: left; }
+.fs-head { display: flex; flex-direction: column; align-items: center; text-align: center; letter-spacing: .56px; }
+.fs-hi { font-size: 40px; line-height: normal; font-weight: 400; color: #000; }
+.fs-sub { font-size: 24px; line-height: normal; color: #6b6b6b; text-wrap: balance; }
+.fs-cards { display: flex; gap: 24px; align-items: stretch; }
+.fs-opt {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 160px;
+  width: 528px; background: #f2f2f2; color: #000; text-decoration: none;
+  transition: background-color .2s;
+}
+.fs-opt:hover { background: #e8e8e8; }
+.fs-opt:focus-visible { outline: 2px solid rgb(45, 67, 200); outline-offset: 3px; }
+.fs-opt__txt { width: 384px; max-width: 100%; font-size: 24px; line-height: 1.2; text-transform: lowercase; text-wrap: balance; }
+.fs-opt__btn { align-self: flex-end; min-width: 0; height: 56px; padding: 0 32px; font-size: 18px; line-height: 21.6px; }
+@container fs (max-width: 1199px) {
+  .fs-choice { gap: 48px; padding: 64px 40px; }
+  .fs-cards { width: 100%; }
+  .fs-opt { width: auto; flex: 1 1 0; gap: 120px; }
+  .fs-opt__txt { font-size: 20px; }
+}
+@container fs (max-width: 809px) {
+  .fs-choice { gap: 32px; padding: 72px 16px 32px; }
+  .fs-hi { font-size: 32px; }
+  .fs-sub { font-size: 18px; }
+  .fs-cards { flex-direction: column; gap: 16px; }
+  .fs-opt { gap: 48px; }
+  .fs-opt__txt { width: auto; font-size: 18px; }
+  .fs-opt__btn { height: 52px; font-size: 16px; }
+}
