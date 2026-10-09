@@ -18,6 +18,7 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
   const stops = []
   let lockUntil = 0
   let lockMax = 0
+  let lastDy = 0
   const maxY = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
   const go = (y) => window.scrollTo({ top: y, left: 0, behavior: 'instant' })
 
@@ -75,17 +76,25 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
     // пока события идут без паузы — держим; новый жест (после паузы) прокручивает дальше.
     // Так страница не «дёргается», доезжая остаток инерции после остановки. Вверх не держим.
     if (dy > 0 && now < lockUntil) {
-      lockUntil = Math.min(lockMax, now + 180)
-      return
+      // новый жест (резкий рост силы прокрутки после затухающей инерции) — сразу отпускаем
+      const fresh = dy > 10 && dy > lastDy * 1.6
+      lastDy = dy
+      if (!fresh) {
+        lockUntil = Math.min(lockMax, now + 140)
+        return
+      }
+      lockUntil = 0
     }
+    lastDy = dy
     let next = clamp(target + dy, 0, maxY())
     if (dy > 0) {
       for (const fn of stops) {
         const y = Math.round(fn())
         if (target < y - 2 && next > y) {
           next = y
-          lockUntil = now + Math.min(1200, Math.abs(y - current) * 1.2) + 300
-          lockMax = now + 5000
+          // короткая пауза на стопоре: пока страница доезжает и ещё ~0,35 с; инерцию гасим не дольше ~0,9 с
+          lockUntil = now + Math.min(700, Math.abs(y - current) * 0.8) + 350
+          lockMax = lockUntil + 550
           break
         }
       }
