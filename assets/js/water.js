@@ -67,7 +67,7 @@ export function mountWater(host, hud) {
   const mctx = mask.getContext('2d', { willReadFrequently: true })
 
   let W = 1, H = 1, FW = 1, dpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
-  let dots = null, dcell = 12
+  let dcell = 12
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
   /* ---------- движение: плавная петляющая траектория по всему фрейму ---------- */
@@ -151,21 +151,55 @@ export function mountWater(host, hud) {
     draw(last)
   }
 
-  // неподвижная россыпь едва заметных точек на фоне (как в референсе) — рисуется один раз
+  // фон: сетка ASCII-символов и пикселей; атлас из уровней яркости (последние — пиксели-квадраты)
+  const BG = ' .·:-+=*#'
+  const BL = BG.length + 2
+  let batlas = null, bcols = 0, brows = 0, bseed = null
   function buildDots() {
     dcell = FW < 810 ? 10 : 12
-    dots = document.createElement('canvas')
-    dots.width = canvas.width
-    dots.height = canvas.height
-    const g = dots.getContext('2d')
-    const cols = Math.ceil(W / dcell), rows = Math.ceil(H / dcell)
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-      const s = hash(r * 977 + c, 13)
-      if (s > 0.55) continue
-      g.fillStyle = 'rgba(70,170,190,' + (0.05 + s * 0.12).toFixed(3) + ')'
-      const sz = Math.max(1, Math.round(dpr * (s < 0.08 ? 2 : 1)))
-      g.fillRect(Math.round((c + 0.5) * dcell * dpr), Math.round((r + 0.5) * dcell * dpr), sz, sz)
+    bcols = Math.ceil(W / dcell)
+    brows = Math.ceil(H / dcell)
+    bseed = new Float32Array(bcols * brows)
+    for (let i = 0; i < bseed.length; i++) bseed[i] = hash(i, 13)
+    const a = Math.ceil(dcell * dpr)
+    batlas = document.createElement('canvas')
+    batlas.width = a * BL
+    batlas.height = a
+    const g = batlas.getContext('2d')
+    g.font = Math.round(dcell * 0.95 * dpr) + 'px ' + font
+    g.textAlign = 'center'
+    g.textBaseline = 'middle'
+    for (let l = 1; l < BL; l++) {
+      if (l < BG.length) {
+        const k = l / (BG.length - 1)
+        g.fillStyle = 'rgba(' + Math.round(150 + 80 * k) + ',' + Math.round(170 + 70 * k) + ',255,' + (0.28 + 0.5 * k).toFixed(3) + ')'
+        g.fillText(BG[l], l * a + a / 2, a / 2)
+      } else {
+        // пиксели: тусклый и яркий квадрат
+        const sz = Math.round(a * (l === BG.length ? 0.5 : 0.7))
+        g.fillStyle = l === BG.length ? 'rgba(170,190,255,0.55)' : 'rgba(225,235,255,0.9)'
+        g.fillRect(l * a + (a - sz) / 2, (a - sz) / 2, sz, sz)
+      }
     }
+  }
+
+  // круги на воде от карпа: от хвоста на каждый взмах и изредка от головы
+  const ripples = []
+  let lastBeat = 0, lastHeadRipple = 0
+  function spawnRipples(t, P) {
+    const beat = Math.floor(phase / Math.PI)
+    if (beat !== lastBeat) {
+      lastBeat = beat
+      const [x, y] = P(0, 0.47, 3)
+      ripples.push({ x, y, t0: t, a: 1, v: len * 0.32 })
+    }
+    if (t - lastHeadRipple > 1.4) {
+      lastHeadRipple = t
+      const [x, y] = P(0, -0.5, 0)
+      ripples.push({ x, y, t0: t, a: 0.75, v: len * 0.24 })
+    }
+    for (let i = ripples.length - 1; i >= 0; i--) if (t - ripples[i].t0 > 3 || t < ripples[i].t0) ripples.splice(i, 1)
+    if (ripples.length > 14) ripples.splice(0, ripples.length - 14)
   }
 
   let last = 0, hudKey = -1
@@ -207,18 +241,45 @@ export function mountWater(host, hud) {
     const d = mctx.getImageData(x0, y0, bw, bh).data
     const A = (c, r) => (c < 0 || r < 0 || c >= bw || r >= bh ? 0 : d[(r * bw + c) * 4 + 3] / 255)
 
-    // фон: глубокий синий с мягким светлым пятном около головы
+    // фон: синий #2C40C7 и сетка ASCII-символов и пикселей; круги от карпа поднимают символы и чуть сдвигают их
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.globalCompositeOperation = 'source-over'
     ctx.globalAlpha = 1
     const [hx, hy] = P(0, -0.4, 0)
-    const bg = ctx.createRadialGradient(hx * sc, hy * sc, 0, hx * sc, hy * sc, Math.max(W, H) * 0.85 * sc)
-    bg.addColorStop(0, '#0f3762')
-    bg.addColorStop(0.45, '#0a2246')
-    bg.addColorStop(1, '#040b1d')
-    ctx.fillStyle = bg
+    ctx.fillStyle = '#2c40c7'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    if (dots) ctx.drawImage(dots, 0, 0)
+    spawnRipples(t, P)
+    const rp = ripples.map((q) => { const age = t - q.t0; return { x: q.x, y: q.y, r: q.v * age + len * 0.04, w: len * (0.03 + 0.025 * age), a: q.a * Math.pow(1 - age / 3, 1.6) } })
+    const ba = batlas.height
+    const btick = Math.floor(t * 6)
+    for (let r = 0; r < brows; r++) {
+      const cy = (r + 0.5) * dcell
+      for (let c = 0; c < bcols; c++) {
+        const i = r * bcols + c
+        const cx = (c + 0.5) * dcell
+        // волна от кругов: интенсивность и смещение вдоль радиуса
+        let wv = 0, ox = 0, oy = 0
+        for (let k = 0; k < rp.length; k++) {
+          const q = rp[k]
+          const dx = cx - q.x, dy = cy - q.y
+          const dd = Math.abs(dx) + Math.abs(dy)
+          if (dd > q.r + q.w * 3 + 4) continue
+          const dist = Math.hypot(dx, dy)
+          const e = (dist - q.r) / q.w
+          if (e > 3 || e < -3) continue
+          const h = Math.exp(-e * e) * q.a
+          wv += h
+          const nrm = h * 3.5 / (dist || 1)
+          ox += dx * nrm; oy += dy * nrm
+        }
+        const s = bseed[i]
+        let l = s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length
+        if (hash(i, btick) < 0.006) l = BG.length + (s > 0.5 ? 1 : 0) // редкое мерцание пикселей
+        if (wv > 0.04) l = Math.max(l, Math.min(BG.length + 1, Math.round(1.5 + wv * 8)))
+        if (!l) continue
+        ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round((c * dcell + ox) * sc), Math.round((r * dcell + oy) * sc), ba, ba)
+      }
+    }
 
     // плитки карпа
     lctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -307,13 +368,6 @@ export function mountWater(host, hud) {
     ctx.fillStyle = hg
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    // виньетка: края фрейма уходят в темноту
-    ctx.globalCompositeOperation = 'source-over'
-    const vg = ctx.createRadialGradient(W * 0.5 * sc, H * 0.45 * sc, Math.min(W, H) * 0.35 * sc, W * 0.5 * sc, H * 0.5 * sc, Math.max(W, H) * 0.75 * sc)
-    vg.addColorStop(0, 'rgba(2,6,16,0)')
-    vg.addColorStop(1, 'rgba(2,6,16,0.55)')
-    ctx.fillStyle = vg
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
     updateHud(t, st)
   }
 
@@ -348,7 +402,7 @@ export function mountWater(host, hud) {
   }
 
   const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
-  ready.then(() => { font = getComputedStyle(document.body).fontFamily || font; lastT = -1; draw(last) })
+  ready.then(() => { font = getComputedStyle(document.body).fontFamily || font; lastT = -1; if (bcols) buildDots(); draw(last) })
   const ro = new ResizeObserver(resize)
   ro.observe(host)
   window.addEventListener('resize', resize)
