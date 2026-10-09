@@ -32,14 +32,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
-  <link rel="modulepreload" href="../assets/js/water.js?v=9">
+  <link rel="modulepreload" href="../assets/js/water.js?v=10">
   <link rel="stylesheet" href="../assets/css/site.css">
 </head>
 <body>
-  <header class="hdr">
+  <header class="hdr hdr--home is-hero">
     <div class="hdr__bar">
       <a class="logo" href="./" aria-label="Портфолио — наверх">
-        <img src="../assets/img/logo.svg" alt="" width="39" height="29">
+        <img src="../assets/img/logo.svg" alt="" width="39" height="29"><img class="logo__light" src="../assets/img/logo-light.svg" alt="" width="39" height="29">
         <span>portfolio</span>
       </a>
       <div class="hdr__right">
@@ -67,13 +67,13 @@
     <section class="hero" aria-label="Первый экран">
       <div class="hero__frame">
         <div class="hero__box">
-          <div class="hero__portrait" data-intro role="img" aria-label="Вид сверху на воду и японского карпа из пиксельной мозаики"></div>
-          <div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="hud__l">100+ проектов в релизе</span><span class="hud__r">679 — 173 NODES / 31 LINKS</span></div>
+          <div class="hero__portrait" role="img" aria-label="Вид сверху на воду и японского карпа из пиксельной мозаики"></div>
           <h1 class="sr-only">UX/UI-дизайн — портфолио для бизнеса</h1>
-          <p class="hero__label" data-intro>[веб]</p>
-          <img class="hero__uxui" data-intro src="../assets/img/uxui.svg" alt="UX/UI" width="363" height="109">
-          <img class="hero__dizain" data-intro src="../assets/img/dizain.svg" alt="дизайн" width="371" height="84">
-          <p class="hero__text hero__text--web" data-intro>Решаю проблемы бизнеса более 4-х лет: проектирую цифровые продукты от сайта до внутренней системы. Клиенты быстрее находят нужное, сотрудники быстрее работают, а вы меньше тратите времени и денег.</p>
+          <p class="hero__hint" aria-hidden="true">кликни чтобы покормить карпа</p>
+          <div class="hero__foot">
+            <p class="hero__label" data-intro data-par="1">[UX/UI-дизайнер<br>для бизнеса]</p>
+            <p class="hero__text" data-intro data-par="1.7">Решаю проблемы бизнеса более 4-х лет: проектирую цифровые продукты от сайта до внутренней системы. Клиенты быстрее находят нужное, сотрудники быстрее работают, а вы меньше тратите времени и денег.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -141,6 +141,6 @@
     </section>
   </main>
 
-  <script type="module" src="../assets/js/page.js?v=12"></script>
+  <script type="module" src="../assets/js/page.js?v=13"></script>
 </body>
 </html>

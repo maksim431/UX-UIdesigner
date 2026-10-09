@@ -184,7 +184,7 @@ export function mountWater(host, hud) {
     b16.width = Math.max(1, canvas.width >> 4); b16.height = Math.max(1, canvas.height >> 4)
     const phone = FW < 810
     tile = phone ? 9 : FW < 1200 ? 11 : 12
-    len = phone ? Math.min(H * 0.46, FW * 0.95) : Math.min(H * 0.6, FW * 0.36)
+    len = phone ? Math.min(H * 0.4, FW * 0.95) : Math.min(H * 0.5, FW * 0.34)
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     mask.width = tcols
@@ -499,6 +499,7 @@ export function mountWater(host, hud) {
     const x = ((e.clientX - r.left) / r.width) * W
     const y = ((e.clientY - r.top) / r.height) * H
     pellets.push({ x, y, t0: last, eaten: -1 })
+    box.classList.add('fed') // подсказка «кликни, чтобы покормить» больше не нужна
     // от упавшего пикселя расходится маленький круг
     for (let k = 0; k < 14; k++) {
       const a = (k / 14) * Math.PI * 2

@@ -736,3 +736,55 @@ html.lb-open .ascii-cursor { display: none; }
 .hero__portrait canvas.water { left: 50%; right: auto; width: auto; transform: translateX(-50%); }
 /* первый экран: по клику по воде можно бросить корм карпу */
 .hero__box.can-feed { cursor: pointer; }
+
+/* ==========================================================================
+   Новый главный экран (Figma 1897:743): синий фрейм на всю ширину и на 120% высоты экрана,
+   внизу — подпись слева и текст справа, по центру — подсказка покормить карпа
+   ========================================================================== */
+.hero { padding-top: 0; }
+.hero .hero__frame { height: 120svh; min-height: 640px; margin: 0; width: 100%; max-width: none; }
+.hero .hero__box { inset: 0; background: #2c40c7; }
+.hero__hint {
+  position: absolute; left: 50%; top: 50svh; z-index: 1; margin: 0;
+  transform: translate(-50%, -50%);
+  font-size: 12px; line-height: 1.2; text-transform: lowercase; white-space: nowrap;
+  pointer-events: none; transition: opacity .6s;
+}
+.hero__box.fed .hero__hint { opacity: 0; }
+/* низ первого экрана — у нижнего края окна (фрейм выше окна на 20%) */
+.hero__foot {
+  position: absolute; left: 0; right: 0; bottom: calc(20svh + 80px); z-index: 1;
+  padding: 0 79px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+  pointer-events: none;
+}
+.hero .hero__foot .hero__label { position: static; margin: 0; font-size: 38px; line-height: 38px; text-transform: lowercase; white-space: normal; }
+.hero .hero__foot .hero__text { position: static; margin: 0; width: 426px; font-size: 20px; line-height: 1.2; white-space: normal; }
+@media (max-width: 1199.98px) {
+  .hero__foot { padding: 0 42px; bottom: calc(20svh + 48px); }
+  .hero .hero__foot .hero__label { font-size: 28px; line-height: 30px; }
+  .hero .hero__foot .hero__text { width: 340px; font-size: 16px; }
+}
+@media (max-width: 809.98px) {
+  .hero__foot { padding: 0 16px; bottom: calc(20svh + 24px); flex-direction: column; align-items: flex-start; gap: 16px; }
+  .hero .hero__foot .hero__label { font-size: 22px; line-height: 24px; }
+  .hero .hero__foot .hero__text { width: auto; max-width: 340px; font-size: 14px; }
+}
+
+/* шапка главной: два состояния — над первым экраном прозрачная, всё по центру и белым;
+   ниже первого экрана — обычная белая шапка */
+.hdr--home { transition: background-color .35s, border-color .35s, color .35s; }
+.hdr--home .hdr__bar { transition: transform .35s var(--ease); }
+.logo__light { display: none; }
+.hdr--home.is-hero:not(.is-open) { background: transparent; border-bottom-color: transparent; color: #fff; }
+.hdr--home.is-hero:not(.is-open) .hdr__bar { justify-content: center; gap: 40px; transform: translateY(15px); }
+.hdr--home.is-hero:not(.is-open) .hdr__right { display: contents; }
+.hdr--home.is-hero:not(.is-open) .logo img:first-child, .hdr--home.is-hero:not(.is-open) .logo span { display: none; }
+.hdr--home.is-hero:not(.is-open) .logo .logo__light { display: block; }
+.hdr--home.is-hero:not(.is-open) .hdr__contacts, .hdr--home.is-hero:not(.is-open) .hdr__burger { order: 1; }
+.hdr--home.is-hero:not(.is-open) .lang { order: 2; margin-right: 0; }
+.hdr--home.is-hero:not(.is-open) .lang [aria-current] { color: #fff; }
+.hdr--home.is-hero:not(.is-open) .lang a:hover, .hdr--home.is-hero:not(.is-open) .hdr__contacts:hover { color: #fff; opacity: .7; }
+.hdr--home.is-hero:not(.is-open) .hdr__burger svg { stroke: #fff; }
+@media (max-width: 1199.98px) { .hdr--home.is-hero:not(.is-open) .hdr__bar { gap: 32px; transform: translateY(8px); } }
+@media (max-width: 809.98px) { .hdr--home.is-hero:not(.is-open) .hdr__bar { gap: 24px; transform: translateY(4px); } }

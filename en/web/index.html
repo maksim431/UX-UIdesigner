@@ -32,14 +32,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Sedgwick+Ave+Display&display=swap">
-  <link rel="modulepreload" href="../../assets/js/water.js?v=9">
+  <link rel="modulepreload" href="../../assets/js/water.js?v=10">
   <link rel="stylesheet" href="../../assets/css/site.css">
 </head>
 <body>
-  <header class="hdr">
+  <header class="hdr hdr--home is-hero">
     <div class="hdr__bar">
       <a class="logo" href="./" aria-label="Portfolio — back to top">
-        <img src="../../assets/img/logo.svg" alt="" width="39" height="29">
+        <img src="../../assets/img/logo.svg" alt="" width="39" height="29"><img class="logo__light" src="../../assets/img/logo-light.svg" alt="" width="39" height="29">
         <span>portfolio</span>
       </a>
       <div class="hdr__right">
@@ -67,13 +67,13 @@
     <section class="hero" aria-label="Intro">
       <div class="hero__frame">
         <div class="hero__box">
-          <div class="hero__portrait" data-intro role="img" aria-label="Top-down view of water and a koi carp made of pixel mosaic"></div>
-          <div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="hud__l">100+ projects released</span><span class="hud__r">679 — 173 NODES / 31 LINKS</span></div>
+          <div class="hero__portrait" role="img" aria-label="Top-down view of water and a koi carp made of pixel mosaic"></div>
           <h1 class="sr-only">UX/UI design — portfolio for business</h1>
-          <p class="hero__label" data-intro>[web]</p>
-          <img class="hero__uxui" data-intro src="../../assets/img/uxui.svg" alt="UX/UI" width="363" height="109">
-          <svg class="hero__dizain hero__dizain--en" data-intro viewBox="0 0 371 84" role="img" aria-label="design"><text x="0" y="66" font-size="86" textLength="371" lengthAdjust="spacingAndGlyphs" fill="#fff">design</text></svg>
-          <p class="hero__text hero__text--web" data-intro>I’ve been solving business problems for 4+ years, designing digital products from websites to internal systems. Customers find what they need faster, employees work faster, and you spend less time and money.</p>
+          <p class="hero__hint" aria-hidden="true">click to feed the koi</p>
+          <div class="hero__foot">
+            <p class="hero__label" data-intro data-par="1">[UX/UI designer<br>for business]</p>
+            <p class="hero__text" data-intro data-par="1.7">I’ve been solving business problems for 4+ years, designing digital products from websites to internal systems. Customers find what they need faster, employees work faster, and you spend less time and money.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -141,6 +141,6 @@
     </section>
   </main>
 
-  <script type="module" src="../../assets/js/page.js?v=12"></script>
+  <script type="module" src="../../assets/js/page.js?v=13"></script>
 </body>
 </html>
