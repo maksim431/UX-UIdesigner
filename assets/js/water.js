@@ -353,7 +353,20 @@ export function mountWater(host, hud) {
         g.fillRect(l * a + (a - sz) / 2, (a - sz) / 2, sz, sz)
       }
     }
+    // неподвижный фон рисуем ОДИН раз в отдельный холст; в кадре он ставится одной операцией
+    bgStatic = document.createElement('canvas')
+    bgStatic.width = canvas.width
+    bgStatic.height = canvas.height
+    const gs = bgStatic.getContext('2d')
+    gs.fillStyle = '#2c40c7'
+    gs.fillRect(0, 0, bgStatic.width, bgStatic.height)
+    for (let r = 0; r < brows; r++) for (let c = 0; c < bcols; c++) {
+      const lv = baseLevel(bseed[r * bcols + c])
+      if (lv) gs.drawImage(batlas, lv * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
+    }
   }
+  const baseLevel = (s) => (s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length)
+  let bgStatic = null
 
   // след на воде клином (как у плывущей рыбы): от боков головы непрерывно отходят «частицы волны»,
   // каждая расходится в сторону от курса и гаснет — вместе они рисуют два расходящихся луча за карпом.
@@ -379,6 +392,7 @@ export function mountWater(host, hud) {
     if (wake.length > 420) wake.splice(0, wake.length - 420)
   }
   let field = null, fox = null, foy = null
+  const touched = []
 
   let last = 0, hudKey = -1
   function updateHud(t, st) {
@@ -419,18 +433,17 @@ export function mountWater(host, hud) {
     const d = mctx.getImageData(x0, y0, bw, bh).data
     const A = (c, r) => (c < 0 || r < 0 || c >= bw || r >= bh ? 0 : d[(r * bw + c) * 4 + 3] / 255)
 
-    // фон: синий #2C40C7 и сетка ASCII-символов и пикселей, еле заметно покачивается; след от карпа — более светлые символы, без пикселей
+    // фон: синий #2C40C7 и сетка ASCII-символов и пикселей, статичный (отрисован один раз); след от карпа — более светлые символы, без пикселей
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.globalCompositeOperation = 'source-over'
     ctx.globalAlpha = 1
     const [hx, hy] = P(0, -0.4, 0)
-    ctx.fillStyle = '#2c40c7'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
     spawnWake(t, P, st)
     // поле волны: каждую частицу «штампуем» в ближайшие клетки фона (быстрее, чем перебирать всё)
     const nb = bcols * brows
-    if (!field || field.length !== nb) { field = new Float32Array(nb); fox = new Float32Array(nb); foy = new Float32Array(nb) }
-    field.fill(0); fox.fill(0); foy.fill(0)
+    if (!field || field.length !== nb) { field = new Float32Array(nb); fox = new Float32Array(nb); foy = new Float32Array(nb); touched.length = 0 }
+    for (let k = 0; k < touched.length; k++) { const i = touched[k]; field[i] = 0; fox[i] = 0; foy[i] = 0 }
+    touched.length = 0
     for (const q of wake) {
       const age = t - q.t0
       const k = 1 - age / q.life
@@ -445,29 +458,27 @@ export function mountWater(host, hud) {
         if (e > 6) continue
         const h = Math.exp(-e) * amp
         const i = r * bcols + c
+        if (field[i] === 0) touched.push(i)
         field[i] += h
         fox[i] += q.nx * h * 1.8
         foy[i] += q.ny * h * 1.8
       }
     }
+    // фон неподвижен: готовый холст одной операцией; перерисовываем только клетки, по которым идёт след
+    ctx.drawImage(bgStatic, 0, 0)
     const ba = batlas.height
-    for (let r = 0; r < brows; r++) {
-      for (let c = 0; c < bcols; c++) {
-        const i = r * bcols + c
-        const wv = Math.min(1.2, field[i])
-        let ox = fox[i], oy = foy[i]
-        const s = bseed[i]
-        let l = s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length
-        // след: только ASCII-символы средней яркости, без крупных пикселей
-        if (wv > 0.06) l = Math.max(l === BG.length ? 0 : l, Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
-        // еле заметное «дыхание» фона: символы чуть покачиваются и изредка меняются
-        const sp2 = s * 6.283
-        ox += 0.6 * Math.sin(t * 0.55 + sp2 * 3)
-        oy += 0.6 * Math.cos(t * 0.47 + sp2 * 5)
-        if (l > 0 && l < BG.length && hash(i, Math.floor(t * 0.4 + s * 17)) < 0.04) l = Math.max(1, Math.min(BG.length - 1, l + (s > 0.5 ? 1 : -1)))
-        if (!l) continue
-        ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round((c * dcell + ox) * sc), Math.round((r * dcell + oy) * sc), ba, ba)
-      }
+    for (let k = 0; k < touched.length; k++) {
+      const i = touched[k]
+      const wv = Math.min(1.2, field[i])
+      if (wv <= 0.06) continue
+      const r = (i / bcols) | 0, c = i - r * bcols
+      const base = baseLevel(bseed[i])
+      const l = Math.max(base === BG.length ? 0 : base, Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
+      const x = Math.round(c * dcell * sc), y = Math.round(r * dcell * sc)
+      // стираем исходный символ клетки и ставим символ гребня волны (чуть сдвинутый по ходу волны)
+      ctx.fillStyle = '#2c40c7'
+      ctx.fillRect(x, y, ba, ba)
+      ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round(x + fox[i] * sc), Math.round(y + foy[i] * sc), ba, ba)
     }
 
     // плитки карпа
@@ -578,7 +589,7 @@ export function mountWater(host, hud) {
     hg.addColorStop(0.4, 'rgba(90,200,240,' + (0.1 * pulse).toFixed(3) + ')')
     hg.addColorStop(1, 'rgba(40,120,200,0)')
     ctx.fillStyle = hg
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(hx * sc - hr, hy * sc - hr, hr * 2, hr * 2)
 
     updateHud(t, st)
   }
