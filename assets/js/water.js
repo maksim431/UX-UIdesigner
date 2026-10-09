@@ -267,7 +267,7 @@ export function mountWater(host, hud) {
     const d = mctx.getImageData(x0, y0, bw, bh).data
     const A = (c, r) => (c < 0 || r < 0 || c >= bw || r >= bh ? 0 : d[(r * bw + c) * 4 + 3] / 255)
 
-    // фон: синий #2C40C7 и неподвижная сетка ASCII-символов и пикселей; след от карпа поднимает символы и чуть сдвигает их
+    // фон: синий #2C40C7 и сетка ASCII-символов и пикселей, еле заметно покачивается; след от карпа — более светлые символы, без пикселей
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.globalCompositeOperation = 'source-over'
     ctx.globalAlpha = 1
@@ -294,18 +294,25 @@ export function mountWater(host, hud) {
         const h = Math.exp(-e) * amp
         const i = r * bcols + c
         field[i] += h
-        fox[i] += q.nx * h * 3.2
-        foy[i] += q.ny * h * 3.2
+        fox[i] += q.nx * h * 1.8
+        foy[i] += q.ny * h * 1.8
       }
     }
     const ba = batlas.height
     for (let r = 0; r < brows; r++) {
       for (let c = 0; c < bcols; c++) {
         const i = r * bcols + c
-        const wv = Math.min(1.2, field[i]), ox = fox[i], oy = foy[i]
+        const wv = Math.min(1.2, field[i])
+        let ox = fox[i], oy = foy[i]
         const s = bseed[i]
         let l = s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length
-        if (wv > 0.06) l = Math.max(l, Math.min(BG.length + 1, Math.round(1.5 + wv * 7)))
+        // след: только ASCII-символы средней яркости, без крупных пикселей
+        if (wv > 0.06) l = Math.max(l === BG.length ? 0 : l, Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
+        // еле заметное «дыхание» фона: символы чуть покачиваются и изредка меняются
+        const sp2 = s * 6.283
+        ox += 0.6 * Math.sin(t * 0.55 + sp2 * 3)
+        oy += 0.6 * Math.cos(t * 0.47 + sp2 * 5)
+        if (l > 0 && l < BG.length && hash(i, Math.floor(t * 0.4 + s * 17)) < 0.04) l = Math.max(1, Math.min(BG.length - 1, l + (s > 0.5 ? 1 : -1)))
         if (!l) continue
         ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round((c * dcell + ox) * sc), Math.round((r * dcell + oy) * sc), ba, ba)
       }
