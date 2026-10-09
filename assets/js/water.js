@@ -366,9 +366,10 @@ export function mountWater(host, hud) {
       const i = r * bcols + c
       const lv = baseLevel(bseed[i])
       bcur[i] = lv
+      // 5% элементов фона «живые»: перебирают ASCII-символы; в готовый фон их не кладём,
+      // а рисуем поверх в каждом кадре — так готовый холст не меняется и не перезагружается в видеопамять
+      if (lv && hash(i, 71) < 0.05) { live.push(i); continue }
       if (lv) gs.drawImage(batlas, lv * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
-      // 20% элементов фона «живые»: время от времени перебирают ASCII-символы
-      if (lv && hash(i, 71) < 0.2) live.push(i)
     }
     bliveIdx = Uint32Array.from(live)
     bliveT = new Float32Array(live.length)
@@ -380,7 +381,6 @@ export function mountWater(host, hud) {
   function tickBg(t) {
     if (!bliveIdx) return
     if (!bliveInit) { for (let k = 0; k < bliveT.length; k++) bliveT[k] += t; bliveInit = true }
-    const a = batlas.height
     for (let k = 0; k < bliveIdx.length; k++) {
       if (t < bliveT[k]) continue
       const i = bliveIdx[k]
@@ -390,11 +390,15 @@ export function mountWater(host, hud) {
       let lv = 1 + ((Math.random() * (BG.length - 2)) | 0)
       if (lv === bcur[i]) lv = lv === 1 ? 2 : lv - 1
       bcur[i] = lv
+    }
+  }
+  function drawLive() {
+    if (!bliveIdx) return
+    const a = batlas.height
+    for (let k = 0; k < bliveIdx.length; k++) {
+      const i = bliveIdx[k]
       const r = (i / bcols) | 0, c = i - r * bcols
-      const x = Math.round(c * dcell * dpr), y = Math.round(r * dcell * dpr)
-      bctx.fillStyle = '#2c40c7'
-      bctx.fillRect(x, y, a, a)
-      bctx.drawImage(batlas, lv * a, 0, a, a, x, y, a, a)
+      ctx.drawImage(batlas, bcur[i] * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
     }
   }
   const baseLevel = (s) => (s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length)
@@ -499,6 +503,7 @@ export function mountWater(host, hud) {
     // фон неподвижен: готовый холст одной операцией; перерисовываем только клетки, по которым идёт след
     tickBg(t)
     ctx.drawImage(bgStatic, 0, 0)
+    drawLive()
     const ba = batlas.height
     for (let k = 0; k < touched.length; k++) {
       const i = touched[k]
