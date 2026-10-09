@@ -209,60 +209,73 @@ export function mountWater(host, hud) {
     return { x: px, y: py, sp }
   }
 
-  // тело следует за головой по её пути (как у настоящей рыбы): позвоночник — это след головы.
-  // Поворачивает влево — тело выгибается вправо, частые смены курса — тело гибко «змеится».
-  // Поверх — волна от головы к хвосту (амплитуда растёт к хвосту).
-  const trail = [] // точки пути кончика головы, новые — в конце
+  // тело — упругая «резиновая» цепочка позвонков: голова ведёт, каждый следующий позвонок
+  // тянется за предыдущим на постоянном расстоянии, а изгибы плавно распрямляются (жёсткость на изгиб).
+  // Поворачивает влево — тело выгибается дугой вправо; частые смены курса — тело гибко волнится.
+  // Между позвонками — гладкий сплайн, поэтому контур не «ломается».
+  const NJ = 22
+  const joints = []
   function headTip() { return [px + Math.sin(heading) * len * 0.5, py - Math.cos(heading) * len * 0.5] }
   function resetTrail() {
-    trail.length = 0
+    joints.length = 0
     const [hx, hy] = headTip()
     const dx = Math.sin(heading), dy = -Math.cos(heading)
-    for (let k = 40; k >= 0; k--) trail.push([hx - dx * k * len * 0.03, hy - dy * k * len * 0.03])
+    const seg = (len * 1.05) / (NJ - 1)
+    for (let i = 0; i < NJ; i++) joints.push([hx - dx * seg * i, hy - dy * seg * i])
   }
+  let chainT = -1
   function pushTrail() {
-    const h = headTip()
-    const l = trail[trail.length - 1]
-    if (!l) { resetTrail(); return }
-    const d = Math.hypot(h[0] - l[0], h[1] - l[1])
-    if (d > len * 0.5) { resetTrail(); return } // скачок (новое появление) — путь заново
-    if (d > len * 0.008) trail.push(h)
-    else trail[trail.length - 1] = h
-    // храним путь чуть длиннее тела
-    let acc = 0
-    for (let i = trail.length - 1; i > 0; i--) {
-      acc += Math.hypot(trail[i][0] - trail[i - 1][0], trail[i][1] - trail[i - 1][1])
-      if (acc > len * 1.35) { trail.splice(0, i - 1); break }
+    const [hx, hy] = headTip()
+    if (!joints.length) { resetTrail(); return }
+    if (Math.hypot(hx - joints[0][0], hy - joints[0][1]) > len * 0.5) { resetTrail(); return } // новое появление
+    const seg = (len * 1.05) / (NJ - 1)
+    const dt = chainT < 0 ? 0 : clamp(lastT - chainT, 0, 0.1)
+    chainT = lastT
+    joints[0][0] = hx; joints[0][1] = hy
+    // 1) каждый позвонок тянется за предыдущим (как верёвка)
+    for (let i = 1; i < NJ; i++) {
+      const p0 = joints[i - 1], q = joints[i]
+      let dx = q[0] - p0[0], dy = q[1] - p0[1]
+      const d = Math.hypot(dx, dy) || 1
+      q[0] = p0[0] + (dx / d) * seg; q[1] = p0[1] + (dy / d) * seg
+    }
+    // 2) жёсткость на изгиб: позвонок мягко тянется к продолжению предыдущего сегмента,
+    //    а слишком острый угол ограничен — тело гнётся дугой, но не складывается
+    const stiff = 1 - Math.pow(0.004, dt) // доля распрямления за кадр (не зависит от частоты кадров)
+    for (let i = 2; i < NJ; i++) {
+      // голова почти жёсткая, середина гнётся умеренно, хвост — гибче всего; изгиб распределяется по телу
+      const u = i / (NJ - 1)
+      const maxBend = u < 0.22 ? 0.05 : 0.09 + 0.07 * u
+      const a0 = joints[i - 2], a1 = joints[i - 1], q = joints[i]
+      const ang0 = Math.atan2(a1[1] - a0[1], a1[0] - a0[0])
+      let ang1 = Math.atan2(q[1] - a1[1], q[0] - a1[0])
+      let rel = ang1 - ang0
+      while (rel > Math.PI) rel -= 2 * Math.PI
+      while (rel < -Math.PI) rel += 2 * Math.PI
+      rel *= 1 - stiff * 0.5
+      rel = clamp(rel, -maxBend, maxBend)
+      ang1 = ang0 + rel
+      q[0] = a1[0] + Math.cos(ang1) * seg; q[1] = a1[1] + Math.sin(ang1) * seg
     }
   }
   function poseFn(st) {
-    // накопленная длина пути от головы назад
-    const n = trail.length
-    const cum = new Float32Array(n)
-    for (let i = n - 2; i >= 0; i--) cum[i] = cum[i + 1] + Math.hypot(trail[i + 1][0] - trail[i][0], trail[i + 1][1] - trail[i][1])
-    const total = cum[0]
-    const bx0 = -Math.sin(heading), by0 = Math.cos(heading) // назад по курсу (если пути не хватает)
-    let j = n - 1
-    // точка позвоночника на расстоянии d от головы и касательная там
+    const seg = (len * 1.05) / (NJ - 1)
+    // точка позвоночника на расстоянии d от головы (сплайн Катмулла — Рома) и касательная (по движению)
+    const J = (i) => joints[clamp(i, 0, NJ - 1)]
     const spine = (d) => {
-      if (d >= total) {
-        const e = d - total, q = trail[0]
-        const q2 = trail[Math.min(1, n - 1)]
-        let tx = q2[0] - q[0], ty = q2[1] - q[1]
-        const tl = Math.hypot(tx, ty) || 1
-        tx = tl > 0.001 ? tx / tl : -bx0; ty = tl > 0.001 ? ty / tl : -by0
-        return [q[0] - tx * e, q[1] - ty * e, tx, ty]
-      }
-      let i = n - 1
-      while (i > 0 && cum[i - 1] < d) i--
-      // между trail[i-1] (дальше) и trail[i] (ближе к голове)
-      const a = trail[i - 1] || trail[i], b = trail[i]
-      const seg = (cum[i - 1] - cum[i]) || 1
-      const f = (d - cum[i]) / seg
-      let tx = b[0] - a[0], ty = b[1] - a[1]
-      const tl = Math.hypot(tx, ty) || 1
-      tx /= tl; ty /= tl
-      return [b[0] + (a[0] - b[0]) * f, b[1] + (a[1] - b[1]) * f, tx, ty]
+      let f = d / seg
+      if (f > NJ - 1) f = NJ - 1
+      if (f < 0) f = 0
+      const i = Math.min(NJ - 2, Math.floor(f)), t = f - i
+      const p0 = J(i - 1), p1 = J(i), p2 = J(i + 1), p3 = J(i + 2)
+      const t2 = t * t, t3 = t2 * t
+      const x = 0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3)
+      const y = 0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+      const dx = 0.5 * ((-p0[0] + p2[0]) + 2 * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t + 3 * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t2)
+      const dy = 0.5 * ((-p0[1] + p2[1]) + 2 * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t + 3 * (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t2)
+      const l = Math.hypot(dx, dy) || 1
+      // касательная направлена от хвоста к голове
+      return [x, y, -dx / l, -dy / l]
     }
     return (x, y, k) => {
       const u = clamp(y + 0.5, 0, 1.1) // 0 у головы, 1 у хвоста
