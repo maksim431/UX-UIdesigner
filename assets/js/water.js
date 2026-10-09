@@ -109,9 +109,9 @@ export function mountWater(host, hud) {
     const inset = len * 0.22
     const inside = px > f.x0 + inset && px < f.x1 - inset && py > f.y0 + inset && py < f.y1 - inset
     if (entering && inside) entering = false
-    const w = entering ? 0 : 0.32 * Math.sin(t * 0.27 + seed) + 0.18 * Math.sin(t * 0.61 + seed * 1.7)
+    const w = entering ? 0 : 0.42 * Math.sin(t * 0.23 + seed) + 0.24 * Math.sin(t * 0.53 + seed * 1.7)
     heading += w * dt
-    const sp = len * (0.17 + 0.06 * Math.sin(t * 0.41 + seed))
+    const sp = len * (0.125 + 0.045 * Math.sin(t * 0.37 + seed))
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
     // целиком ушёл за край — появляется с другой (случайной) стороны
@@ -126,7 +126,7 @@ export function mountWater(host, hud) {
     turn = Math.abs(dh) > 1 ? turn : turn * 0.9 + (dt ? dh / dt : 0) * 0.1
     prevHeading = heading
     // частота взмахов хвоста растёт со скоростью
-    phase += dt * (2.2 + 4 * clamp(sp / len, 0, 1.2))
+    phase += dt * (2.4 + 5 * clamp(sp / len, 0, 1.2))
     lastT = t
     return { x: px, y: py, sp }
   }
@@ -134,10 +134,10 @@ export function mountWater(host, hud) {
   // поза: волна по телу (амплитуда растёт к хвосту) + изгиб на повороте + поворот по курсу
   function poseFn(st) {
     const c = Math.cos(heading), s = Math.sin(heading)
-    const bendTurn = clamp(-turn * 0.35, -0.12, 0.12)
+    const bendTurn = clamp(-turn * 0.55, -0.18, 0.18)
     return (x, y, k) => {
       const u = y + 0.5 // 0 у головы, 1 у хвоста
-      const amp = 0.012 + 0.075 * u * u
+      const amp = 0.018 + 0.11 * u * u
       let bx = x + amp * Math.sin(u * 5.2 - phase) + bendTurn * u * u
       if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
       return [st.x + (bx * c - y * s) * len, st.y + (bx * s + y * c) * len]
@@ -203,24 +203,30 @@ export function mountWater(host, hud) {
     }
   }
 
-  // круги на воде от карпа: от хвоста на каждый взмах и изредка от головы
-  const ripples = []
-  let lastBeat = 0, lastHeadRipple = 0
-  function spawnRipples(t, P) {
-    const beat = Math.floor(phase / Math.PI)
-    if (beat !== lastBeat) {
-      lastBeat = beat
-      const [x, y] = P(0, 0.47, 3)
-      ripples.push({ x, y, t0: t, a: 1, v: len * 0.32 })
+  // след на воде клином (как у плывущей рыбы): от боков головы непрерывно отходят «частицы волны»,
+  // каждая расходится в сторону от курса и гаснет — вместе они рисуют два расходящихся луча за карпом.
+  // От хвоста — короткая слабая полоса завихрений по центру следа.
+  const wake = []
+  let lastSpawn = -1
+  function spawnWake(t, P, st) {
+    if (lastSpawn < 0 || t < lastSpawn) lastSpawn = t
+    const nx = Math.cos(heading), ny = Math.sin(heading) // нормаль вправо от курса
+    while (t - lastSpawn > 0.06) {
+      lastSpawn += 0.06
+      const vs = st.sp * 0.5 + len * 0.01
+      const [rx, ry] = P(0.1, -0.36, 0)
+      const [lx, ly] = P(-0.1, -0.36, 0)
+      wake.push({ x: rx, y: ry, nx, ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
+      wake.push({ x: lx, y: ly, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
+      if (Math.random() < 0.5) {
+        const [tx, ty] = P((Math.random() - 0.5) * 0.08, 0.46, 3)
+        wake.push({ x: tx, y: ty, nx: 0, ny: 0, v: 0, t0: lastSpawn, a: 0.45, life: 1.4 })
+      }
     }
-    if (t - lastHeadRipple > 1.4) {
-      lastHeadRipple = t
-      const [x, y] = P(0, -0.5, 0)
-      ripples.push({ x, y, t0: t, a: 0.75, v: len * 0.24 })
-    }
-    for (let i = ripples.length - 1; i >= 0; i--) if (t - ripples[i].t0 > 3 || t < ripples[i].t0) ripples.splice(i, 1)
-    if (ripples.length > 14) ripples.splice(0, ripples.length - 14)
+    for (let i = wake.length - 1; i >= 0; i--) if (t - wake[i].t0 > wake[i].life || t < wake[i].t0) wake.splice(i, 1)
+    if (wake.length > 420) wake.splice(0, wake.length - 420)
   }
+  let field = null, fox = null, foy = null
 
   let last = 0, hudKey = -1
   function updateHud(t, st) {
@@ -261,39 +267,45 @@ export function mountWater(host, hud) {
     const d = mctx.getImageData(x0, y0, bw, bh).data
     const A = (c, r) => (c < 0 || r < 0 || c >= bw || r >= bh ? 0 : d[(r * bw + c) * 4 + 3] / 255)
 
-    // фон: синий #2C40C7 и сетка ASCII-символов и пикселей; круги от карпа поднимают символы и чуть сдвигают их
+    // фон: синий #2C40C7 и неподвижная сетка ASCII-символов и пикселей; след от карпа поднимает символы и чуть сдвигает их
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.globalCompositeOperation = 'source-over'
     ctx.globalAlpha = 1
     const [hx, hy] = P(0, -0.4, 0)
     ctx.fillStyle = '#2c40c7'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    spawnRipples(t, P)
-    const rp = ripples.map((q) => { const age = t - q.t0; return { x: q.x, y: q.y, r: q.v * age + len * 0.04, w: len * (0.03 + 0.025 * age), a: q.a * Math.pow(1 - age / 3, 1.6) } })
+    spawnWake(t, P, st)
+    // поле волны: каждую частицу «штампуем» в ближайшие клетки фона (быстрее, чем перебирать всё)
+    const nb = bcols * brows
+    if (!field || field.length !== nb) { field = new Float32Array(nb); fox = new Float32Array(nb); foy = new Float32Array(nb) }
+    field.fill(0); fox.fill(0); foy.fill(0)
+    for (const q of wake) {
+      const age = t - q.t0
+      const k = 1 - age / q.life
+      const amp = q.a * Math.pow(k, 1.3) * Math.min(1, age * 1.5)
+      const w = len * (0.014 + 0.006 * age)
+      const x = q.x + q.nx * q.v * age, y = q.y + q.ny * q.v * age
+      const c0 = Math.max(0, Math.floor((x - w * 2.5) / dcell)), c1 = Math.min(bcols - 1, Math.floor((x + w * 2.5) / dcell))
+      const r0 = Math.max(0, Math.floor((y - w * 2.5) / dcell)), r1 = Math.min(brows - 1, Math.floor((y + w * 2.5) / dcell))
+      for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) {
+        const dx = (c + 0.5) * dcell - x, dy = (r + 0.5) * dcell - y
+        const e = (dx * dx + dy * dy) / (w * w)
+        if (e > 6) continue
+        const h = Math.exp(-e) * amp
+        const i = r * bcols + c
+        field[i] += h
+        fox[i] += q.nx * h * 3.2
+        foy[i] += q.ny * h * 3.2
+      }
+    }
     const ba = batlas.height
     for (let r = 0; r < brows; r++) {
-      const cy = (r + 0.5) * dcell
       for (let c = 0; c < bcols; c++) {
         const i = r * bcols + c
-        const cx = (c + 0.5) * dcell
-        // волна от кругов: интенсивность и смещение вдоль радиуса
-        let wv = 0, ox = 0, oy = 0
-        for (let k = 0; k < rp.length; k++) {
-          const q = rp[k]
-          const dx = cx - q.x, dy = cy - q.y
-          const dd = Math.abs(dx) + Math.abs(dy)
-          if (dd > q.r + q.w * 3 + 4) continue
-          const dist = Math.hypot(dx, dy)
-          const e = (dist - q.r) / q.w
-          if (e > 3 || e < -3) continue
-          const h = Math.exp(-e * e) * q.a
-          wv += h
-          const nrm = h * 3.5 / (dist || 1)
-          ox += dx * nrm; oy += dy * nrm
-        }
+        const wv = Math.min(1.2, field[i]), ox = fox[i], oy = foy[i]
         const s = bseed[i]
         let l = s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length
-        if (wv > 0.04) l = Math.max(l, Math.min(BG.length + 1, Math.round(1.5 + wv * 8)))
+        if (wv > 0.06) l = Math.max(l, Math.min(BG.length + 1, Math.round(1.5 + wv * 7)))
         if (!l) continue
         ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round((c * dcell + ox) * sc), Math.round((r * dcell + oy) * sc), ba, ba)
       }
