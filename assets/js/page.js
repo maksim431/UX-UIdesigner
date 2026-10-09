@@ -35,7 +35,8 @@ document.addEventListener('click', (e) => {
 const box = document.querySelector('.hero__box')
 const portraitHost = document.querySelector('.hero__portrait')
 const hudRight = document.querySelector('.hud__r')
-if (portraitHost) mountWater(portraitHost, hudRight)
+// ?nokoi в адресе — главный экран без анимации карпа (для проверки, влияет ли она на плавность прокрутки)
+if (portraitHost && !/[?&]nokoi\b/.test(location.search)) mountWater(portraitHost, hudRight)
 
 /* ---------- появление первого экрана (после ASCII-перехода, если он был) ---------- */
 const introEls = [...document.querySelectorAll('[data-intro]')].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
