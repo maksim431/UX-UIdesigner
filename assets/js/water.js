@@ -401,7 +401,7 @@ export function mountWater(host, hud) {
       ctx.drawImage(batlas, bcur[i] * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
     }
   }
-  const baseLevel = (s) => (s < 0.3 ? 0 : s < 0.62 ? 1 : s < 0.8 ? 2 : s < 0.9 ? 3 : s < 0.95 ? 4 : s < 0.985 ? 5 : BG.length)
+  const baseLevel = (s) => (s < 0.65 ? 0 : s < 0.81 ? 1 : s < 0.9 ? 2 : s < 0.95 ? 3 : s < 0.975 ? 4 : s < 0.9925 ? 5 : BG.length)
   let bgStatic = null, bctx = null, bcur = null, bliveIdx = null, bliveT = null, bliveInit = false
 
   // след на воде клином (как у плывущей рыбы): от боков головы непрерывно отходят «частицы волны»,
