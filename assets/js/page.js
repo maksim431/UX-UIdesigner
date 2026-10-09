@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
-import { mountFigure } from './figure.js'
+import { mountCovers } from './covers.js'
 import { initProjects } from './projects.js'
 import { initSmoothScroll, scrollToY } from './smooth.js'
 
@@ -35,7 +35,7 @@ document.addEventListener('click', (e) => {
 const box = document.querySelector('.hero__box')
 const portraitHost = document.querySelector('.hero__portrait')
 const hudRight = document.querySelector('.hud__r')
-if (portraitHost) mountFigure(portraitHost, portraitHost.getAttribute('data-video'), portraitHost.getAttribute('data-poster'), hudRight)
+if (portraitHost) mountCovers(portraitHost, JSON.parse(portraitHost.getAttribute('data-covers') || '[]'), hudRight)
 
 /* ---------- появление первого экрана (после ASCII-перехода, если он был) ---------- */
 const introEls = [...document.querySelectorAll('[data-intro]')].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
