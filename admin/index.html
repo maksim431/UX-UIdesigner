@@ -796,7 +796,12 @@
 
     async function ym(params) {
       const q = new URLSearchParams({ ids: counterId, date1: $('stPeriod').value + 'daysAgo', date2: 'today', lang: 'ru', accuracy: 'full', ...params })
-      const r = await fetch(YM + '?' + q, { headers: { Authorization: 'OAuth ' + ymToken } })
+      let r
+      for (let attempt = 0; attempt < 4; attempt++) {
+        r = await fetch(YM + '?' + q, { headers: { Authorization: 'OAuth ' + ymToken } })
+        if (r.status !== 429) break
+        await new Promise((res) => setTimeout(res, 800 * (attempt + 1))) // квота занята — немного ждём и повторяем
+      }
       const j = await r.json().catch(() => ({}))
       if (!r.ok) { const e = new Error((j.errors && j.errors[0] && j.errors[0].message) || j.message || r.status); e.status = r.status; throw e }
       return j
@@ -842,15 +847,20 @@
         const tot = await ym({ metrics: 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageviews' })
         const t = tot.totals || [0, 0, 0, 0, 0]
         const sec = Math.round(t[3] || 0)
-        const parts = await Promise.allSettled([
-          ym({ dimensions: 'ym:s:lastTrafficSource', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
-          ym({ dimensions: 'ym:s:lastSourceEngine', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
-          ym({ dimensions: 'ym:s:deviceCategory', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
-          ym({ dimensions: 'ym:s:regionCountry', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
-          ymTry(['ym:pv:URLPath', 'ym:pv:URL'], { metrics: 'ym:pv:pageviews', sort: '-ym:pv:pageviews', limit: 30 }),
-          ymTry(['ym:s:endURLPath', 'ym:s:endURL'], { metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 30 }),
-          ym({ dimensions: 'ym:s:paramsLevel2,ym:s:paramsLevel3', metrics: 'ym:s:visits', filters: "ym:s:paramsLevel1=='этап'", limit: 1000 }),
-        ])
+        // Метрика разрешает не больше 3 одновременных запросов — грузим отчёты по очереди
+        const jobs = [
+          () => ym({ dimensions: 'ym:s:lastTrafficSource', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
+          () => ym({ dimensions: 'ym:s:lastSourceEngine', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
+          () => ym({ dimensions: 'ym:s:deviceCategory', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
+          () => ym({ dimensions: 'ym:s:regionCountry', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
+          () => ymTry(['ym:pv:URLPath', 'ym:pv:URL'], { metrics: 'ym:pv:pageviews', sort: '-ym:pv:pageviews', limit: 30 }),
+          () => ymTry(['ym:s:endURLPath', 'ym:s:endURL'], { metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 30 }),
+          () => ym({ dimensions: 'ym:s:paramsLevel2,ym:s:paramsLevel3', metrics: 'ym:s:visits', filters: "ym:s:paramsLevel1=='этап'", limit: 1000 }),
+        ]
+        const parts = []
+        for (const job of jobs) {
+          try { parts.push({ status: 'fulfilled', value: await job() }) } catch (e) { parts.push({ status: 'rejected', reason: e }) }
+        }
         const val = (i) => (parts[i].status === 'fulfilled' ? parts[i].value : { data: [], err: parts[i].reason })
         const errs = parts.filter((p) => p.status === 'rejected').map((p) => p.reason.message)
         // объединяем страницы с одинаковым названием (с / без index.html и т. п.)
