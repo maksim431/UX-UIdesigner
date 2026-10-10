@@ -4,7 +4,7 @@
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js'
 import { mountWater } from './water.js?v=31'
-import { initProjects } from './projects.js'
+import { initProjects } from './projects.js?v=2'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=3'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))

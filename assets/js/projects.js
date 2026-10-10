@@ -165,6 +165,109 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     io.observe(root)
   }
 
+  /* ---------- листание: один жест колеса/свайп — ровно одна карточка ---------- */
+  const yAt = (i) => {
+    const total = root.offsetHeight - box.innerH
+    const top = root.getBoundingClientRect().top + window.scrollY - box.hdr
+    return Math.round(top + (total * clamp(i, 0, n - 1)) / Math.max(1, n - 1)) + 2
+  }
+  const zone = () => [yAt(0), yAt(n - 1)]
+  const idxAt = (y) => { const [a, b] = zone(); return clamp(Math.round(((y - a) / Math.max(1, b - a)) * (n - 1)), 0, n - 1) }
+  let busyUntil = 0, own = 0
+  function glide(y, ms) {
+    busyUntil = performance.now() + ms + 120
+    if (smooth) { smooth.scrollTo(y, ms / 1000); return }
+    cancelAnimationFrame(own)
+    const from = window.scrollY, t0 = performance.now()
+    const tick = (t) => {
+      const k = clamp((t - t0) / ms, 0, 1)
+      window.scrollTo(0, from + (y - from) * easeInOut(k))
+      if (k < 1) own = requestAnimationFrame(tick)
+    }
+    own = requestAnimationFrame(tick)
+  }
+  const pageTo = (i) => glide(yAt(i), reduce ? 1 : 850)
+  // куда листать жестом в направлении dir; null — край блока, прокрутка идёт дальше как обычно
+  function nextFor(dir) {
+    const y = window.scrollY, [a, b] = zone()
+    if (y < a - 3 || y > b + 3) return null
+    const i = idxAt(y)
+    const aligned = Math.abs(y - yAt(i)) <= 3
+    const t = aligned ? i + dir : dir > 0 ? Math.ceil(((y - a) / Math.max(1, b - a)) * (n - 1)) : Math.floor(((y - a) / Math.max(1, b - a)) * (n - 1))
+    if (t < 0 || t > n - 1) return null
+    return t
+  }
+
+  // колесо и тачпад: перехватываем раньше плавной прокрутки; инерцию жеста гасим целиком
+  let wheelQuiet = 0, lastAbs = 0
+  window.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || document.documentElement.classList.contains('no-scroll')) return
+    const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY
+    if (!dy) return
+    const now = performance.now()
+    const abs = Math.abs(dy)
+    // пока карточка перелистывается — всё колесо её, без накопления
+    if (now < busyUntil) { e.preventDefault(); wheelQuiet = now + 250; lastAbs = abs; return }
+    const inGesture = now < wheelQuiet
+    const fresh = abs > 12 && abs > lastAbs * 1.8 && now > busyUntil
+    lastAbs = abs
+    if (inGesture && !fresh) {
+      // хвост того же жеста: внутри блока его глушим, на краю — отдаём странице
+      const [a, b] = zone(), y = window.scrollY
+      if (now < busyUntil || (y >= a - 3 && y <= b + 3 && nextFor(Math.sign(dy)) !== null)) { e.preventDefault(); wheelQuiet = now + 250 }
+      return
+    }
+    const t = nextFor(Math.sign(dy))
+    if (t === null) return
+    e.preventDefault()
+    wheelQuiet = now + 250
+    pageTo(t)
+  }, { passive: false, capture: true })
+
+  // свайп на телефоне и планшете
+  let ty0 = 0, tDir = 0, tTake = false, tEnter = 0, sy0 = 0
+  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; sy0 = window.scrollY; tDir = 0; tTake = false; tEnter = 0 }, { passive: true })
+  window.addEventListener('touchmove', (e) => {
+    const d = ty0 - e.touches[0].clientY
+    if (!tDir && Math.abs(d) > 6) { tDir = Math.sign(d); tTake = performance.now() > busyUntil ? nextFor(tDir) !== null : true }
+    if (!tTake && tDir) {
+      // тянут палец из первого экрана в блок (или снизу вверх) — на границе останавливаемся на крайней карточке
+      const y = window.scrollY, [a, b] = zone()
+      if (tDir > 0 && sy0 < a - 3 && y >= a - 3) { tTake = true; tEnter = 1 }
+      else if (tDir < 0 && sy0 > b + 3 && y <= b + 3) { tTake = true; tEnter = -1 }
+    }
+    if (tTake || performance.now() < busyUntil) e.preventDefault()
+  }, { passive: false })
+  window.addEventListener('touchend', () => {
+    if (!tTake) return
+    tTake = false
+    if (tEnter) { const [a, b] = zone(); glide(tEnter > 0 ? a : b, 450); return }
+    const t = nextFor(tDir)
+    if (t !== null && performance.now() > busyUntil) pageTo(t)
+  }, { passive: true })
+
+  // если прокрутка (инерция, полоса, клавиши) остановилась посреди карточки — доводим до ближайшей
+  let settleT = 0, prevY = window.scrollY, entry = null
+  window.addEventListener('scroll', () => {
+    // влетели в блок с разгона (из первого экрана или снизу) — останавливаемся на крайней карточке, а не посреди следующей
+    const y0 = window.scrollY, [za, zb] = zone()
+    if (performance.now() > busyUntil) {
+      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; glide(za, 450) }
+      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; glide(zb, 450) }
+    }
+    prevY = y0
+    clearTimeout(settleT)
+    settleT = setTimeout(() => {
+      if (performance.now() < busyUntil) return
+      const y = window.scrollY, [a, b] = zone()
+      if (y <= a + 3 || y >= b - 3) return
+      // инерция всё же пронесла дальше крайней карточки — возвращаем на неё
+      const i = entry && performance.now() < entry.until ? entry.i : idxAt(y)
+      entry = null
+      if (Math.abs(y - yAt(i)) > 3) pageTo(i)
+    }, 160)
+  }, { passive: true })
+
   measure(true)
 
   return {
