@@ -262,7 +262,14 @@
     const dlg = $('tokenDlg')
     $('tokenBtn').onclick = () => { $('tokenInput').value = ''; $('tokenStatus').textContent = token ? 'ключ подключён' : ''; dlg.showModal() }
     dlg.addEventListener('close', async () => {
-      if (dlg.returnValue === 'forget') { token = ''; try { localStorage.removeItem('ghToken') } catch (e) {} ; location.reload(); return }
+      if (dlg.returnValue === 'forget') {
+        if (!confirm('Удалить ключ GitHub из этого браузера? Чтобы снова править сайт, ключ нужно будет вставить заново.')) return
+        token = ''
+        try { localStorage.removeItem('ghToken'); sessionStorage.setItem('ghForgot', '1') } catch (e) {}
+        dirty = false
+        location.reload()
+        return
+      }
       if (dlg.returnValue !== 'save') return
       const v = $('tokenInput').value.trim()
       if (!v) return
@@ -282,7 +289,9 @@
 
     /* ---------- список кейсов ---------- */
     async function init() {
-      if (!token) { dlg.showModal(); return }
+      let forgot = false
+      try { forgot = sessionStorage.getItem('ghForgot') === '1'; sessionStorage.removeItem('ghForgot') } catch (e) {}
+      if (!token) { $('tokenStatus').textContent = forgot ? 'Ключ удалён из этого браузера.' : ''; dlg.showModal(); return }
       try {
         const list = await gh('/contents/projects?ref=' + BRANCH)
         const cases = list.filter((x) => x.type === 'dir').map((x) => x.name).sort()
@@ -723,7 +732,13 @@
     $('stSetupBtn').onclick = () => { $('stSetup').hidden = !$('stSetup').hidden }
     $('stReload').onclick = () => stLoad()
     $('stPeriod').onchange = () => stLoad()
-    $('stForget').onclick = () => { ymToken = ''; try { localStorage.removeItem('ymToken') } catch (e) {} ; stInit() }
+    $('stForget').onclick = async () => {
+      if (!ymToken) { stStatus('ключ Яндекса в этом браузере не сохранён — удалять нечего', 'dirty'); return }
+      ymToken = ''
+      try { localStorage.removeItem('ymToken') } catch (e) {}
+      await stInit()
+      stStatus('ключ Яндекса удалён из этого браузера', 'ok')
+    }
     $('stLogin').onclick = () => {
       const id = $('stClient').value.trim()
       if (!id) { stStatus('вставьте ClientID приложения', 'err'); return }
