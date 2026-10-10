@@ -26,7 +26,7 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
     raf = 0
     if (tween) {
       const k = clamp((time - tween.t0) / tween.d, 0, 1)
-      const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
+      const e = tween.ease ? tween.ease(k) : k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
       current = tween.from + (tween.to - tween.from) * e
       target = current
       go(current)
@@ -126,9 +126,9 @@ export function initSmoothScroll({ lerp = 0.1 } = {}) {
     addStop(fn) {
       stops.push(fn)
     },
-    scrollTo(y, duration = 1.2) {
+    scrollTo(y, duration = 1.2, ease) {
       cancelAnimationFrame(raf)
-      tween = { from: window.scrollY, to: clamp(y, 0, maxY()), t0: performance.now(), d: duration * 1000 }
+      tween = { from: window.scrollY, to: clamp(y, 0, maxY()), t0: performance.now(), d: duration * 1000, ease }
       current = window.scrollY
       animating = true
       raf = requestAnimationFrame(step)

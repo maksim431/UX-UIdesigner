@@ -3,7 +3,7 @@
 // тексты выезжают снизу, индекс показывает активный проект.
 // Пересчёт — только на прокрутке/ресайзе (в покое процессор не занят).
 
-import { scrollToY } from './smooth.js'
+import { scrollToY } from './smooth.js?v=4'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
@@ -173,20 +173,22 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   }
   const zone = () => [yAt(0), yAt(n - 1)]
   const idxAt = (y) => { const [a, b] = zone(); return clamp(Math.round(((y - a) / Math.max(1, b - a)) * (n - 1)), 0, n - 1) }
+  // мягкий разгон и мягкое торможение (синусоида) — без рывка в начале и в конце
+  const easeSoft = (t) => -(Math.cos(Math.PI * t) - 1) / 2
   let busyUntil = 0, own = 0
   function glide(y, ms) {
     busyUntil = performance.now() + ms + 120
-    if (smooth) { smooth.scrollTo(y, ms / 1000); return }
+    if (smooth) { smooth.scrollTo(y, ms / 1000, easeSoft); return }
     cancelAnimationFrame(own)
     const from = window.scrollY, t0 = performance.now()
     const tick = (t) => {
       const k = clamp((t - t0) / ms, 0, 1)
-      window.scrollTo(0, from + (y - from) * easeInOut(k))
+      window.scrollTo(0, from + (y - from) * easeSoft(k))
       if (k < 1) own = requestAnimationFrame(tick)
     }
     own = requestAnimationFrame(tick)
   }
-  const pageTo = (i) => glide(yAt(i), reduce ? 1 : 850)
+  const pageTo = (i) => glide(yAt(i), reduce ? 1 : 1250)
   // куда листать жестом в направлении dir; null — край блока, прокрутка идёт дальше как обычно
   function nextFor(dir) {
     const y = window.scrollY, [a, b] = zone()
@@ -241,7 +243,7 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   window.addEventListener('touchend', () => {
     if (!tTake) return
     tTake = false
-    if (tEnter) { const [a, b] = zone(); glide(tEnter > 0 ? a : b, 450); return }
+    if (tEnter) { const [a, b] = zone(); glide(tEnter > 0 ? a : b, 700); return }
     const t = nextFor(tDir)
     if (t !== null && performance.now() > busyUntil) pageTo(t)
   }, { passive: true })
@@ -252,8 +254,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     // влетели в блок с разгона (из первого экрана или снизу) — останавливаемся на крайней карточке, а не посреди следующей
     const y0 = window.scrollY, [za, zb] = zone()
     if (performance.now() > busyUntil) {
-      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; glide(za, 450) }
-      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; glide(zb, 450) }
+      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; glide(za, 700) }
+      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; glide(zb, 700) }
     }
     prevY = y0
     clearTimeout(settleT)
