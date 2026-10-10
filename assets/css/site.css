@@ -839,3 +839,17 @@ html.lb-open .ascii-cursor { display: none; }
   .fs-opt__txt { width: auto; font-size: 18px; }
   .fs-opt__btn { height: 52px; font-size: 16px; }
 }
+
+/* шапка: «скачать cv» — контакты — язык (язык всегда правее контактов) */
+.hdr__right { gap: 40px; }
+.hdr__right .lang { margin-right: 0; }
+.hdr__cv { font-size: 20px; line-height: 24px; white-space: pre; transition: color .2s; }
+.hdr__cv:hover { color: #666; }
+.hdr--home.is-hero:not(.is-open) .hdr__cv { order: 1; }
+.hdr--home.is-hero:not(.is-open) .hdr__cv:hover { color: #fff; opacity: .7; }
+.contacts__cv { display: none; }
+@media (max-width: 1199.98px) {
+  .hdr__right { gap: 20px; }
+  .hdr__cv { display: none; }
+  .contacts .contacts__cv { display: flex; }
+}
