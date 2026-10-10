@@ -97,6 +97,8 @@
     </span>
     <button type="button" id="boldBtn" title="Жирный (Ctrl+B)" disabled><b>Ж</b></button>
     <label class="chk"><input type="checkbox" id="syncPair" checked> картинки — в обеих версиях</label>
+    <label class="chk" id="trWrap" title="Изменённый русский текст переводится и подставляется в английскую версию при сохранении"><input type="checkbox" id="trOn" checked> переводить на en</label>
+    <button type="button" id="trBtn" title="Настройка перевода">перевод</button>
     </span>
     <span class="sp"></span>
     <span class="status" id="status"></span>
@@ -183,6 +185,17 @@
       <p class="status" id="tokenStatus"></p>
     </form>
   </dialog>
+  <dialog id="trDlg">
+    <form method="dialog">
+      <h2>автоперевод на английский</h2>
+      <p>Когда вы правите русскую страницу, изменённые фрагменты при сохранении переводятся и подставляются в те же места английской версии. Остальной английский текст не трогается.</p>
+      <p><label><input type="radio" name="trEng" value="mm"> <b>бесплатный</b> (MyMemory) — без настройки, до ~5000 символов в день, качество попроще.</label></p>
+      <p><label><input type="radio" name="trEng" value="claude"> <b>Claude</b> — точнее и сохраняет тон портфолио. Нужен ключ <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic API</a>; перевод правок стоит доли цента.</label></p>
+      <div class="row"><input type="password" id="trKey" placeholder="sk-ant-… (только для Claude)" autocomplete="off" spellcheck="false"></div>
+      <p class="hint">Ключ хранится только в этом браузере.</p>
+      <div class="row"><button type="submit" class="primary" value="save">сохранить</button><button type="submit" value="cancel">закрыть</button></div>
+    </form>
+  </dialog>
   <input type="file" id="filePick" accept="image/*" hidden>
 
   <script>
@@ -199,7 +212,7 @@
     try { token = localStorage.getItem('ghToken') || '' } catch (e) {}
     let pages = [], lang = 'ru', cur = null // { path, src, sha, page }
     let dirty = false, pending = new Map() // img id -> { file blob, repoPath, oldRepoPath, w, h }
-    let frame = null, seq = 0, justSaved = false
+    let frame = null, seq = 0, justSaved = false, savedNote = ''
 
     const status = (t, kind) => { const s = $('status'); s.textContent = t || ''; s.className = 'status' + (kind ? ' ' + kind : '') }
     const setDirty = (v) => { dirty = v; $('saveBtn').disabled = !v; $('resetBtn').disabled = !v; if (v) status('есть несохранённые изменения', 'dirty') }
@@ -290,7 +303,7 @@
       load()
     }
     const pageById = (id) => pages.find((x) => x.id === id)
-    const updLang = () => { $('langRu').setAttribute('aria-pressed', lang === 'ru'); $('langEn').setAttribute('aria-pressed', lang === 'en') }
+    const updLang = () => { $('langRu').setAttribute('aria-pressed', lang === 'ru'); $('langEn').setAttribute('aria-pressed', lang === 'en'); $('trWrap').hidden = lang !== 'ru' }
     const guard = () => !dirty || confirm('Есть несохранённые изменения. Выйти без сохранения?')
     $('caseSel').addEventListener('focus', function () { this.dataset.prev = this.value })
     $('caseSel').onchange = function () { if (!guard()) { this.value = this.dataset.prev; return } load() }
@@ -359,10 +372,9 @@
       if (!main) { status('на странице нет блока <main>', 'err'); return }
       // ссылки внутри редактора не уводят со страницы
       d.addEventListener('click', (e) => { const a = e.target.closest('a'); if (a) e.preventDefault() }, true)
-      // редактируемые блоки: самые «внутренние» текстовые элементы
-      const cand = [...main.querySelectorAll(EDIT_SEL)].filter((el) => (el.textContent.trim() || el.matches('p')) && !el.closest('.sr-only, .ps__nav'))
-      const set = new Set(cand)
-      cand.filter((el) => ![...el.querySelectorAll(EDIT_SEL)].some((c) => set.has(c))).forEach(makeEditable)
+      // редактируемые блоки: самые «внутренние» текстовые элементы; номер нужен, чтобы найти то же место в английской версии
+      origHTML = []
+      editables(main).forEach((el, k) => { el.setAttribute('data-ae-k', k); origHTML[k] = el.innerHTML; makeEditable(el) })
       // картинки: показываем, как на сайте (с запасными вариантами), клик — замена
       main.querySelectorAll('img[data-ae-id]').forEach(showImg)
       main.querySelectorAll(IMG_BOX).forEach((box) => box.addEventListener('click', (e) => {
@@ -372,8 +384,14 @@
         if (img) pickFor(img)
       }))
       $('boldBtn').disabled = false
-      if (justSaved) { status('сохранено — на сайте через 1–2 минуты', 'ok'); justSaved = false } else status('готово к правкам')
+      if (justSaved) { status('сохранено' + (savedNote ? ', ' + savedNote : '') + ' — на сайте через 1–2 минуты', 'ok'); justSaved = false } else status('готово к правкам')
     }
+    function editables(main) {
+      const cand = [...main.querySelectorAll(EDIT_SEL)].filter((el) => (el.textContent.trim() || el.matches('p')) && !el.closest('.sr-only, .ps__nav'))
+      const set = new Set(cand)
+      return cand.filter((el) => ![...el.querySelectorAll(EDIT_SEL)].some((c) => set.has(c)))
+    }
+    let origHTML = []
     function makeEditable(el) {
       el.setAttribute('contenteditable', 'true')
       el.setAttribute('spellcheck', 'true')
@@ -398,6 +416,7 @@
           const frag = tail.extractContents()
           const p = d.createElement('p')
           if (el.className) p.className = el.className
+          p.setAttribute('data-ae-from', el.getAttribute('data-ae-k') || el.getAttribute('data-ae-from'))
           p.append(frag)
           el.after(p)
           makeEditable(p)
@@ -473,6 +492,116 @@
       return { blob, ext: '.jpg', w, h }
     }
 
+    /* ---------- автоперевод правок на английский ---------- */
+    const trGet = (k, d) => { try { return localStorage.getItem(k) || d } catch (e) { return d } }
+    const trDlg = $('trDlg')
+    $('trBtn').onclick = () => {
+      const eng = trGet('trEngine', 'mm')
+      trDlg.querySelectorAll('input[name=trEng]').forEach((r) => { r.checked = r.value === eng })
+      $('trKey').value = trGet('trKey', '')
+      trDlg.showModal()
+    }
+    trDlg.addEventListener('close', () => {
+      if (trDlg.returnValue !== 'save') return
+      const eng = (trDlg.querySelector('input[name=trEng]:checked') || {}).value || 'mm'
+      try { localStorage.setItem('trEngine', eng); localStorage.setItem('trKey', $('trKey').value.trim()) } catch (e) {}
+    })
+    // какие русские блоки изменились: [{ k, html: [..] }] — html пустой, если блок удалён
+    function collectChanges() {
+      const main = frame.contentDocument.querySelector('main')
+      const out = []
+      for (let k = 0; k < origHTML.length; k++) {
+        const group = [...main.querySelectorAll('[data-ae-k="' + k + '"],[data-ae-from="' + k + '"]')]
+        const html = group.map((el) => el.innerHTML.replace(/<br>$/, '').trim()).filter((h, i) => i === 0 || h)
+        if (html.length === 1 && group[0].innerHTML === origHTML[k]) continue
+        out.push({ k, html })
+      }
+      return out
+    }
+    const sig = (els) => els.map((el) => el.tagName + '.' + el.className).join('|')
+    async function translatePair(enText, changes) {
+      const ruDoc = new DOMParser().parseFromString(cur.src, 'text/html')
+      const enDoc = new DOMParser().parseFromString(enText, 'text/html')
+      const ruEds = editables(ruDoc.querySelector('main')), enMain = enDoc.querySelector('main'), enEds = editables(enMain)
+      if (sig(ruEds) !== sig(enEds)) {
+        const e = new Error('русская и английская страницы устроены по-разному, перевести автоматически не получится — снимите галочку «переводить на en» или напишите Claude'); e.trError = true; throw e
+      }
+      const src = []
+      changes.forEach((c) => c.html.forEach((h) => src.push(h)))
+      let tr = []
+      try { tr = await translateAll(src) } catch (e) { const er = new Error('перевод не удался: ' + e.message + '. Можно сохранить без перевода — снимите галочку «переводить на en».'); er.trError = true; throw er }
+      let i = 0
+      for (const c of changes) {
+        const el = enEds[c.k]
+        if (!c.html.length) { el.remove(); continue }
+        el.innerHTML = tr[i++]
+        let prev = el
+        for (let j = 1; j < c.html.length; j++) {
+          const n = el.cloneNode(false)
+          n.removeAttribute('id')
+          n.innerHTML = tr[i++]
+          prev.after(n); prev = n
+        }
+      }
+      const html = enMain.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
+      const a = enText.indexOf('<main'), b = enText.lastIndexOf('</main>')
+      const n = changes.reduce((s, c) => s + Math.max(1, c.html.length), 0)
+      return { text: enText.slice(0, a) + html + enText.slice(b + 7), note: 'английская версия переведена (' + n + ' ' + plural(n, 'фрагмент', 'фрагмента', 'фрагментов') + ')' }
+    }
+    const plural = (n, a, b, c) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c)
+    // строчные буквы в исходнике — строчные и в переводе (заголовки сайта набраны в нижнем регистре)
+    const keepCase = (src, out) => { const t = src.replace(/<[^>]*>/g, ''); return /\p{L}/u.test(t) && t === t.toLowerCase() ? out.replace(/(^|>)([^<]*)/g, (m, a, b) => a + b.toLowerCase()) : out }
+    async function translateAll(list) {
+      const eng = trGet('trEngine', 'mm')
+      const out = eng === 'claude' ? await trClaude(list) : await Promise.all(list.map(trMyMemory))
+      return out.map((o, i) => keepCase(list[i], o))
+    }
+    async function trClaude(list) {
+      const key = trGet('trKey', '')
+      if (!key) throw new Error('не указан ключ Anthropic API (кнопка «перевод»)')
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-5-5', max_tokens: 8000,
+          system: 'You translate fragments of a UX/UI designer portfolio website from Russian to natural, concise English. Each fragment is an HTML snippet: keep every HTML tag and attribute exactly as is and translate only the text. Keep product and brand names as they are. Use typographic quotes “ ” instead of « ». Return ONLY a JSON array of strings, one translation per input fragment, in the same order.',
+          messages: [{ role: 'user', content: JSON.stringify(list) }],
+        }),
+      })
+      const j = await r.json().catch(() => ({}))
+      if (!r.ok) throw new Error((j.error && j.error.message) || 'ошибка ' + r.status)
+      const txt = (j.content || []).map((c) => c.text || '').join('')
+      const arr = JSON.parse(txt.slice(txt.indexOf('['), txt.lastIndexOf(']') + 1))
+      if (!Array.isArray(arr) || arr.length !== list.length) throw new Error('ответ не совпал по количеству фрагментов')
+      return arr
+    }
+    // MyMemory принимает до ~500 символов за раз — длинный абзац режем по предложениям вне тегов
+    function chunks(html, max = 450) {
+      if (html.length <= max) return [html]
+      const parts = [], re = /[.!?…]\s+/g
+      let depth = 0, start = 0
+      for (let i = 0; i < html.length; i++) {
+        if (html[i] === '<') depth += html[i + 1] === '/' ? -1 : 1
+        if (depth === 0 && /[.!?…]/.test(html[i]) && /\s/.test(html[i + 1] || '') && i - start > 40) { parts.push(html.slice(start, i + 1)); start = i + 2 }
+      }
+      parts.push(html.slice(start))
+      const out = []
+      for (const p of parts) { if (out.length && (out[out.length - 1] + ' ' + p).length <= max) out[out.length - 1] += ' ' + p; else out.push(p) }
+      return out
+    }
+    async function trMyMemory(html) {
+      const res = []
+      for (const part of chunks(html)) {
+        const r = await fetch('https://api.mymemory.translated.net/get?langpair=ru|en&q=' + encodeURIComponent(part))
+        const j = await r.json().catch(() => ({}))
+        if (j.quotaFinished) throw new Error('дневной лимит бесплатного перевода исчерпан — переключитесь на Claude (кнопка «перевод») или попробуйте завтра')
+        if (!r.ok || j.responseStatus != 200) throw new Error(j.responseDetails || 'ошибка ' + r.status)
+        const ta = document.createElement('textarea'); ta.innerHTML = j.responseData.translatedText
+        res.push(ta.value.replace(/«|»/g, '"'))
+      }
+      return res.join(' ')
+    }
+
     /* ---------- сохранение ---------- */
     const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const prefixFor = (path) => '../'.repeat(path.split('/').length - 1)
@@ -492,6 +621,7 @@
       main.querySelectorAll('[data-ae-new]').forEach((el) => { if (el.tagName !== 'IMG') el.removeAttribute('data-ae-new') })
       main.querySelectorAll('*').forEach((el) => {
         for (const a of [...el.attributes]) if (a.name.startsWith('data-ae-on')) { el.setAttribute(a.name.slice(8), a.value); el.removeAttribute(a.name) }
+        el.removeAttribute('data-ae-k'); el.removeAttribute('data-ae-from')
       })
       // картинки возвращаем ровно такими, как в исходнике (тот же порядок атрибутов); заменённые — с новым файлом
       const srcMain = cur.src.slice(cur.src.indexOf('<main'), cur.src.lastIndexOf('</main>'))
@@ -521,11 +651,19 @@
         for (const p of pending.values()) files.push({ path: p.repoPath, b64: await blobToB64(p.blob) })
         files.push({ path: cur.path, text: page })
         // та же картинка во второй языковой версии
-        if ($('syncPair').checked && pending.size) {
+        const wantTr = lang === 'ru' && $('trOn').checked
+        const changes = wantTr ? collectChanges() : []
+        let trNote = ''
+        if ((($('syncPair').checked && pending.size) || changes.length)) {
           const pairPath = cur.page[lang === 'ru' ? 'en' : 'ru']
           try {
             const pair = await getFile(pairPath)
             let t = pair.text
+            if (changes.length) {
+              status('перевожу на английский…')
+              const r = await translatePair(t, changes)
+              t = r.text; trNote = r.note
+            }
             const pre = prefixFor(pairPath)
             for (const p of pending.values()) {
               if (!p.oldRepo) continue
@@ -533,10 +671,13 @@
               t = t.replace(re, (tag) => fixImgTag(tag, pre + p.repoPath, p.w, p.h))
             }
             if (t !== pair.text) files.push({ path: pairPath, text: t })
-          } catch (e) { /* второй версии может не быть */ }
+          } catch (e) {
+            if (e.trError) throw e
+            /* второй версии может не быть */
+          }
         }
-        const sha = await commit(files, 'Админка: правка ' + cur.path)
-        status('сохранено — на сайте через 1–2 минуты', 'ok')
+        const sha = await commit(files, 'Админка: правка ' + cur.path + (changes.length ? ' (+ перевод на en)' : ''))
+        savedNote = trNote
         setDirty(false)
         justSaved = true
         await load(sha)
