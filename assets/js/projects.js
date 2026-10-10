@@ -191,6 +191,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     own = requestAnimationFrame(tick)
   }
   const pageTo = (i) => { goal = i; glide(yAt(i), reduce ? 1 : 1250) }
+  // жест наружу с крайней карточки: прекращаем своё листание и сразу отдаём прокрутку странице
+  const release = () => { busyUntil = 0; goal = -1; cancelAnimationFrame(own) }
   // куда листать жестом в направлении dir; null — край блока.
   // Во время анимации считаем от карточки, к которой уже едем, — новый жест сразу продолжает листание.
   function nextFor(dir) {
@@ -206,7 +208,7 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
 
   // колесо и тачпад: перехватываем раньше плавной прокрутки.
   // Новый жест — это щелчок колеса после паузы или новый свайп тачпада (резкий рост силы); хвост инерции — нет.
-  let lastWheel = 0, lastAbs = 0
+  let lastWheel = 0, lastAbs = 0, peak = 0, lastTrigger = 0
   window.addEventListener('wheel', (e) => {
     if (e.ctrlKey || document.documentElement.classList.contains('no-scroll')) return
     const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY
@@ -214,19 +216,24 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     const now = performance.now()
     const abs = Math.abs(dy), dir = Math.sign(dy)
     const gap = now - lastWheel
-    const fresh = gap > 150 || (abs > 12 && abs > lastAbs * 1.8)
+    // новый жест: пауза в событиях (отдельный щелчок колеса или новый свайп после остановки)
+    // либо резкий всплеск силы, когда инерция прошлого свайпа уже затухла (разгон в начале свайпа — не новый жест)
+    let fresh = gap > 150
+    if (!fresh && abs > 20 && abs > lastAbs * 2 && lastAbs < peak * 0.4 && now - lastTrigger > 350) fresh = true
+    if (fresh) peak = 0
+    peak = Math.max(peak, abs)
     lastWheel = now
     lastAbs = abs
     const [a, b] = zone(), y = window.scrollY
-    const inside = busy() || (y >= a - 3 && y <= b + 3)
     if (!fresh) {
-      // хвост того же жеста: внутри блока глушим, на краю — отдаём странице
-      if (busy() || (inside && nextFor(dir) !== null)) e.preventDefault()
+      // хвост того же жеста: внутри блока глушим (если он не ушёл за край блока)
+      if (busy() || (y >= a - 3 && y <= b + 3 && nextFor(dir) !== null)) e.preventDefault()
       return
     }
     const t = nextFor(dir)
-    if (t === null) { if (busy()) e.preventDefault(); return }
+    if (t === null) { if (busy()) release(); return } // край блока — этот же жест сразу прокручивает страницу
     e.preventDefault()
+    lastTrigger = now
     pageTo(t)
   }, { passive: false, capture: true })
 
@@ -238,7 +245,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     if (!tDir && Math.abs(d) > 6) {
       tDir = Math.sign(d)
       const t = nextFor(tDir)
-      tTake = t !== null || busy()
+      if (t === null && busy()) release() // свайп наружу с крайней карточки — сразу обычная прокрутка
+      tTake = t !== null
       if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
     }
     if (!tTake && tDir) {
