@@ -97,8 +97,18 @@ export function mountWater(host, hud) {
     return { x0: f.x0, x1: f.x1, y0: f.y0, y1: f.y0 + (f.y1 - f.y0) / 1.2 }
   }
   // новая цель «прогулки»: случайная точка внутри видимой области, не слишком близко к краю
+  // window.__koiScript — заданный маршрут (нужен только для записи анимированной обложки; на сайте не задаётся)
+  const SCRIPT = window.__koiScript || null
+  let scriptStep = 0
   function pickWaypoint(t) {
     const v = viewBox()
+    if (SCRIPT) {
+      const pt = SCRIPT.points[scriptStep++]
+      if (!pt) { pickExit(); return }
+      wx = v.x0 + (v.x1 - v.x0) * pt[0]; wy = v.y0 + (v.y1 - v.y0) * pt[1]
+      calm = SCRIPT.calm || 0.25; burstUntil = -1; segUntil = t + 60
+      return
+    }
     const mx = Math.min(len * 0.55, (v.x1 - v.x0) * 0.3), my = Math.min(len * 0.55, (v.y1 - v.y0) * 0.3)
     // не ближе ~0.6 длины тела к текущей точке, чтобы получался заметный путь
     for (let k = 0; k < 8; k++) {
@@ -115,13 +125,14 @@ export function mountWater(host, hud) {
   function pickExit() {
     const f = frameBox()
     const m = hidden() * 1.6
-    const side = Math.random() < 0.6 ? nearestSide() : Math.floor(Math.random() * 4)
-    const k = 0.2 + Math.random() * 0.6
+    let side = Math.random() < 0.6 ? nearestSide() : Math.floor(Math.random() * 4)
+    let k = 0.2 + Math.random() * 0.6
+    if (SCRIPT) { side = SCRIPT.exit[0]; k = SCRIPT.exit[1]; calm = SCRIPT.calm || 0.25 }
     if (side === 0) { wx = f.x0 + (f.x1 - f.x0) * k; wy = f.y0 - m }
     else if (side === 1) { wx = f.x1 + m; wy = f.y0 + (f.y1 - f.y0) * k }
     else if (side === 2) { wx = f.x0 + (f.x1 - f.x0) * k; wy = f.y1 + m }
     else { wx = f.x0 - m; wy = f.y0 + (f.y1 - f.y0) * k }
-    calm = 0.3
+    if (!SCRIPT) calm = 0.3
     leaving = true
   }
   function nearestSide() {
@@ -133,8 +144,9 @@ export function mountWater(host, hud) {
   function respawn(t) {
     const f = frameBox(), v = viewBox()
     const m = hidden()
-    const side = Math.floor(Math.random() * 4)
-    const k = 0.15 + Math.random() * 0.7
+    let side = Math.floor(Math.random() * 4)
+    let k = 0.15 + Math.random() * 0.7
+    if (SCRIPT) { side = SCRIPT.enter[0]; k = SCRIPT.enter[1]; scriptStep = 0 }
     if (side === 0) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y0 - m }
     else if (side === 1) { px = f.x1 + m; py = v.y0 + (v.y1 - v.y0) * k }
     else if (side === 2) { px = f.x0 + (f.x1 - f.x0) * k; py = f.y1 + m }
@@ -147,6 +159,7 @@ export function mountWater(host, hud) {
     entering = true
     leaving = false
     calm = 0.3; segUntil = t + 30
+    if (SCRIPT) { const pt = SCRIPT.points[0]; wx = v.x0 + (v.x1 - v.x0) * pt[0]; wy = v.y0 + (v.y1 - v.y0) * pt[1]; heading = Math.atan2(wx - px, -(wy - py)); scriptStep = 1; calm = SCRIPT.calm || 0.25 }
     resetTrail()
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
@@ -175,7 +188,7 @@ export function mountWater(host, hud) {
     } else {
       // цель прогулки достигнута (или «не даётся» слишком долго) — следующая цель или уход
       if (!entering && !leaving && (Math.hypot(wx - hx0, wy - hy0) < len * 0.35 || t > segUntil)) {
-        if (Math.random() < 0.14) pickExit()
+        if (!SCRIPT && Math.random() < 0.14) pickExit()
         else pickWaypoint(t)
       }
       tx = wx; ty = wy
