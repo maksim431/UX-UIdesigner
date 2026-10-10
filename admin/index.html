@@ -153,7 +153,7 @@
       <h2>как редактировать</h2>
       <ul>
         <li><b>Текст</b> — кликните по нему и печатайте прямо на странице.</li>
-        <li><kbd>Enter</kbd> в абзаце — новый абзац; <kbd>Backspace</kbd> в пустом — удалить его.</li>
+        <li><kbd>Enter</kbd> — перенос строки внутри того же текста. Новые абзацы, блоки и поля создать нельзя — так структура страницы не сломается.</li>
         <li>Выделите слова и нажмите <b>Ж</b> (или <kbd>Ctrl</kbd>+<kbd>B</kbd>) — жирный.</li>
         <li><b>Картинка</b> — кликните по ней (или по серой заглушке) и выберите файл. Большие картинки уменьшаются до 2560px по ширине.</li>
         <li>Галочка «картинки — в обеих версиях» заменяет ту же картинку и на русской, и на английской странице.</li>
@@ -384,6 +384,7 @@
       if (!main) { status('на странице нет блока <main>', 'err'); return }
       // ссылки внутри редактора не уводят со страницы
       d.addEventListener('click', (e) => { const a = e.target.closest('a'); if (a) e.preventDefault() }, true)
+      ;['dragstart', 'drop'].forEach((t) => d.addEventListener(t, (e) => e.preventDefault(), true))
       // редактируемые блоки: самые «внутренние» текстовые элементы; номер нужен, чтобы найти то же место в английской версии
       origHTML = []
       editables(main).forEach((el, k) => { el.setAttribute('data-ae-k', k); origHTML[k] = el.innerHTML; makeEditable(el) })
@@ -404,6 +405,30 @@
       return cand.filter((el) => ![...el.querySelectorAll(EDIT_SEL)].some((c) => set.has(c)))
     }
     let origHTML = []
+    // внутри текстового поля остаются только строчные теги; любые блоки (div, p, списки) разворачиваются в текст с переносом строки
+    const INLINE = /^(STRONG|B|EM|I|U|S|SUB|SUP|BR|SPAN|A)$/
+    function clean(html) {
+      const box = document.implementation.createHTMLDocument('').createElement('div')
+      box.innerHTML = html
+      const walk = (node) => {
+        for (const ch of [...node.childNodes]) {
+          if (ch.nodeType === 3) continue
+          if (ch.nodeType !== 1) { ch.remove(); continue }
+          walk(ch)
+          if (!INLINE.test(ch.tagName)) {
+            if (ch.previousSibling) ch.before(box.ownerDocument.createElement('br'))
+            ch.replaceWith(...ch.childNodes)
+            continue
+          }
+          for (const a of [...ch.attributes]) {
+            const keep = (ch.tagName === 'A' && /^(href|target|rel)$/.test(a.name)) || (ch.tagName === 'SPAN' && a.name === 'class')
+            if (!keep) ch.removeAttribute(a.name)
+          }
+        }
+      }
+      walk(box)
+      return box.innerHTML.replace(/(<br>\s*)+$/, '')
+    }
     function makeEditable(el) {
       el.setAttribute('contenteditable', 'true')
       el.setAttribute('spellcheck', 'true')
@@ -416,37 +441,14 @@
       el.addEventListener('keydown', (e) => {
         const d = el.ownerDocument
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); d.execCommand('bold'); setDirty(true); return }
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault()
-          if (el.tagName !== 'P') return
-          // новый абзац после текущего; текст после курсора переезжает в него
-          const sel = d.getSelection()
-          const r = sel.getRangeAt(0)
-          const tail = d.createRange()
-          tail.setStart(r.endContainer, r.endOffset)
-          tail.setEnd(el, el.childNodes.length)
-          const frag = tail.extractContents()
-          const p = d.createElement('p')
-          if (el.className) p.className = el.className
-          p.setAttribute('data-ae-from', el.getAttribute('data-ae-k') || el.getAttribute('data-ae-from'))
-          p.append(frag)
-          el.after(p)
-          makeEditable(p)
-          p.focus()
-          const c = d.createRange(); c.setStart(p, 0); c.collapse(true); sel.removeAllRanges(); sel.addRange(c)
-          setDirty(true)
-          return
-        }
-        if (e.key === 'Backspace' && el.tagName === 'P' && !el.textContent.length) {
-          const prev = el.previousElementSibling
-          if (prev && prev.matches('[contenteditable]')) {
-            e.preventDefault()
-            el.remove()
-            prev.focus()
-            const sel = d.getSelection(), c = d.createRange(); c.selectNodeContents(prev); c.collapse(false); sel.removeAllRanges(); sel.addRange(c)
-            setDirty(true)
-          }
-        }
+        // Enter — только перенос строки внутри этого же текста; новые абзацы и блоки не создаются
+        if (e.key === 'Enter') { e.preventDefault(); d.execCommand('insertLineBreak'); setDirty(true) }
+      })
+      // всё, что браузер умеет превращать в новые блоки (абзац, список, перетаскивание), запрещено
+      el.addEventListener('beforeinput', (e) => {
+        const t = e.inputType || ''
+        if (t === 'insertParagraph') { e.preventDefault(); el.ownerDocument.execCommand('insertLineBreak'); setDirty(true); return }
+        if (/^(insertFromDrop|deleteByDrag|insertOrderedList|insertUnorderedList|insertHorizontalRule|formatBlock|formatIndent|formatOutdent)$/.test(t)) e.preventDefault()
       })
     }
     $('boldBtn').onmousedown = (e) => e.preventDefault() // не терять выделение
@@ -523,10 +525,9 @@
       const main = frame.contentDocument.querySelector('main')
       const out = []
       for (let k = 0; k < origHTML.length; k++) {
-        const group = [...main.querySelectorAll('[data-ae-k="' + k + '"],[data-ae-from="' + k + '"]')]
-        const html = group.map((el) => el.innerHTML.replace(/<br>$/, '').trim()).filter((h, i) => i === 0 || h)
-        if (html.length === 1 && group[0].innerHTML === origHTML[k]) continue
-        out.push({ k, html })
+        const el = main.querySelector('[data-ae-k="' + k + '"]')
+        if (!el || el.innerHTML === origHTML[k]) continue
+        out.push({ k, html: [clean(el.innerHTML)] })
       }
       return out
     }
@@ -543,18 +544,7 @@
       let tr = []
       try { tr = await translateAll(src) } catch (e) { const er = new Error('перевод не удался: ' + e.message + '. Можно сохранить без перевода — снимите галочку «переводить на en».'); er.trError = true; throw er }
       let i = 0
-      for (const c of changes) {
-        const el = enEds[c.k]
-        if (!c.html.length) { el.remove(); continue }
-        el.innerHTML = tr[i++]
-        let prev = el
-        for (let j = 1; j < c.html.length; j++) {
-          const n = el.cloneNode(false)
-          n.removeAttribute('id')
-          n.innerHTML = tr[i++]
-          prev.after(n); prev = n
-        }
-      }
+      for (const c of changes) enEds[c.k].innerHTML = tr[i++]
       const html = enMain.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
       const a = enText.indexOf('<main'), b = enText.lastIndexOf('</main>')
       const n = changes.reduce((s, c) => s + Math.max(1, c.html.length), 0)
@@ -623,29 +613,26 @@
       return tag
     }
     function serializeMain() {
-      const d = frame.contentDocument
-      // копия в «неживом» документе: там картинки не грузятся и обработчики не срабатывают
-      const inert = document.implementation.createHTMLDocument('')
-      const main = inert.importNode(d.querySelector('main'), true)
-      main.querySelectorAll('[style=""]').forEach((el) => el.removeAttribute('style'))
-      main.querySelectorAll('[contenteditable]').forEach((el) => { el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck') })
-      main.querySelectorAll('.is-loaded').forEach((el) => { el.classList.remove('is-loaded'); if (!el.className) el.removeAttribute('class') })
-      main.querySelectorAll('[data-ae-new]').forEach((el) => { if (el.tagName !== 'IMG') el.removeAttribute('data-ae-new') })
-      main.querySelectorAll('*').forEach((el) => {
-        for (const a of [...el.attributes]) if (a.name.startsWith('data-ae-on')) { el.setAttribute(a.name.slice(8), a.value); el.removeAttribute(a.name) }
-        el.removeAttribute('data-ae-k'); el.removeAttribute('data-ae-from')
+      // берём исходную страницу и меняем в ней только текст существующих полей и заменённые картинки —
+      // так никакие лишние блоки из редактора не могут попасть на сайт
+      const srcDoc = new DOMParser().parseFromString(cur.src, 'text/html')
+      const sMain = srcDoc.querySelector('main')
+      const live = frame.contentDocument.querySelector('main')
+      editables(sMain).forEach((el, k) => {
+        const now = live.querySelector('[data-ae-k="' + k + '"]')
+        if (!now || now.innerHTML === origHTML[k]) return
+        el.innerHTML = clean(now.innerHTML)
       })
-      // картинки возвращаем ровно такими, как в исходнике (тот же порядок атрибутов); заменённые — с новым файлом
-      const srcMain = cur.src.slice(cur.src.indexOf('<main'), cur.src.lastIndexOf('</main>'))
-      const origTags = srcMain.match(/<img\b[^>]*>/g) || []
-      main.querySelectorAll('img[data-ae-id]').forEach((img) => img.replaceWith(inert.createComment('ae-img:' + img.getAttribute('data-ae-id').slice(1))))
-      const restore = (html) => html.replace(/<!--ae-img:(\d+)-->/g, (m0, k) => {
-        const tag = origTags[+k] || ''
-        const p = pending.get('i' + k)
-        return p ? fixImgTag(tag, prefixFor(cur.path) + p.repoPath, p.w, p.h) : tag
+      ;[...sMain.querySelectorAll('img')].forEach((img, i) => {
+        const p = pending.get('i' + i)
+        if (!p) return
+        img.setAttribute('src', prefixFor(cur.path) + p.repoPath)
+        img.removeAttribute('data-alt'); img.removeAttribute('data-fb')
+        if (img.hasAttribute('width')) img.setAttribute('width', p.w)
+        if (img.hasAttribute('height')) img.setAttribute('height', p.h)
       })
       // атрибуты без значения оставляем в исходном виде: data-intro, а не data-intro=""
-      return restore(main.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1'))
+      return sMain.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
     }
     $('saveBtn').onclick = async () => {
       if (!cur || !frame) return
