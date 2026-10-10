@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>Админка кейсов</title>
+  <title>Админка сайта</title>
   <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,8 +52,8 @@
 </head>
 <body>
   <div class="bar">
-    <h1>админка кейсов</h1>
-    <select id="caseSel" aria-label="Кейс" disabled><option>загрузка…</option></select>
+    <h1>админка</h1>
+    <select id="caseSel" aria-label="Страница" disabled><option>загрузка…</option></select>
     <span class="seg" role="group" aria-label="Язык">
       <button type="button" id="langRu" aria-pressed="true">ru</button>
       <button type="button" id="langEn" aria-pressed="false">en</button>
@@ -76,13 +76,13 @@
         <li><kbd>Enter</kbd> в абзаце — новый абзац; <kbd>Backspace</kbd> в пустом — удалить его.</li>
         <li>Выделите слова и нажмите <b>Ж</b> (или <kbd>Ctrl</kbd>+<kbd>B</kbd>) — жирный.</li>
         <li><b>Картинка</b> — кликните по ней (или по серой заглушке) и выберите файл. Большие картинки уменьшаются до 2560px по ширине.</li>
-        <li>Галочка «картинки — в обеих версиях» заменяет ту же картинку и в русском, и в английском кейсе.</li>
+        <li>Галочка «картинки — в обеих версиях» заменяет ту же картинку и на русской, и на английской странице.</li>
         <li>Нажмите <b>сохранить</b> — изменения попадут на сайт через 1–2 минуты.</li>
       </ul>
       <h2>чего здесь нет</h2>
       <ul>
         <li>Добавления новых разделов, картинок и кейсов — напишите Claude.</li>
-        <li>Редактирования главной страницы.</li>
+        <li>Анимаций: на главной блок «мои работы» показан списком, а карп — пустым синим экраном. На сайте всё остаётся как было.</li>
       </ul>
     </aside>
   </main>
@@ -116,12 +116,13 @@
     const API = 'https://api.github.com/repos/' + OWNER + '/' + REPO
     const SITE = new URL('../', location.href).href // корень сайта
     const $ = (id) => document.getElementById(id)
-    const EDIT_SEL = 'h1,h2,h3,h4,h5,h6,p,li,figcaption,blockquote,td,th,dt,dd,.hk__go,.cs-fig__ph,.cs-fig__tag'
+    const EDIT_SEL = 'h1,h2,h3,h4,h5,h6,p,li,figcaption,blockquote,td,th,dt,dd,.hk__go,.cs-fig__ph,.cs-fig__tag,.ps__num,.ps__tag,.ps__soon,.fs-opt__txt,.fs-opt__btn,[data-scramble-text]'
+    const IMG_BOX = '.cs-fig__box, .ps__media'
     const MAX_W = 2560
 
     let token = ''
     try { token = localStorage.getItem('ghToken') || '' } catch (e) {}
-    let cases = [], lang = 'ru', cur = null // { path, src, sha, slug }
+    let pages = [], lang = 'ru', cur = null // { path, src, sha, page }
     let dirty = false, pending = new Map() // img id -> { file blob, repoPath, oldRepoPath, w, h }
     let frame = null, seq = 0, justSaved = false
 
@@ -193,20 +194,27 @@
       if (!token) { dlg.showModal(); return }
       try {
         const list = await gh('/contents/projects?ref=' + BRANCH)
-        cases = list.filter((x) => x.type === 'dir').map((x) => x.name).sort()
+        const cases = list.filter((x) => x.type === 'dir').map((x) => x.name).sort()
+        pages = [
+          { id: 'first', group: 'страницы', label: 'first screen (выбор версии)', ru: 'index.html', en: 'en/index.html' },
+          { id: 'product', group: 'страницы', label: 'главная — продуктовая версия', ru: 'product/index.html', en: 'en/product/index.html' },
+          { id: 'web', group: 'страницы', label: 'главная — веб-версия', ru: 'web/index.html', en: 'en/web/index.html' },
+          ...cases.map((c) => ({ id: 'case:' + c, group: 'кейсы', label: c, slug: c, ru: 'projects/' + c + '/index.html', en: 'en/projects/' + c + '/index.html' })),
+        ]
       } catch (e) {
         if (e.status === 401) { status('ключ не подходит — подключите заново', 'err'); return }
-        status('не удалось получить список кейсов: ' + e.message, 'err'); return
+        status('не удалось получить список страниц: ' + e.message, 'err'); return
       }
       const sel = $('caseSel')
-      sel.innerHTML = cases.map((c) => '<option value="' + c + '">' + c + '</option>').join('')
+      const groups = [...new Set(pages.map((x) => x.group))]
+      sel.innerHTML = groups.map((g) => '<optgroup label="' + g + '">' + pages.filter((x) => x.group === g).map((x) => '<option value="' + x.id + '">' + x.label + '</option>').join('') + '</optgroup>').join('')
       sel.disabled = false
       const saved = (() => { try { return JSON.parse(localStorage.getItem('adminLast') || 'null') } catch (e) { return null } })()
-      if (saved && cases.includes(saved.slug)) { sel.value = saved.slug; lang = saved.lang || 'ru' }
+      if (saved && pages.some((x) => x.id === saved.id)) { sel.value = saved.id; lang = saved.lang || 'ru' }
       updLang()
       load()
     }
-    const pathFor = (slug, lg) => (lg === 'en' ? 'en/' : '') + 'projects/' + slug + '/index.html'
+    const pageById = (id) => pages.find((x) => x.id === id)
     const updLang = () => { $('langRu').setAttribute('aria-pressed', lang === 'ru'); $('langEn').setAttribute('aria-pressed', lang === 'en') }
     const guard = () => !dirty || confirm('Есть несохранённые изменения. Выйти без сохранения?')
     $('caseSel').addEventListener('focus', function () { this.dataset.prev = this.value })
@@ -217,16 +225,16 @@
 
     /* ---------- загрузка страницы в редактор ---------- */
     async function load(ref) {
-      const slug = $('caseSel').value
-      if (!slug) return
+      const page = pageById($('caseSel').value)
+      if (!page) return
       const my = ++seq
-      const path = pathFor(slug, lang)
-      try { localStorage.setItem('adminLast', JSON.stringify({ slug, lang })) } catch (e) {}
+      const path = page[lang]
+      try { localStorage.setItem('adminLast', JSON.stringify({ id: page.id, lang })) } catch (e) {}
       status('загружаю…')
       let f
       try { f = await getFile(path, ref) } catch (e) { status('не удалось открыть ' + path + ': ' + e.message, 'err'); return }
       if (my !== seq) return
-      cur = { path, slug, src: f.text, sha: f.sha }
+      cur = { path, page, src: f.text, sha: f.sha }
       pending.clear()
       setDirty(false)
       $('viewLink').href = SITE + path.replace(/index\.html$/, '')
@@ -250,10 +258,14 @@
         '[contenteditable]{outline:1px dashed transparent;outline-offset:3px;transition:outline-color .15s;cursor:text}',
         '[contenteditable]:hover{outline-color:#9aa6ef}',
         '[contenteditable]:focus{outline:2px solid #2c40c7}',
-        'main .cs-fig__box{cursor:pointer;position:relative}',
-        'main .cs-fig__box:hover::after{content:"заменить картинку";position:absolute;left:12px;top:12px;background:#000;color:#fff;font:13px "Fira Mono",monospace;padding:6px 10px;z-index:5}',
-        'main .cs-fig__box[data-ae-new]::before{content:"новая · не сохранена";position:absolute;right:12px;top:12px;background:#2c40c7;color:#fff;font:12px "Fira Mono",monospace;padding:5px 8px;z-index:5}',
-        '.hdr,.contacts,.totop{pointer-events:none}',
+        'main .cs-fig__box,main .ps__media{cursor:pointer;position:relative}',
+        'main .cs-fig__box:hover::after,main .ps__media:hover::after{content:"заменить картинку";position:absolute;left:12px;top:12px;background:#000;color:#fff;font:13px "Fira Mono",monospace;padding:6px 10px;z-index:5}',
+        'main .cs-fig__box[data-ae-new]::before,main .ps__media[data-ae-new]::before{content:"новая · не сохранена";position:absolute;right:12px;top:12px;background:#2c40c7;color:#fff;font:12px "Fira Mono",monospace;padding:5px 8px;z-index:5}',
+        '.hdr,.contacts,.totop,.fs-lang{pointer-events:none}',
+        // главная: блок «мои работы» без прокрутки-анимации — все карточки друг под другом
+        '.ps{--s:.62}.ps__sticky{position:static!important;height:auto!important;overflow:visible!important}',
+        '.ps__panel{position:relative!important;inset:auto!important;height:min(78vh,620px)!important;clip-path:none!important;visibility:visible!important;border-bottom:1px solid #ddd}',
+        '.ps__nav{display:none!important}.hero__portrait{pointer-events:none!important}.hero__foot,.hero__foot *{pointer-events:auto!important}',
       ].join('\n')
       doc.head.append(st)
       const html = '<!doctype html>\n' + doc.documentElement.outerHTML
@@ -273,12 +285,12 @@
       // ссылки внутри редактора не уводят со страницы
       d.addEventListener('click', (e) => { const a = e.target.closest('a'); if (a) e.preventDefault() }, true)
       // редактируемые блоки: самые «внутренние» текстовые элементы
-      const cand = [...main.querySelectorAll(EDIT_SEL)].filter((el) => el.textContent.trim() || el.matches('p'))
+      const cand = [...main.querySelectorAll(EDIT_SEL)].filter((el) => (el.textContent.trim() || el.matches('p')) && !el.closest('.sr-only, .ps__nav'))
       const set = new Set(cand)
       cand.filter((el) => ![...el.querySelectorAll(EDIT_SEL)].some((c) => set.has(c))).forEach(makeEditable)
       // картинки: показываем, как на сайте (с запасными вариантами), клик — замена
       main.querySelectorAll('img[data-ae-id]').forEach(showImg)
-      main.querySelectorAll('.cs-fig__box').forEach((box) => box.addEventListener('click', (e) => {
+      main.querySelectorAll(IMG_BOX).forEach((box) => box.addEventListener('click', (e) => {
         if (e.target.closest('[contenteditable]')) return
         e.preventDefault()
         const img = box.querySelector('img[data-ae-id]')
@@ -359,7 +371,7 @@
         const oldRel = img.getAttribute('data-ae-src') || ''
         const oldRepo = oldRel ? new URL(oldRel, 'https://r/' + pageDir).pathname.slice(1) : ''
         const m = oldRepo.match(/^assets\/cases\/([^/]+)\/([^/.]+)/)
-        const folder = m ? 'assets/cases/' + m[1] : 'assets/cases/' + cur.slug.replace(/-web$/, '')
+        const folder = m ? 'assets/cases/' + m[1] : cur.page.slug ? 'assets/cases/' + cur.page.slug.replace(/-web$/, '') : 'assets/img'
         const stem = m ? m[2].replace(/-[a-z0-9]{6,}$/, '') : 'img'
         const repoPath = folder + '/' + stem + '-' + Date.now().toString(36) + out.ext
         const id = img.getAttribute('data-ae-id')
@@ -403,22 +415,20 @@
       main.querySelectorAll('[contenteditable]').forEach((el) => { el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck') })
       main.querySelectorAll('.is-loaded').forEach((el) => { el.classList.remove('is-loaded'); if (!el.className) el.removeAttribute('class') })
       main.querySelectorAll('[data-ae-new]').forEach((el) => { if (el.tagName !== 'IMG') el.removeAttribute('data-ae-new') })
-      main.querySelectorAll('img[data-ae-id]').forEach((img) => {
-        const p = pending.get(img.getAttribute('data-ae-id'))
-        if (p) {
-          img.setAttribute('src', prefixFor(cur.path) + p.repoPath)
-          img.removeAttribute('data-alt'); img.removeAttribute('data-fb')
-          img.setAttribute('width', p.w); img.setAttribute('height', p.h)
-        } else img.setAttribute('src', img.getAttribute('data-ae-src'))
-        const ld = img.getAttribute('data-ae-load')
-        if (ld) img.setAttribute('loading', ld); else img.removeAttribute('loading')
-        img.removeAttribute('data-ae-src'); img.removeAttribute('data-ae-id'); img.removeAttribute('data-ae-new'); img.removeAttribute('data-ae-load')
-      })
       main.querySelectorAll('*').forEach((el) => {
         for (const a of [...el.attributes]) if (a.name.startsWith('data-ae-on')) { el.setAttribute(a.name.slice(8), a.value); el.removeAttribute(a.name) }
       })
+      // картинки возвращаем ровно такими, как в исходнике (тот же порядок атрибутов); заменённые — с новым файлом
+      const srcMain = cur.src.slice(cur.src.indexOf('<main'), cur.src.lastIndexOf('</main>'))
+      const origTags = srcMain.match(/<img\b[^>]*>/g) || []
+      main.querySelectorAll('img[data-ae-id]').forEach((img) => img.replaceWith(inert.createComment('ae-img:' + img.getAttribute('data-ae-id').slice(1))))
+      const restore = (html) => html.replace(/<!--ae-img:(\d+)-->/g, (m0, k) => {
+        const tag = origTags[+k] || ''
+        const p = pending.get('i' + k)
+        return p ? fixImgTag(tag, prefixFor(cur.path) + p.repoPath, p.w, p.h) : tag
+      })
       // атрибуты без значения оставляем в исходном виде: data-intro, а не data-intro=""
-      return main.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
+      return restore(main.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1'))
     }
     $('saveBtn').onclick = async () => {
       if (!cur || !frame) return
@@ -437,7 +447,7 @@
         files.push({ path: cur.path, text: page })
         // та же картинка во второй языковой версии
         if ($('syncPair').checked && pending.size) {
-          const pairPath = pathFor(cur.slug, lang === 'ru' ? 'en' : 'ru')
+          const pairPath = cur.page[lang === 'ru' ? 'en' : 'ru']
           try {
             const pair = await getFile(pairPath)
             let t = pair.text
