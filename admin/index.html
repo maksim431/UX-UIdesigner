@@ -130,10 +130,13 @@
         <ol>
           <li>Откройте <a href="https://oauth.yandex.ru/client/new" target="_blank" rel="noopener">oauth.yandex.ru/client/new</a> → «Для доступа к API или отладки».</li>
           <li>Доступ: <b>Яндекс.Метрика → Получение статистики, чтение параметров</b>.</li>
-          <li>Платформа «Веб-сервисы», Redirect URI: <code id="stRedirect"></code>.</li>
-          <li>Создайте приложение, скопируйте его <b>ClientID</b> и вставьте сюда.</li>
+          <li>Redirect URI оставьте как есть (<code>oauth.yandex.ru/verification_code</code>). Создайте приложение.</li>
+          <li>Скопируйте <b>ClientID</b> приложения сюда и нажмите «получить токен» — откроется Яндекс, разрешите доступ и скопируйте показанный токен.</li>
+          <li>Вставьте токен во второе поле и нажмите «подключить».</li>
         </ol>
-        <div class="row"><input type="text" id="stClient" placeholder="ClientID приложения"><button type="button" class="primary" id="stLogin">войти через Яндекс</button></div>
+        <div class="row"><input type="text" id="stClient" placeholder="ClientID приложения"><button type="button" id="stLogin">получить токен</button></div>
+        <div class="row" style="margin-top:8px"><input type="password" id="stToken" placeholder="токен (y0_…)" autocomplete="off" spellcheck="false"><button type="button" class="primary" id="stTokenSave">подключить</button></div>
+        <p class="hint" id="stRedirectHint" hidden>Redirect URI: <code id="stRedirect"></code></p>
         <p class="hint">Ключ хранится только в этом браузере. <button type="button" class="link" id="stForget">забыть ключ</button></p>
       </div>
       <div class="st-card">
@@ -725,9 +728,18 @@
       const id = $('stClient').value.trim()
       if (!id) { stStatus('вставьте ClientID приложения', 'err'); return }
       try { localStorage.setItem('ymClient', id) } catch (e) {}
-      if (dirty && !confirm('Есть несохранённые правки в редакторе — они пропадут. Продолжить?')) return
-      dirty = false
-      location.href = 'https://oauth.yandex.ru/authorize?response_type=token&client_id=' + encodeURIComponent(id) + '&redirect_uri=' + encodeURIComponent(ADMIN_URL)
+      // Redirect URI приложения — стандартная страница Яндекса: она показывает токен, его копируют сюда
+      window.open('https://oauth.yandex.ru/authorize?response_type=token&client_id=' + encodeURIComponent(id), '_blank', 'noopener')
+      stStatus('скопируйте токен со страницы Яндекса и вставьте во второе поле', 'dirty')
+      $('stToken').focus()
+    }
+    $('stTokenSave').onclick = () => {
+      const t = $('stToken').value.trim()
+      if (!t) { stStatus('вставьте токен', 'err'); return }
+      ymToken = t
+      try { localStorage.setItem('ymToken', t) } catch (e) {}
+      $('stToken').value = ''
+      stInit()
     }
 
     // номер счётчика хранится прямо в assets/js/analytics.js
