@@ -176,7 +176,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   const idxAt = (y) => { const [a, b] = zone(); return clamp(Math.round(((y - a) / Math.max(1, b - a)) * (n - 1)), 0, n - 1) }
   // стартует сразу (без медленного разгона) и долго, мягко тормозит
   const easeSoft = (t) => 1 - Math.pow(1 - t, 4)
-  let busyUntil = 0, own = 0
+  let busyUntil = 0, own = 0, goal = -1 // goal — карточка, к которой сейчас едем
+  const busy = () => performance.now() < busyUntil
   function glide(y, ms) {
     busyUntil = performance.now() + ms + 120
     if (smooth) { smooth.scrollTo(y, ms / 1000, easeSoft); return }
@@ -189,9 +190,11 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     }
     own = requestAnimationFrame(tick)
   }
-  const pageTo = (i) => glide(yAt(i), reduce ? 1 : 1250)
-  // куда листать жестом в направлении dir; null — край блока, прокрутка идёт дальше как обычно
+  const pageTo = (i) => { goal = i; glide(yAt(i), reduce ? 1 : 1250) }
+  // куда листать жестом в направлении dir; null — край блока.
+  // Во время анимации считаем от карточки, к которой уже едем, — новый жест сразу продолжает листание.
   function nextFor(dir) {
+    if (busy() && goal >= 0) { const t = goal + dir; return t < 0 || t > n - 1 ? null : t }
     const y = window.scrollY, [a, b] = zone()
     if (y < a - 3 || y > b + 3) return null
     const i = idxAt(y)
@@ -201,41 +204,41 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     return t
   }
 
-  // колесо и тачпад: перехватываем раньше плавной прокрутки; инерцию жеста гасим целиком
-  let wheelQuiet = 0, lastAbs = 0
+  // колесо и тачпад: перехватываем раньше плавной прокрутки.
+  // Новый жест — это щелчок колеса после паузы или новый свайп тачпада (резкий рост силы); хвост инерции — нет.
+  let lastWheel = 0, lastAbs = 0
   window.addEventListener('wheel', (e) => {
     if (e.ctrlKey || document.documentElement.classList.contains('no-scroll')) return
     const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY
     if (!dy) return
     const now = performance.now()
-    const abs = Math.abs(dy)
-    // пока карточка перелистывается — всё колесо её, без накопления
-    if (now < busyUntil) { e.preventDefault(); wheelQuiet = now + 250; lastAbs = abs; return }
-    const inGesture = now < wheelQuiet
-    const fresh = abs > 12 && abs > lastAbs * 1.8 && now > busyUntil
+    const abs = Math.abs(dy), dir = Math.sign(dy)
+    const gap = now - lastWheel
+    const fresh = gap > 150 || (abs > 12 && abs > lastAbs * 1.8)
+    lastWheel = now
     lastAbs = abs
-    if (inGesture && !fresh) {
-      // хвост того же жеста: внутри блока его глушим, на краю — отдаём странице
-      const [a, b] = zone(), y = window.scrollY
-      if (now < busyUntil || (y >= a - 3 && y <= b + 3 && nextFor(Math.sign(dy)) !== null)) { e.preventDefault(); wheelQuiet = now + 250 }
+    const [a, b] = zone(), y = window.scrollY
+    const inside = busy() || (y >= a - 3 && y <= b + 3)
+    if (!fresh) {
+      // хвост того же жеста: внутри блока глушим, на краю — отдаём странице
+      if (busy() || (inside && nextFor(dir) !== null)) e.preventDefault()
       return
     }
-    const t = nextFor(Math.sign(dy))
-    if (t === null) return
+    const t = nextFor(dir)
+    if (t === null) { if (busy()) e.preventDefault(); return }
     e.preventDefault()
-    wheelQuiet = now + 250
     pageTo(t)
   }, { passive: false, capture: true })
 
-  // свайп на телефоне и планшете
+  // свайп на телефоне и планшете: каждый новый свайп листает сразу, даже если прошлая анимация не закончилась
   let ty0 = 0, tDir = 0, tTake = false, tEnter = 0, sy0 = 0, tFired = false
   window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; sy0 = window.scrollY; tDir = 0; tTake = false; tEnter = 0; tFired = false }, { passive: true })
   window.addEventListener('touchmove', (e) => {
     const d = ty0 - e.touches[0].clientY
     if (!tDir && Math.abs(d) > 6) {
       tDir = Math.sign(d)
-      const t = performance.now() > busyUntil ? nextFor(tDir) : null
-      tTake = t !== null || performance.now() < busyUntil
+      const t = nextFor(tDir)
+      tTake = t !== null || busy()
       if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
     }
     if (!tTake && tDir) {
@@ -244,15 +247,15 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
       if (tDir > 0 && sy0 < a - 3 && y >= a - 3) { tTake = true; tEnter = 1 }
       else if (tDir < 0 && sy0 > b + 3 && y <= b + 3) { tTake = true; tEnter = -1 }
     }
-    if (tTake || performance.now() < busyUntil) e.preventDefault()
+    if (tTake) e.preventDefault()
   }, { passive: false })
   window.addEventListener('touchend', () => {
     if (!tTake) return
     tTake = false
-    if (tEnter) { const [a, b] = zone(); glide(tEnter > 0 ? a : b, 700); return }
+    if (tEnter) { const [a, b] = zone(); goal = tEnter > 0 ? 0 : n - 1; glide(tEnter > 0 ? a : b, 700); return }
     if (tFired) return
     const t = nextFor(tDir)
-    if (t !== null && performance.now() > busyUntil) pageTo(t)
+    if (t !== null) pageTo(t)
   }, { passive: true })
 
   // если прокрутка (инерция, полоса, клавиши) остановилась посреди карточки — доводим до ближайшей
@@ -261,8 +264,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     // влетели в блок с разгона (из первого экрана или снизу) — останавливаемся на крайней карточке, а не посреди следующей
     const y0 = window.scrollY, [za, zb] = zone()
     if (performance.now() > busyUntil) {
-      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; glide(za, 700) }
-      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; glide(zb, 700) }
+      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; goal = 0; glide(za, 700) }
+      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; goal = n - 1; glide(zb, 700) }
     }
     prevY = y0
     clearTimeout(settleT)
