@@ -186,7 +186,7 @@ export function mountWater(host, hud) {
     // цель рядом, но сбоку — тело работает тише (и он медленнее), доворачивая к цели
     if (dist < len * 0.9) slow = clamp(0.45 + 0.55 * Math.max(0, Math.cos(ang)), 0.45, 1)
     // сила движений: рывок разгоняется быстро, успокоение — плавное
-    vigor += (vT - vigor) * Math.min(1, dt * (vT > vigor ? 5 : 0.9))
+    vigor += (vT - vigor) * Math.min(1, dt * (vT > vigor ? 9 : 0.9))
     const ve = clamp(vigor * slow, 0.06, 1)
     // ЖЁСТКАЯ СВЯЗЬ: резкость поворота, взмахи хвоста и скорость — всё от одной силы движений v
     const maxTurn = 0.18 + 1.05 * ve
@@ -200,12 +200,12 @@ export function mountWater(host, hud) {
     const drive = Math.max(ve, turnV)
     // ФИЗИКА: сила работы тела eff -> размах и частота взмахов хвоста -> тяга -> скорость (с инерцией).
     // Ускорение бывает только когда хвост бьёт широко и часто; перестал — карп по инерции замедляется.
-    eff += (drive - eff) * Math.min(1, dt * (drive > eff ? 4 : 1.6))
+    eff += (drive - eff) * Math.min(1, dt * (drive > eff ? 7 : 1.6))
     ampK = 0.6 + 1.0 * eff // размах волны по телу
-    const rate = 0.9 + 4.2 * eff // частота взмахов
-    const thrust = len * 0.035 * ampK * rate // тяга = размах x частота
+    const rate = 0.6 + 3.4 * eff // частота взмахов (спокойно — реже, размах тот же)
+    const thrust = len * 0.06 * ampK * rate // тяга = размах x частота (вода «лёгкая»: каждый взмах толкает сильнее)
     if (spV < 0) spV = thrust
-    spV += (thrust - spV) * Math.min(1, dt * (thrust > spV ? 2.4 : 1.4))
+    spV += (thrust - spV) * Math.min(1, dt * (thrust > spV ? 5 : 0.8)) // разгон сразу, торможение — долгое скольжение
     const sp = spV
     spCur = sp / (len * 0.12)
     px += Math.sin(heading) * sp * dt
