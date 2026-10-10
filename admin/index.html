@@ -744,7 +744,7 @@
       if (!id) { stStatus('вставьте ClientID приложения', 'err'); return }
       try { localStorage.setItem('ymClient', id) } catch (e) {}
       // Redirect URI приложения — стандартная страница Яндекса: она показывает токен, его копируют сюда
-      window.open('https://oauth.yandex.ru/authorize?response_type=token&client_id=' + encodeURIComponent(id), '_blank', 'noopener')
+      window.open('https://oauth.yandex.ru/authorize?response_type=token&client_id=' + encodeURIComponent(id) + '&redirect_uri=' + encodeURIComponent('https://oauth.yandex.ru/verification_code'), '_blank', 'noopener')
       stStatus('скопируйте токен со страницы Яндекса и вставьте во второе поле', 'dirty')
       $('stToken').focus()
     }
