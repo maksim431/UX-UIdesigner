@@ -88,7 +88,7 @@ export function mountWater(host, hud) {
   let px = -1, py = -1, entering = false, leaving = false, heading = 0, omega = 0, phase = 0, lastT = -1, turn = 0, seed = Math.random() * 100
   let wx = 0, wy = 0, segSp = 1, spCur = 1, segTurn = 0.7, segUntil = 0
   // vigor — сила движений тела (0…1): от неё жёстко зависят и взмахи хвоста, и резкость поворотов, и скорость
-  let vigor = 0.2, calm = 0.2, burstUntil = -1, ampK = 1
+  let vigor = 0.2, calm = 0.2, burstUntil = -1, ampK = 1, eff = 0.2, spV = -1
   // запас за краем, при котором карп (с плавниками, хвостом и свечением) уже целиком не виден
   const hidden = () => len * 0.68
   // видимая часть фрейма: фрейм выше окна на 20%, нижнюю пятую часть сразу не видно
@@ -195,12 +195,18 @@ export function mountWater(host, hud) {
     omega += clamp(want - omega, -(0.4 + 2.2 * ve) * dt, (0.4 + 2.2 * ve) * dt)
     omega = clamp(omega, -maxTurn, maxTurn)
     heading = wrap(heading + omega * dt)
-    // резкий поворот корпусом сам добавляет силы — и скорости
+    // резкий поворот корпусом сам добавляет силы
     const turnV = clamp(Math.abs(omega) / 1.2, 0, 1)
     const drive = Math.max(ve, turnV)
-    // размах волны по телу: широкий и меняется плавно
-    ampK += (0.85 + 0.6 * drive - ampK) * Math.min(1, dt * 1.5)
-    const sp = len * (0.03 + 0.24 * drive)
+    // ФИЗИКА: сила работы тела eff -> размах и частота взмахов хвоста -> тяга -> скорость (с инерцией).
+    // Ускорение бывает только когда хвост бьёт широко и часто; перестал — карп по инерции замедляется.
+    eff += (drive - eff) * Math.min(1, dt * (drive > eff ? 4 : 1.6))
+    ampK = 0.6 + 1.0 * eff // размах волны по телу
+    const rate = 0.9 + 4.2 * eff // частота взмахов
+    const thrust = len * 0.035 * ampK * rate // тяга = размах x частота
+    if (spV < 0) spV = thrust
+    spV += (thrust - spV) * Math.min(1, dt * (thrust > spV ? 2.4 : 1.4))
+    const sp = spV
     spCur = sp / (len * 0.12)
     px += Math.sin(heading) * sp * dt
     py += -Math.cos(heading) * sp * dt
@@ -210,7 +216,7 @@ export function mountWater(host, hud) {
     turn = omega
     pushTrail()
     // частота взмахов хвоста растёт со скоростью
-    phase += dt * (0.9 + 4.5 * drive) // частота взмахов — от силы движений (спокойно — редкие широкие взмахи)
+    phase += dt * rate // взмахи хвоста: спокойно — редкие, в рывке — частые и широкие
     lastT = t
     return { x: px, y: py, sp }
   }
@@ -285,7 +291,7 @@ export function mountWater(host, hud) {
     }
     return (x, y, k) => {
       const u = clamp(y + 0.5, 0, 1.1) // 0 у головы, 1 у хвоста
-      const amp = (0.02 + 0.13 * u * u) * ampK
+      const amp = (0.02 + 0.19 * u * u) * ampK
       let bx = x + amp * Math.sin(u * 3.8 - phase)
       if (k === 1) bx *= 1 + 0.12 * Math.sin(phase * 0.6) // грудные плавники гребут
       const [sx, sy, tx, ty] = spine((y + 0.5) * len)
