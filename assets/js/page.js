@@ -84,7 +84,8 @@ function heroScroll() {
   portraitHost && (portraitHost.style.translate = p ? '0 ' + (p * 22).toFixed(2) + '%' : '')
   heroTexts.forEach((el, i) => {
     // параллакс: каждый текст уезжает вверх со своей скоростью (data-par)
-    const k = parseFloat(el.dataset.par || '') || 1 + i * 0.25
+    // на планшете и телефоне тексты стоят друг под другом — разная скорость сводила бы их вместе, поэтому едут одинаково
+    const k = window.innerWidth < 1200 ? 1 : parseFloat(el.dataset.par || '') || 1 + i * 0.25
     el.style.translate = p ? '0 ' + (-p * 150 * k).toFixed(1) + 'px' : ''
     el.style.opacity = p ? String(clamp(1 - p * 1.6, 0, 1)) : ''
   })

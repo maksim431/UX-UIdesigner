@@ -560,11 +560,6 @@ html.cs-anim .cs-fig__box.is-in { opacity: 1; transform: none; }
 .hero__portrait { left: var(--gl, 0px); right: var(--gr, 0px); }
 html { overflow-x: clip; }
 
-/* на сенсорных экранах стопор перед блоком проектов делает браузер */
-@media (pointer: coarse) {
-  html { scroll-snap-type: y proximity; }
-  #works { scroll-snap-align: start; scroll-snap-stop: always; }
-}
 
 /* первый экран: весь контент по центру, в колонке не шире 1000px */
 .fs-wrap { max-width: 1000px; margin: 0 auto; align-items: center; text-align: center; }
