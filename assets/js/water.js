@@ -415,6 +415,7 @@ export function mountWater(host, hud) {
   // От хвоста — короткая слабая полоса завихрений по центру следа.
   const wake = []
   let lastSpawn = -1
+  let tailPrev = null
   function spawnWake(t, P, st) {
     if (lastSpawn < 0 || t < lastSpawn) lastSpawn = t
     const nx = Math.cos(heading), ny = Math.sin(heading) // нормаль вправо от курса
@@ -425,13 +426,20 @@ export function mountWater(host, hud) {
       const [lx, ly] = P(-0.1, -0.36, 0)
       wake.push({ x: rx, y: ry, nx, ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
       wake.push({ x: lx, y: ly, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
-      if (Math.random() < 0.5) {
-        const [tx, ty] = P((Math.random() - 0.5) * 0.08, 0.46, 3)
-        wake.push({ x: tx, y: ty, nx: 0, ny: 0, v: 0, t0: lastSpawn, a: 0.45, life: 1.4 })
+      // хвост: каждый взмах отталкивает воду в сторону и назад — за карпом остаётся
+      // «дорожка» из завихрений поочерёдно слева и справа; чем сильнее взмах, тем заметнее
+      const [tx, ty] = P(0, 0.52, 3)
+      if (tailPrev && Math.hypot(tx - tailPrev[0], ty - tailPrev[1]) < len * 0.3) {
+        const bvx = Math.sin(heading) * st.sp, bvy = -Math.cos(heading) * st.sp
+        const rvx = (tx - tailPrev[0]) / 0.06 - bvx * 0.4, rvy = (ty - tailPrev[1]) / 0.06 - bvy * 0.4
+        const rv = Math.hypot(rvx, rvy)
+        const a = clamp(rv / (len * 0.9), 0, 1)
+        if (a > 0.05) wake.push({ x: tx, y: ty, nx: rvx / rv, ny: rvy / rv, v: Math.min(rv * 0.25, len * 0.14), t0: lastSpawn, a: 0.45 + 0.75 * a, life: 2.4 + 2 * a, w: 1.7 })
       }
+      tailPrev = [tx, ty]
     }
     for (let i = wake.length - 1; i >= 0; i--) if (t - wake[i].t0 > wake[i].life || t < wake[i].t0) wake.splice(i, 1)
-    if (wake.length > 420) wake.splice(0, wake.length - 420)
+    if (wake.length > 560) wake.splice(0, wake.length - 560)
   }
   let field = null, fox = null, foy = null
   const touched = []
@@ -490,7 +498,7 @@ export function mountWater(host, hud) {
       const age = t - q.t0
       const k = 1 - age / q.life
       const amp = q.a * Math.pow(k, 1.3) * Math.min(1, age * 1.5)
-      const w = len * (0.014 + 0.006 * age)
+      const w = len * (0.014 + 0.006 * age) * (q.w || 1)
       const x = q.x + q.nx * q.v * age, y = q.y + q.ny * q.v * age
       const c0 = Math.max(0, Math.floor((x - w * 2.5) / dcell)), c1 = Math.min(bcols - 1, Math.floor((x + w * 2.5) / dcell))
       const r0 = Math.max(0, Math.floor((y - w * 2.5) / dcell)), r1 = Math.min(brows - 1, Math.floor((y + w * 2.5) / dcell))
