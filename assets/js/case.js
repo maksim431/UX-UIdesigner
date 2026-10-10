@@ -38,7 +38,7 @@ revealIfNeeded().then(() => {
 
 /* ---------- тексты и блоки поднимаются при прокрутке ---------- */
 if (anim && 'IntersectionObserver' in window) {
-  const sel = '.cs-flow .rt:not([data-intro]), .cs-hooks:not([data-intro]), .cs-btns, .aic'
+  const sel = '.cs-flow .rt:not([data-intro]), .cs-hooks:not([data-intro]), .aic' // кнопки внизу кейса не прячем — они видны всегда
   // только то, что ниже экрана: видимое сразу не прячем, чтобы ничего не мигало
   const els = [...document.querySelectorAll(sel)].filter((el) => !el.closest('.cs-hooks[data-intro]') && el.getBoundingClientRect().top > window.innerHeight)
   els.forEach((el) => el.classList.add('cs-rise'))
