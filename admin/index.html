@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Админка кейсов</title>
+  <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
+  <style>
+    :root { --bg: #f2f2f2; --ink: #000; --muted: #6b6b6b; --line: #d9d9d9; --blue: #2c40c7; --ok: #1d7a3a; --err: #b3261e; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body { font-family: 'Fira Mono', ui-monospace, monospace; font-size: 14px; color: var(--ink); background: var(--bg); display: flex; flex-direction: column; }
+    button, select, input { font: inherit; color: inherit; }
+    button { cursor: pointer; border: 1px solid var(--ink); background: #fff; padding: 8px 14px; line-height: 1.2; }
+    button:hover { background: #eaeaea; }
+    button.primary { background: #000; color: #fff; }
+    button.primary:hover { background: #333; }
+    button:disabled { opacity: .4; cursor: default; }
+    select, input[type=text], input[type=password] { border: 1px solid var(--ink); background: #fff; padding: 8px 10px; }
+    .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--line); }
+    .bar h1 { font-size: 16px; font-weight: 500; margin: 0 12px 0 0; }
+    .bar .sp { flex: 1; }
+    .seg { display: inline-flex; }
+    .seg button + button { border-left: 0; }
+    .seg button[aria-pressed=true] { background: #000; color: #fff; }
+    .chk { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+    .status { color: var(--muted); min-height: 1.2em; }
+    .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+    .dirty { color: var(--blue); }
+    main { flex: 1; display: flex; min-height: 0; }
+    .stage { flex: 1; display: flex; justify-content: center; overflow: hidden; padding: 16px; }
+    iframe { width: 100%; max-width: 1100px; height: 100%; border: 1px solid var(--line); background: #fff; }
+    .help { width: 300px; padding: 16px; border-left: 1px solid var(--line); background: #fff; overflow: auto; line-height: 1.5; color: #333; }
+    .help h2 { font-size: 14px; font-weight: 500; margin: 0 0 8px; }
+    .help ul { padding-left: 18px; margin: 0 0 16px; }
+    .help kbd { border: 1px solid var(--line); padding: 0 4px; background: var(--bg); }
+    @media (max-width: 1000px) { .help { display: none; } }
+    .empty { margin: auto; max-width: 520px; text-align: center; color: var(--muted); line-height: 1.6; }
+    dialog { border: 1px solid #000; padding: 24px; max-width: 560px; width: calc(100% - 32px); }
+    dialog::backdrop { background: rgba(0,0,0,.35); }
+    dialog h2 { margin: 0 0 12px; font-size: 18px; font-weight: 500; }
+    dialog p, dialog ol { line-height: 1.55; margin: 0 0 12px; }
+    dialog ol { padding-left: 20px; }
+    dialog .row { display: flex; gap: 8px; margin-top: 12px; }
+    dialog .row input { flex: 1; min-width: 0; }
+    a { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <h1>админка кейсов</h1>
+    <select id="caseSel" aria-label="Кейс" disabled><option>загрузка…</option></select>
+    <span class="seg" role="group" aria-label="Язык">
+      <button type="button" id="langRu" aria-pressed="true">ru</button>
+      <button type="button" id="langEn" aria-pressed="false">en</button>
+    </span>
+    <button type="button" id="boldBtn" title="Жирный (Ctrl+B)" disabled><b>Ж</b></button>
+    <label class="chk"><input type="checkbox" id="syncPair" checked> картинки — в обеих версиях</label>
+    <span class="sp"></span>
+    <span class="status" id="status"></span>
+    <a id="viewLink" href="#" target="_blank" rel="noopener">открыть на сайте</a>
+    <button type="button" id="resetBtn" disabled>отменить</button>
+    <button type="button" class="primary" id="saveBtn" disabled>сохранить</button>
+    <button type="button" id="tokenBtn" title="Ключ доступа GitHub">ключ</button>
+  </div>
+  <main>
+    <div class="stage" id="stage"><div class="empty" id="empty">Подключите ключ доступа GitHub — кнопка «ключ» справа вверху.</div></div>
+    <aside class="help">
+      <h2>как редактировать</h2>
+      <ul>
+        <li><b>Текст</b> — кликните по нему и печатайте прямо на странице.</li>
+        <li><kbd>Enter</kbd> в абзаце — новый абзац; <kbd>Backspace</kbd> в пустом — удалить его.</li>
+        <li>Выделите слова и нажмите <b>Ж</b> (или <kbd>Ctrl</kbd>+<kbd>B</kbd>) — жирный.</li>
+        <li><b>Картинка</b> — кликните по ней (или по серой заглушке) и выберите файл. Большие картинки уменьшаются до 2560px по ширине.</li>
+        <li>Галочка «картинки — в обеих версиях» заменяет ту же картинку и в русском, и в английском кейсе.</li>
+        <li>Нажмите <b>сохранить</b> — изменения попадут на сайт через 1–2 минуты.</li>
+      </ul>
+      <h2>чего здесь нет</h2>
+      <ul>
+        <li>Добавления новых разделов, картинок и кейсов — напишите Claude.</li>
+        <li>Редактирования главной страницы.</li>
+      </ul>
+    </aside>
+  </main>
+
+  <dialog id="tokenDlg">
+    <form method="dialog">
+      <h2>ключ доступа GitHub</h2>
+      <p>Админка сохраняет изменения прямо в репозиторий сайта. Для этого нужен личный ключ GitHub — он хранится только в этом браузере.</p>
+      <ol>
+        <li>Откройте <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens → Generate new token</a>.</li>
+        <li>Repository access: <b>Only select repositories</b> → <b>UX-UIdesigner</b>.</li>
+        <li>Permissions → Repository permissions → <b>Contents: Read and write</b>.</li>
+        <li>Создайте ключ, скопируйте и вставьте сюда.</li>
+      </ol>
+      <div class="row">
+        <input type="password" id="tokenInput" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+        <button type="submit" class="primary" value="save" id="tokenSave">подключить</button>
+      </div>
+      <div class="row">
+        <button type="submit" value="forget" id="tokenForget">забыть ключ</button>
+        <button type="submit" value="cancel">закрыть</button>
+      </div>
+      <p class="status" id="tokenStatus"></p>
+    </form>
+  </dialog>
+  <input type="file" id="filePick" accept="image/*" hidden>
+
+  <script>
+  (() => {
+    const OWNER = 'maksim431', REPO = 'UX-UIdesigner', BRANCH = 'main'
+    const API = 'https://api.github.com/repos/' + OWNER + '/' + REPO
+    const SITE = new URL('../', location.href).href // корень сайта
+    const $ = (id) => document.getElementById(id)
+    const EDIT_SEL = 'h1,h2,h3,h4,h5,h6,p,li,figcaption,blockquote,td,th,dt,dd,.hk__go,.cs-fig__ph,.cs-fig__tag'
+    const MAX_W = 2560
+
+    let token = ''
+    try { token = localStorage.getItem('ghToken') || '' } catch (e) {}
+    let cases = [], lang = 'ru', cur = null // { path, src, sha, slug }
+    let dirty = false, pending = new Map() // img id -> { file blob, repoPath, oldRepoPath, w, h }
+    let frame = null, seq = 0, justSaved = false
+
+    const status = (t, kind) => { const s = $('status'); s.textContent = t || ''; s.className = 'status' + (kind ? ' ' + kind : '') }
+    const setDirty = (v) => { dirty = v; $('saveBtn').disabled = !v; $('resetBtn').disabled = !v; if (v) status('есть несохранённые изменения', 'dirty') }
+    window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = '' } })
+
+    /* ---------- GitHub API ---------- */
+    async function gh(path, opts = {}) {
+      const r = await fetch(path.startsWith('http') ? path : API + path, {
+        ...opts,
+        cache: 'no-store',
+        headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', ...(opts.body ? { 'Content-Type': 'application/json' } : {}) },
+      })
+      if (!r.ok) {
+        let msg = r.status + ''
+        try { msg += ' ' + (await r.json()).message } catch (e) {}
+        const err = new Error(msg); err.status = r.status; throw err
+      }
+      return r.status === 204 ? null : r.json()
+    }
+    const b64ToText = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), (c) => c.charCodeAt(0)))
+    async function getFile(path, ref) {
+      const j = await gh('/contents/' + path + '?ref=' + encodeURIComponent(ref || BRANCH))
+      return { text: b64ToText(j.content), sha: j.sha }
+    }
+    const blobToB64 = (blob) => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1]); fr.onerror = rej; fr.readAsDataURL(blob) })
+
+    // один коммит со всеми файлами: картинки + страницы
+    async function commit(files, message) {
+      const ref = await gh('/git/ref/heads/' + BRANCH)
+      const head = ref.object.sha
+      const base = await gh('/git/commits/' + head)
+      const tree = []
+      for (const f of files) {
+        const blob = await gh('/git/blobs', { method: 'POST', body: JSON.stringify(f.b64 ? { content: f.b64, encoding: 'base64' } : { content: f.text, encoding: 'utf-8' }) })
+        tree.push({ path: f.path, mode: '100644', type: 'blob', sha: blob.sha })
+      }
+      const t = await gh('/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: base.tree.sha, tree }) })
+      const c = await gh('/git/commits', { method: 'POST', body: JSON.stringify({ message, tree: t.sha, parents: [head] }) })
+      await gh('/git/refs/heads/' + BRANCH, { method: 'PATCH', body: JSON.stringify({ sha: c.sha }) })
+      return c.sha
+    }
+
+    /* ---------- ключ ---------- */
+    const dlg = $('tokenDlg')
+    $('tokenBtn').onclick = () => { $('tokenInput').value = ''; $('tokenStatus').textContent = token ? 'ключ подключён' : ''; dlg.showModal() }
+    dlg.addEventListener('close', async () => {
+      if (dlg.returnValue === 'forget') { token = ''; try { localStorage.removeItem('ghToken') } catch (e) {} ; location.reload(); return }
+      if (dlg.returnValue !== 'save') return
+      const v = $('tokenInput').value.trim()
+      if (!v) return
+      token = v
+      try {
+        const repo = await gh('')
+        if (!repo.permissions || !repo.permissions.push) throw new Error('у ключа нет права записи (Contents: Read and write)')
+        try { localStorage.setItem('ghToken', token) } catch (e) {}
+        status('ключ подключён', 'ok')
+        init()
+      } catch (e) {
+        token = ''
+        $('tokenStatus').textContent = 'Не получилось: ' + e.message
+        dlg.showModal()
+      }
+    })
+
+    /* ---------- список кейсов ---------- */
+    async function init() {
+      if (!token) { dlg.showModal(); return }
+      try {
+        const list = await gh('/contents/projects?ref=' + BRANCH)
+        cases = list.filter((x) => x.type === 'dir').map((x) => x.name).sort()
+      } catch (e) {
+        if (e.status === 401) { status('ключ не подходит — подключите заново', 'err'); return }
+        status('не удалось получить список кейсов: ' + e.message, 'err'); return
+      }
+      const sel = $('caseSel')
+      sel.innerHTML = cases.map((c) => '<option value="' + c + '">' + c + '</option>').join('')
+      sel.disabled = false
+      const saved = (() => { try { return JSON.parse(localStorage.getItem('adminLast') || 'null') } catch (e) { return null } })()
+      if (saved && cases.includes(saved.slug)) { sel.value = saved.slug; lang = saved.lang || 'ru' }
+      updLang()
+      load()
+    }
+    const pathFor = (slug, lg) => (lg === 'en' ? 'en/' : '') + 'projects/' + slug + '/index.html'
+    const updLang = () => { $('langRu').setAttribute('aria-pressed', lang === 'ru'); $('langEn').setAttribute('aria-pressed', lang === 'en') }
+    const guard = () => !dirty || confirm('Есть несохранённые изменения. Выйти без сохранения?')
+    $('caseSel').addEventListener('focus', function () { this.dataset.prev = this.value })
+    $('caseSel').onchange = function () { if (!guard()) { this.value = this.dataset.prev; return } load() }
+    $('langRu').onclick = () => { if (lang === 'ru' || !guard()) return; lang = 'ru'; updLang(); load() }
+    $('langEn').onclick = () => { if (lang === 'en' || !guard()) return; lang = 'en'; updLang(); load() }
+    $('resetBtn').onclick = () => { if (confirm('Отменить все несохранённые изменения?')) load() }
+
+    /* ---------- загрузка страницы в редактор ---------- */
+    async function load(ref) {
+      const slug = $('caseSel').value
+      if (!slug) return
+      const my = ++seq
+      const path = pathFor(slug, lang)
+      try { localStorage.setItem('adminLast', JSON.stringify({ slug, lang })) } catch (e) {}
+      status('загружаю…')
+      let f
+      try { f = await getFile(path, ref) } catch (e) { status('не удалось открыть ' + path + ': ' + e.message, 'err'); return }
+      if (my !== seq) return
+      cur = { path, slug, src: f.text, sha: f.sha }
+      pending.clear()
+      setDirty(false)
+      $('viewLink').href = SITE + path.replace(/index\.html$/, '')
+      render()
+    }
+
+    function render() {
+      const doc = new DOMParser().parseFromString(cur.src, 'text/html')
+      doc.querySelectorAll('script').forEach((s) => s.remove())
+      // встроенные обработчики не запускаем в редакторе, но сохраняем как были
+      doc.querySelectorAll('*').forEach((el) => {
+        for (const a of [...el.attributes]) if (/^on/i.test(a.name)) { el.setAttribute('data-ae-' + a.name, a.value); el.removeAttribute(a.name) }
+      })
+      doc.querySelectorAll('main img').forEach((img, i) => { img.setAttribute('data-ae-src', img.getAttribute('src') || ''); img.setAttribute('data-ae-id', 'i' + i); img.setAttribute('data-ae-load', img.getAttribute('loading') || '') })
+      const base = doc.createElement('base')
+      base.href = SITE + cur.path.replace(/index\.html$/, '')
+      doc.head.prepend(base)
+      const st = doc.createElement('style')
+      st.setAttribute('data-ae-style', '')
+      st.textContent = [
+        '[contenteditable]{outline:1px dashed transparent;outline-offset:3px;transition:outline-color .15s;cursor:text}',
+        '[contenteditable]:hover{outline-color:#9aa6ef}',
+        '[contenteditable]:focus{outline:2px solid #2c40c7}',
+        'main .cs-fig__box{cursor:pointer;position:relative}',
+        'main .cs-fig__box:hover::after{content:"заменить картинку";position:absolute;left:12px;top:12px;background:#000;color:#fff;font:13px "Fira Mono",monospace;padding:6px 10px;z-index:5}',
+        'main .cs-fig__box[data-ae-new]::before{content:"новая · не сохранена";position:absolute;right:12px;top:12px;background:#2c40c7;color:#fff;font:12px "Fira Mono",monospace;padding:5px 8px;z-index:5}',
+        '.hdr,.contacts,.totop{pointer-events:none}',
+      ].join('\n')
+      doc.head.append(st)
+      const html = '<!doctype html>\n' + doc.documentElement.outerHTML
+      const stage = $('stage')
+      stage.innerHTML = ''
+      frame = document.createElement('iframe')
+      frame.title = 'Редактор кейса'
+      frame.srcdoc = html
+      frame.onload = wire
+      stage.append(frame)
+    }
+
+    function wire() {
+      const d = frame.contentDocument
+      const main = d.querySelector('main')
+      if (!main) { status('на странице нет блока <main>', 'err'); return }
+      // ссылки внутри редактора не уводят со страницы
+      d.addEventListener('click', (e) => { const a = e.target.closest('a'); if (a) e.preventDefault() }, true)
+      // редактируемые блоки: самые «внутренние» текстовые элементы
+      const cand = [...main.querySelectorAll(EDIT_SEL)].filter((el) => el.textContent.trim() || el.matches('p'))
+      const set = new Set(cand)
+      cand.filter((el) => ![...el.querySelectorAll(EDIT_SEL)].some((c) => set.has(c))).forEach(makeEditable)
+      // картинки: показываем, как на сайте (с запасными вариантами), клик — замена
+      main.querySelectorAll('img[data-ae-id]').forEach(showImg)
+      main.querySelectorAll('.cs-fig__box').forEach((box) => box.addEventListener('click', (e) => {
+        if (e.target.closest('[contenteditable]')) return
+        e.preventDefault()
+        const img = box.querySelector('img[data-ae-id]')
+        if (img) pickFor(img)
+      }))
+      $('boldBtn').disabled = false
+      if (justSaved) { status('сохранено — на сайте через 1–2 минуты', 'ok'); justSaved = false } else status('готово к правкам')
+    }
+    function makeEditable(el) {
+      el.setAttribute('contenteditable', 'true')
+      el.setAttribute('spellcheck', 'true')
+      el.addEventListener('input', () => setDirty(true))
+      el.addEventListener('paste', (e) => {
+        e.preventDefault()
+        const t = (e.clipboardData || window.clipboardData).getData('text/plain')
+        el.ownerDocument.execCommand('insertText', false, t)
+      })
+      el.addEventListener('keydown', (e) => {
+        const d = el.ownerDocument
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); d.execCommand('bold'); setDirty(true); return }
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault()
+          if (el.tagName !== 'P') return
+          // новый абзац после текущего; текст после курсора переезжает в него
+          const sel = d.getSelection()
+          const r = sel.getRangeAt(0)
+          const tail = d.createRange()
+          tail.setStart(r.endContainer, r.endOffset)
+          tail.setEnd(el, el.childNodes.length)
+          const frag = tail.extractContents()
+          const p = d.createElement('p')
+          if (el.className) p.className = el.className
+          p.append(frag)
+          el.after(p)
+          makeEditable(p)
+          p.focus()
+          const c = d.createRange(); c.setStart(p, 0); c.collapse(true); sel.removeAllRanges(); sel.addRange(c)
+          setDirty(true)
+          return
+        }
+        if (e.key === 'Backspace' && el.tagName === 'P' && !el.textContent.length) {
+          const prev = el.previousElementSibling
+          if (prev && prev.matches('[contenteditable]')) {
+            e.preventDefault()
+            el.remove()
+            prev.focus()
+            const sel = d.getSelection(), c = d.createRange(); c.selectNodeContents(prev); c.collapse(false); sel.removeAllRanges(); sel.addRange(c)
+            setDirty(true)
+          }
+        }
+      })
+    }
+    $('boldBtn').onmousedown = (e) => e.preventDefault() // не терять выделение
+    $('boldBtn').onclick = () => { const d = frame && frame.contentDocument; if (!d) return; const a = d.activeElement; if (a && a.isContentEditable) { d.execCommand('bold'); setDirty(true) } }
+
+    function showImg(img) {
+      const box = img.parentNode
+      const alts = (img.getAttribute('data-alt') || '').split('|').filter(Boolean)
+      if (img.getAttribute('data-fb')) alts.push(img.getAttribute('data-fb'))
+      const ok = () => { if (img.naturalWidth) box.classList.add('is-loaded') }
+      img.addEventListener('load', ok)
+      img.addEventListener('error', () => { if (img.hasAttribute('data-ae-new')) return; const n = alts.shift(); if (n) img.src = n })
+      img.loading = 'eager'
+      if (img.complete) { if (img.naturalWidth) ok(); else if (alts.length) img.src = alts.shift() }
+    }
+
+    /* ---------- замена картинки ---------- */
+    let pickImg = null
+    function pickFor(img) { pickImg = img; $('filePick').value = ''; $('filePick').click() }
+    $('filePick').onchange = async () => {
+      const file = $('filePick').files[0]
+      const img = pickImg
+      if (!file || !img) return
+      status('готовлю картинку…')
+      try {
+        const out = await prepImage(file)
+        const pageDir = cur.path.replace(/index\.html$/, '')
+        const oldRel = img.getAttribute('data-ae-src') || ''
+        const oldRepo = oldRel ? new URL(oldRel, 'https://r/' + pageDir).pathname.slice(1) : ''
+        const m = oldRepo.match(/^assets\/cases\/([^/]+)\/([^/.]+)/)
+        const folder = m ? 'assets/cases/' + m[1] : 'assets/cases/' + cur.slug.replace(/-web$/, '')
+        const stem = m ? m[2].replace(/-[a-z0-9]{6,}$/, '') : 'img'
+        const repoPath = folder + '/' + stem + '-' + Date.now().toString(36) + out.ext
+        const id = img.getAttribute('data-ae-id')
+        pending.set(id, { blob: out.blob, repoPath, oldRepo, w: out.w, h: out.h })
+        img.setAttribute('data-ae-new', repoPath)
+        img.parentNode.setAttribute('data-ae-new', '')
+        img.src = URL.createObjectURL(out.blob)
+        setDirty(true)
+      } catch (e) { status('не удалось открыть картинку: ' + e.message, 'err') }
+    }
+    async function prepImage(file) {
+      const bmp = await createImageBitmap(file)
+      let w = bmp.width, h = bmp.height
+      const big = w > MAX_W || file.size > 1.5 * 1024 * 1024
+      const extOf = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif', 'image/svg+xml': '.svg' }
+      if (!big && extOf[file.type]) return { blob: file, ext: extOf[file.type], w, h }
+      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W }
+      const c = document.createElement('canvas')
+      c.width = w; c.height = h
+      const g = c.getContext('2d')
+      g.fillStyle = '#fff'; g.fillRect(0, 0, w, h)
+      g.drawImage(bmp, 0, 0, w, h)
+      const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.88))
+      return { blob, ext: '.jpg', w, h }
+    }
+
+    /* ---------- сохранение ---------- */
+    const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const prefixFor = (path) => '../'.repeat(path.split('/').length - 1)
+    function fixImgTag(tag, newRel, w, h) {
+      tag = tag.replace(/\ssrc="[^"]*"/, ' src="' + newRel + '"').replace(/\sdata-alt="[^"]*"/, '').replace(/\sdata-fb="[^"]*"/, '')
+      if (w && h) tag = tag.replace(/\swidth="\d+"/, ' width="' + w + '"').replace(/\sheight="\d+"/, ' height="' + h + '"')
+      return tag
+    }
+    function serializeMain() {
+      const d = frame.contentDocument
+      // копия в «неживом» документе: там картинки не грузятся и обработчики не срабатывают
+      const inert = document.implementation.createHTMLDocument('')
+      const main = inert.importNode(d.querySelector('main'), true)
+      main.querySelectorAll('[style=""]').forEach((el) => el.removeAttribute('style'))
+      main.querySelectorAll('[contenteditable]').forEach((el) => { el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck') })
+      main.querySelectorAll('.is-loaded').forEach((el) => { el.classList.remove('is-loaded'); if (!el.className) el.removeAttribute('class') })
+      main.querySelectorAll('[data-ae-new]').forEach((el) => { if (el.tagName !== 'IMG') el.removeAttribute('data-ae-new') })
+      main.querySelectorAll('img[data-ae-id]').forEach((img) => {
+        const p = pending.get(img.getAttribute('data-ae-id'))
+        if (p) {
+          img.setAttribute('src', prefixFor(cur.path) + p.repoPath)
+          img.removeAttribute('data-alt'); img.removeAttribute('data-fb')
+          img.setAttribute('width', p.w); img.setAttribute('height', p.h)
+        } else img.setAttribute('src', img.getAttribute('data-ae-src'))
+        const ld = img.getAttribute('data-ae-load')
+        if (ld) img.setAttribute('loading', ld); else img.removeAttribute('loading')
+        img.removeAttribute('data-ae-src'); img.removeAttribute('data-ae-id'); img.removeAttribute('data-ae-new'); img.removeAttribute('data-ae-load')
+      })
+      main.querySelectorAll('*').forEach((el) => {
+        for (const a of [...el.attributes]) if (a.name.startsWith('data-ae-on')) { el.setAttribute(a.name.slice(8), a.value); el.removeAttribute(a.name) }
+      })
+      // атрибуты без значения оставляем в исходном виде: data-intro, а не data-intro=""
+      return main.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
+    }
+    $('saveBtn').onclick = async () => {
+      if (!cur || !frame) return
+      $('saveBtn').disabled = true
+      status('сохраняю…')
+      try {
+        // страница не изменилась на GitHub, пока её правили?
+        const now = await getFile(cur.path)
+        if (now.sha !== cur.sha) throw new Error('страница изменилась на GitHub после открытия — нажмите «отменить», чтобы загрузить свежую версию')
+        const mainHtml = serializeMain()
+        const a = cur.src.indexOf('<main'), b = cur.src.lastIndexOf('</main>')
+        if (a < 0 || b < 0) throw new Error('не найден блок <main>')
+        const page = cur.src.slice(0, a) + mainHtml + cur.src.slice(b + 7)
+        const files = []
+        for (const p of pending.values()) files.push({ path: p.repoPath, b64: await blobToB64(p.blob) })
+        files.push({ path: cur.path, text: page })
+        // та же картинка во второй языковой версии
+        if ($('syncPair').checked && pending.size) {
+          const pairPath = pathFor(cur.slug, lang === 'ru' ? 'en' : 'ru')
+          try {
+            const pair = await getFile(pairPath)
+            let t = pair.text
+            const pre = prefixFor(pairPath)
+            for (const p of pending.values()) {
+              if (!p.oldRepo) continue
+              const re = new RegExp('<img\\b[^>]*\\ssrc="' + esc(pre + p.oldRepo) + '"[^>]*>', 'g')
+              t = t.replace(re, (tag) => fixImgTag(tag, pre + p.repoPath, p.w, p.h))
+            }
+            if (t !== pair.text) files.push({ path: pairPath, text: t })
+          } catch (e) { /* второй версии может не быть */ }
+        }
+        const sha = await commit(files, 'Админка: правка ' + cur.path)
+        status('сохранено — на сайте через 1–2 минуты', 'ok')
+        setDirty(false)
+        justSaved = true
+        await load(sha)
+      } catch (e) {
+        status('не сохранилось: ' + e.message, 'err')
+        $('saveBtn').disabled = false
+      }
+    }
+
+    init()
+  })()
+  </script>
+</body>
+</html>
