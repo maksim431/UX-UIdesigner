@@ -208,38 +208,47 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
 
   // колесо и тачпад: перехватываем раньше плавной прокрутки.
   // Новый жест — это щелчок колеса после паузы или новый свайп тачпада (резкий рост силы); хвост инерции — нет.
-  let lastWheel = 0, lastAbs = 0, peak = 0, lastTrigger = 0
+  // Колесо и тачпад. Отличаем новый жест от инерции прошлого (как Lethargy):
+  //  • пауза в событиях или смена направления — точно новый жест;
+  //  • инерция всегда затухает, а живой свайп разгоняется: если сила снова растёт после затухания — это новый свайп.
+  // Разгон того же свайпа второй раз не срабатывает: после листания ждём, пока сила начнёт падать.
+  let lastWheel = 0, lastDir = 0, hist = [], armed = true
+  const mean = (a) => a.reduce((x, y) => x + y, 0) / Math.max(1, a.length)
   window.addEventListener('wheel', (e) => {
     if (e.ctrlKey || document.documentElement.classList.contains('no-scroll')) return
     const dy = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY
     if (!dy) return
     const now = performance.now()
     const abs = Math.abs(dy), dir = Math.sign(dy)
-    const gap = now - lastWheel
-    // новый жест: пауза в событиях (отдельный щелчок колеса или новый свайп после остановки)
-    // либо резкий всплеск силы, когда инерция прошлого свайпа уже затухла (разгон в начале свайпа — не новый жест)
-    let fresh = gap > 150
-    if (!fresh && abs > 20 && abs > lastAbs * 2 && lastAbs < peak * 0.4 && now - lastTrigger > 350) fresh = true
-    if (fresh) peak = 0
-    peak = Math.max(peak, abs)
+    const pause = now - lastWheel > 150 || dir !== lastDir
     lastWheel = now
-    lastAbs = abs
+    lastDir = dir
+    if (pause) { hist = []; armed = true }
+    hist.push(abs)
+    if (hist.length > 12) hist.shift()
+    let rising = false
+    if (hist.length >= 6) {
+      const recent = mean(hist.slice(-3)), before = mean(hist.slice(-8, -3))
+      if (recent < before * 0.9) armed = true // затухает — следующий разгон будет новым свайпом
+      rising = recent > before * 1.25 && recent > 6
+    }
+    const intent = pause || (armed && rising)
     const [a, b] = zone(), y = window.scrollY
-    if (!fresh) {
-      // хвост того же жеста: внутри блока глушим (если он не ушёл за край блока)
-      if (busy() || (y >= a - 3 && y <= b + 3 && nextFor(dir) !== null)) e.preventDefault()
+    const t = nextFor(dir)
+    if (!intent) {
+      // продолжение того же жеста: внутри блока глушим, чтобы страница не уезжала
+      if (busy() || (y >= a - 3 && y <= b + 3 && t !== null)) e.preventDefault()
       return
     }
-    const t = nextFor(dir)
     if (t === null) { if (busy()) release(); return } // край блока — этот же жест сразу прокручивает страницу
     e.preventDefault()
-    lastTrigger = now
+    armed = false
     pageTo(t)
   }, { passive: false, capture: true })
 
   // свайп на телефоне и планшете: каждый новый свайп листает сразу, даже если прошлая анимация не закончилась
-  let ty0 = 0, tDir = 0, tTake = false, tEnter = 0, sy0 = 0, tFired = false
-  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; sy0 = window.scrollY; tDir = 0; tTake = false; tEnter = 0; tFired = false }, { passive: true })
+  let ty0 = 0, tDir = 0, tTake = false, tFired = false, touching = false
+  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; tDir = 0; tTake = false; tFired = false; touching = true }, { passive: true })
   window.addEventListener('touchmove', (e) => {
     const d = ty0 - e.touches[0].clientY
     if (!tDir && Math.abs(d) > 6) {
@@ -249,43 +258,23 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
       tTake = t !== null
       if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
     }
-    if (!tTake && tDir) {
-      // тянут палец из первого экрана в блок (или снизу вверх) — на границе останавливаемся на крайней карточке
-      const y = window.scrollY, [a, b] = zone()
-      if (tDir > 0 && sy0 < a - 3 && y >= a - 3) { tTake = true; tEnter = 1 }
-      else if (tDir < 0 && sy0 > b + 3 && y <= b + 3) { tTake = true; tEnter = -1 }
-    }
     if (tTake) e.preventDefault()
   }, { passive: false })
-  window.addEventListener('touchend', () => {
-    if (!tTake) return
-    tTake = false
-    if (tEnter) { const [a, b] = zone(); goal = tEnter > 0 ? 0 : n - 1; glide(tEnter > 0 ? a : b, 700); return }
-    if (tFired) return
-    const t = nextFor(tDir)
-    if (t !== null) pageTo(t)
-  }, { passive: true })
+  const touchEnd = () => { touching = false; tTake = false }
+  window.addEventListener('touchend', touchEnd, { passive: true })
+  window.addEventListener('touchcancel', touchEnd, { passive: true })
 
-  // если прокрутка (инерция, полоса, клавиши) остановилась посреди карточки — доводим до ближайшей
-  let settleT = 0, prevY = window.scrollY, entry = null
+  // если прокрутка (инерция, полоса, клавиши) остановилась посреди карточки — плавно доводим до ближайшей
+  let settleT = 0
   window.addEventListener('scroll', () => {
-    // влетели в блок с разгона (из первого экрана или снизу) — останавливаемся на крайней карточке, а не посреди следующей
-    const y0 = window.scrollY, [za, zb] = zone()
-    if (performance.now() > busyUntil) {
-      if (prevY < za - 3 && y0 > za + 3) { entry = { i: 0, until: performance.now() + 2000 }; goal = 0; glide(za, 700) }
-      else if (prevY > zb + 3 && y0 < zb - 3) { entry = { i: n - 1, until: performance.now() + 2000 }; goal = n - 1; glide(zb, 700) }
-    }
-    prevY = y0
     clearTimeout(settleT)
     settleT = setTimeout(() => {
-      if (performance.now() < busyUntil) return
+      if (busy() || performance.now() - lastWheel < 200 || touching) return
       const y = window.scrollY, [a, b] = zone()
       if (y <= a + 3 || y >= b - 3) return
-      // инерция всё же пронесла дальше крайней карточки — возвращаем на неё
-      const i = entry && performance.now() < entry.until ? entry.i : idxAt(y)
-      entry = null
+      const i = idxAt(y)
       if (Math.abs(y - yAt(i)) > 3) pageTo(i)
-    }, 160)
+    }, 220)
   }, { passive: true })
 
   measure(true)
