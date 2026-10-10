@@ -83,7 +83,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
       k = n - 1
       f = 0
     }
-    const t = reduce ? (f > 0.5 ? 1 : 0) : easeInOut(clamp(f / (1 - hold), 0, 1))
+    // смена карточки идёт строго вслед за прокруткой (сама прокрутка уже плавная) — без своей паузы в начале
+    const t = reduce ? (f > 0.5 ? 1 : 0) : clamp(f, 0, 1)
     for (let i = 0; i < n; i++) {
       const p = parts[i]
       const reveal = i <= k ? 1 : i === k + 1 ? t : 0
@@ -173,8 +174,8 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   }
   const zone = () => [yAt(0), yAt(n - 1)]
   const idxAt = (y) => { const [a, b] = zone(); return clamp(Math.round(((y - a) / Math.max(1, b - a)) * (n - 1)), 0, n - 1) }
-  // мягкий разгон и мягкое торможение (синусоида) — без рывка в начале и в конце
-  const easeSoft = (t) => -(Math.cos(Math.PI * t) - 1) / 2
+  // стартует сразу (без медленного разгона) и долго, мягко тормозит
+  const easeSoft = (t) => 1 - Math.pow(1 - t, 4)
   let busyUntil = 0, own = 0
   function glide(y, ms) {
     busyUntil = performance.now() + ms + 120
@@ -227,11 +228,16 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   }, { passive: false, capture: true })
 
   // свайп на телефоне и планшете
-  let ty0 = 0, tDir = 0, tTake = false, tEnter = 0, sy0 = 0
-  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; sy0 = window.scrollY; tDir = 0; tTake = false; tEnter = 0 }, { passive: true })
+  let ty0 = 0, tDir = 0, tTake = false, tEnter = 0, sy0 = 0, tFired = false
+  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; sy0 = window.scrollY; tDir = 0; tTake = false; tEnter = 0; tFired = false }, { passive: true })
   window.addEventListener('touchmove', (e) => {
     const d = ty0 - e.touches[0].clientY
-    if (!tDir && Math.abs(d) > 6) { tDir = Math.sign(d); tTake = performance.now() > busyUntil ? nextFor(tDir) !== null : true }
+    if (!tDir && Math.abs(d) > 6) {
+      tDir = Math.sign(d)
+      const t = performance.now() > busyUntil ? nextFor(tDir) : null
+      tTake = t !== null || performance.now() < busyUntil
+      if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
+    }
     if (!tTake && tDir) {
       // тянут палец из первого экрана в блок (или снизу вверх) — на границе останавливаемся на крайней карточке
       const y = window.scrollY, [a, b] = zone()
@@ -244,6 +250,7 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     if (!tTake) return
     tTake = false
     if (tEnter) { const [a, b] = zone(); glide(tEnter > 0 ? a : b, 700); return }
+    if (tFired) return
     const t = nextFor(tDir)
     if (t !== null && performance.now() > busyUntil) pageTo(t)
   }, { passive: true })
