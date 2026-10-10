@@ -155,11 +155,11 @@ export function mountWater(host, hud) {
     wy = v.y0 + (v.y1 - v.y0) * (0.3 + Math.random() * 0.4)
     heading = Math.atan2(wx - px, -(wy - py))
     omega = 0
-    seed = Math.random() * 100
+    seed = SCRIPT ? (SCRIPT.seed || 0) : Math.random() * 100
     entering = true
     leaving = false
     calm = 0.3; segUntil = t + 30
-    if (SCRIPT) { const pt = SCRIPT.points[0]; wx = v.x0 + (v.x1 - v.x0) * pt[0]; wy = v.y0 + (v.y1 - v.y0) * pt[1]; heading = Math.atan2(wx - px, -(wy - py)); scriptStep = 1; calm = SCRIPT.calm || 0.25 }
+    if (SCRIPT) { const pt = SCRIPT.points[0]; if (pt) { wx = v.x0 + (v.x1 - v.x0) * pt[0]; wy = v.y0 + (v.y1 - v.y0) * pt[1]; scriptStep = 1 } else { pickExit(); entering = true; leaving = false } heading = Math.atan2(wx - px, -(wy - py)); calm = SCRIPT.calm || 0.25 }
     resetTrail()
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
