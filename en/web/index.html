@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Sedgwick+Ave+Display&display=swap">
   <link rel="modulepreload" href="../../assets/js/water.js?v=31">
-  <link rel="stylesheet" href="../../assets/css/site.css?v=5">
+  <link rel="stylesheet" href="../../assets/css/site.css?v=6">
 </head>
 <body>
   <header class="hdr hdr--home is-hero">
@@ -66,6 +66,19 @@
     <nav class="lang contacts__lang" aria-label="Language"><a href="../../web/" hreflang="ru" lang="ru" data-lang="ru" data-scramble="140">ru</a><i aria-hidden="true">/</i><span aria-current="true">en</span></nav>
   </div>
 
+  <div class="cmodal" id="cmodal" role="dialog" aria-modal="true" aria-labelledby="cmodal-t" hidden>
+    <div class="cmodal__bg" data-close-modal></div>
+    <div class="cmodal__box">
+      <button class="cmodal__close" type="button" data-close-modal aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <h2 class="cmodal__t" id="cmodal-t">get in touch</h2>
+      <div class="cmodal__list">
+        <a class="cmodal__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener">telegram</a>
+        <a class="cmodal__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">vk</a>
+        <button class="cmodal__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Copy email v1122706@yandex.ru">v1122706@yandex.ru</button>
+      </div>
+    </div>
+  </div>
+
   <main>
     <section class="hero" aria-label="Intro">
       <div class="hero__frame">
@@ -76,8 +89,8 @@
             <p class="hero__label" data-intro data-par="1">[UX/UI Designer]</p>
             <div class="hero__note" data-intro data-par="1.7">
               <p class="hero__text">I’ve been solving business problems for 4+ years, designing digital products from websites to internal systems. Customers find what they need faster, employees work faster, and you spend less time and money.</p>
-              <p class="hero__hint">P.S. Click anywhere to feed the koi</p>
             </div>
+            <div class="hero__act" data-intro data-par="2"><button class="hero__cta" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span class="hero__cta-t">get in touch</span></button></div>
           </div>
         </div>
       </div>
@@ -146,7 +159,7 @@
     </section>
   </main>
 
-  <script type="module" src="../../assets/js/page.js?v=44"></script>
+  <script type="module" src="../../assets/js/page.js?v=45"></script>
   <script src="../../assets/js/analytics.js?v=1" defer></script>
 </body>
 </html>

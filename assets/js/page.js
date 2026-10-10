@@ -2,7 +2,7 @@
 // шапка и меню контактов, первый экран с портретом, анимации при скролле, блок проектов.
 
 import { revealIfNeeded } from './ascii.js'
-import { initChrome } from './ui.js'
+import { initChrome } from './ui.js?v=2'
 import { mountWater } from './water.js?v=31'
 import { initProjects } from './projects.js?v=7'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=4'

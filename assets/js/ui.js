@@ -137,8 +137,49 @@ export function initLang() {
   )
 }
 
+// модальное окно «связаться со мной»: telegram, вконтакте, почта
+function initModal() {
+  const m = document.getElementById('cmodal')
+  if (!m) return
+  const root = document.documentElement
+  let back = null
+  const focusables = () => [...m.querySelectorAll('a[href], button:not([disabled])')]
+  const open = (opener) => {
+    back = opener || document.activeElement
+    m.hidden = false
+    requestAnimationFrame(() => m.classList.add('is-open'))
+    root.classList.add('no-scroll')
+    document.querySelectorAll('[data-open-modal]').forEach((b) => b.setAttribute('aria-expanded', 'true'))
+    const f = m.querySelector('.cmodal__close')
+    f && f.focus({ preventScroll: true })
+  }
+  const close = () => {
+    if (m.hidden) return
+    m.classList.remove('is-open')
+    root.classList.remove('no-scroll')
+    document.querySelectorAll('[data-open-modal]').forEach((b) => b.setAttribute('aria-expanded', 'false'))
+    setTimeout(() => { if (!m.classList.contains('is-open')) m.hidden = true }, 250)
+    back && back.focus && back.focus({ preventScroll: true })
+  }
+  document.querySelectorAll('[data-open-modal]').forEach((b) =>
+    b.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); open(b) })
+  )
+  m.addEventListener('click', (e) => { if (e.target.closest('[data-close-modal]')) close() })
+  document.addEventListener('keydown', (e) => {
+    if (m.hidden) return
+    if (e.key === 'Escape') close()
+    if (e.key === 'Tab') {
+      // фокус не уходит за пределы окна
+      const f = focusables(), first = f[0], last = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+  })
+}
+
 export function initChrome() {
   initLang()
+  initModal() // до initScramble/initCopy: пункты окна получают те же эффекты, что и меню контактов
   initScramble()
   initContacts()
   initCopy()

@@ -1,7 +1,7 @@
 // Страница кейса: шапка и контакты, появление картинок, кнопка «наверх», блок про нейросеть.
 
 import { revealIfNeeded } from './ascii.js'
-import { initChrome } from './ui.js'
+import { initChrome } from './ui.js?v=2'
 import { initAiCompare } from './aicompare.js'
 import { initSmoothScroll, scrollToY } from './smooth.js'
 

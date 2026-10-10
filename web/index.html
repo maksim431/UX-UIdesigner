@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
   <link rel="modulepreload" href="../assets/js/water.js?v=31">
-  <link rel="stylesheet" href="../assets/css/site.css?v=5">
+  <link rel="stylesheet" href="../assets/css/site.css?v=6">
 </head>
 <body>
   <header class="hdr hdr--home is-hero">
@@ -66,6 +66,19 @@
     <nav class="lang contacts__lang" aria-label="Язык"><span aria-current="true">ru</span><i aria-hidden="true">/</i><a href="../en/web/" hreflang="en" lang="en" data-lang="en" data-scramble="140">en</a></nav>
   </div>
 
+  <div class="cmodal" id="cmodal" role="dialog" aria-modal="true" aria-labelledby="cmodal-t" hidden>
+    <div class="cmodal__bg" data-close-modal></div>
+    <div class="cmodal__box">
+      <button class="cmodal__close" type="button" data-close-modal aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <h2 class="cmodal__t" id="cmodal-t">связаться со мной</h2>
+      <div class="cmodal__list">
+        <a class="cmodal__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener">telegram</a>
+        <a class="cmodal__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">вконтакте</a>
+        <button class="cmodal__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button>
+      </div>
+    </div>
+  </div>
+
   <main>
     <section class="hero" aria-label="Первый экран">
       <div class="hero__frame">
@@ -76,8 +89,8 @@
             <p class="hero__label" data-intro data-par="1">[UX/UI-дизайнер]</p>
             <div class="hero__note" data-intro data-par="1.7">
               <p class="hero__text">Решаю проблемы бизнеса более 4-х лет: проектирую цифровые продукты от сайта до внутренней системы. Клиенты быстрее находят нужное, сотрудники быстрее работают, а вы меньше тратите времени и денег.</p>
-              <p class="hero__hint">P.S. Кликни по области, чтобы покормить карпа</p>
             </div>
+            <div class="hero__act" data-intro data-par="2"><button class="hero__cta" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span class="hero__cta-t">связаться со мной</span></button></div>
           </div>
         </div>
       </div>
@@ -146,7 +159,7 @@
     </section>
   </main>
 
-  <script type="module" src="../assets/js/page.js?v=44"></script>
+  <script type="module" src="../assets/js/page.js?v=45"></script>
   <script src="../assets/js/analytics.js?v=1" defer></script>
 </body>
 </html>
