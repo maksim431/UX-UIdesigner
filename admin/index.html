@@ -48,11 +48,48 @@
     dialog .row { display: flex; gap: 8px; margin-top: 12px; }
     dialog .row input { flex: 1; min-width: 0; }
     a { color: var(--blue); }
+    .ed { display: contents; }
+    .ed[hidden] { display: none; }
+    .stats { flex: 1; overflow: auto; padding: 16px; }
+    .stats[hidden], main[hidden] { display: none; }
+    .st-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .st-head .sp { flex: 1; }
+    .st-setup { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .st-setup[hidden] { display: none; }
+    .st-card { background: #fff; border: 1px solid var(--line); padding: 16px; min-width: 0; }
+    .st-card h3 { margin: 0 0 10px; font-size: 14px; font-weight: 500; }
+    .st-card p, .st-card ol { margin: 0 0 10px; line-height: 1.55; color: #333; }
+    .st-card ol { padding-left: 20px; }
+    .st-card .row { display: flex; gap: 8px; }
+    .st-card .row input { flex: 1; min-width: 0; }
+    .st-card code { background: var(--bg); padding: 1px 4px; word-break: break-all; }
+    .hint { color: var(--muted); font-size: 12px; }
+    button.link { border: 0; background: none; padding: 0; color: var(--blue); text-decoration: underline; font-size: inherit; }
+    .st-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; }
+    .st-wide { grid-column: 1 / -1; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .kpi b { display: block; font-size: 28px; font-weight: 500; margin-top: 6px; }
+    .kpi span { color: var(--muted); }
+    .bars { list-style: none; margin: 0; padding: 0; }
+    .bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; padding: 6px 0; border-top: 1px solid #eee; }
+    .bars li:first-child { border-top: 0; }
+    .bars .lb { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bars .v { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .bars .meter { grid-column: 1 / -1; display: block; height: 4px; background: #eee; }
+    .bars .meter i { display: block; height: 100%; background: var(--blue); }
+    .bars .drop { color: var(--err); }
+    .funnel-sel { margin-bottom: 8px; max-width: 100%; }
+    .muted { color: var(--muted); }
   </style>
 </head>
 <body>
   <div class="bar">
     <h1>админка</h1>
+    <span class="seg" role="tablist" aria-label="Раздел">
+      <button type="button" id="tabEdit" aria-pressed="true">редактор</button>
+      <button type="button" id="tabStats" aria-pressed="false">статистика</button>
+    </span>
+    <span class="ed" id="edCtl">
     <select id="caseSel" aria-label="Страница" disabled><option>загрузка…</option></select>
     <span class="seg" role="group" aria-label="Язык">
       <button type="button" id="langRu" aria-pressed="true">ru</button>
@@ -60,14 +97,52 @@
     </span>
     <button type="button" id="boldBtn" title="Жирный (Ctrl+B)" disabled><b>Ж</b></button>
     <label class="chk"><input type="checkbox" id="syncPair" checked> картинки — в обеих версиях</label>
+    </span>
     <span class="sp"></span>
     <span class="status" id="status"></span>
+    <span class="ed" id="edCtl2">
     <a id="viewLink" href="#" target="_blank" rel="noopener">открыть на сайте</a>
     <button type="button" id="resetBtn" disabled>отменить</button>
     <button type="button" class="primary" id="saveBtn" disabled>сохранить</button>
+    </span>
     <button type="button" id="tokenBtn" title="Ключ доступа GitHub">ключ</button>
   </div>
-  <main>
+  <section class="stats" id="statsView" hidden>
+    <div class="st-head">
+      <label>период <select id="stPeriod">
+        <option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option><option value="365">год</option>
+      </select></label>
+      <button type="button" id="stReload">обновить</button>
+      <span class="sp"></span>
+      <button type="button" id="stSetupBtn">настройка</button>
+    </div>
+    <div class="st-setup" id="stSetup" hidden>
+      <div class="st-card">
+        <h3>1. счётчик Яндекс Метрики</h3>
+        <p>Создайте счётчик на <a href="https://metrika.yandex.ru/add" target="_blank" rel="noopener">metrika.yandex.ru/add</a>: адрес сайта — <code id="stSiteUrl"></code>, остальное по умолчанию. Скопируйте номер счётчика (8–9 цифр) и сохраните его здесь — код подключится на всех страницах сайта.</p>
+        <div class="row"><input type="text" id="stCounter" inputmode="numeric" placeholder="номер счётчика"><button type="button" class="primary" id="stCounterSave">сохранить на сайт</button></div>
+      </div>
+      <div class="st-card">
+        <h3>2. доступ к цифрам</h3>
+        <p>Чтобы видеть статистику здесь, нужен ключ Яндекса с правом только на чтение Метрики:</p>
+        <ol>
+          <li>Откройте <a href="https://oauth.yandex.ru/client/new" target="_blank" rel="noopener">oauth.yandex.ru/client/new</a> → «Для доступа к API или отладки».</li>
+          <li>Доступ: <b>Яндекс.Метрика → Получение статистики, чтение параметров</b>.</li>
+          <li>Платформа «Веб-сервисы», Redirect URI: <code id="stRedirect"></code>.</li>
+          <li>Создайте приложение, скопируйте его <b>ClientID</b> и вставьте сюда.</li>
+        </ol>
+        <div class="row"><input type="text" id="stClient" placeholder="ClientID приложения"><button type="button" class="primary" id="stLogin">войти через Яндекс</button></div>
+        <p class="hint">Ключ хранится только в этом браузере. <button type="button" class="link" id="stForget">забыть ключ</button></p>
+      </div>
+      <div class="st-card">
+        <h3>3. свои визиты</h3>
+        <label class="chk"><input type="checkbox" id="stNoTrack"> не считать мои посещения сайта с этого браузера</label>
+      </div>
+    </div>
+    <p class="status" id="stStatus"></p>
+    <div class="st-grid" id="stGrid"></div>
+  </section>
+  <main id="edView">
     <div class="stage" id="stage"><div class="empty" id="empty">Подключите ключ доступа GitHub — кнопка «ключ» справа вверху.</div></div>
     <aside class="help">
       <h2>как редактировать</h2>
@@ -470,6 +545,191 @@
         $('saveBtn').disabled = false
       }
     }
+
+    /* ================= статистика (Яндекс Метрика) ================= */
+    const YM = 'https://api-metrika.yandex.net/stat/v1/data'
+    const ADMIN_URL = location.origin + location.pathname
+    let ymToken = '', counterId = 0, stLoaded = false
+    try { ymToken = localStorage.getItem('ymToken') || '' } catch (e) {}
+    // вернулись со входа через Яндекс: ключ в адресе после #
+    if (/access_token=/.test(location.hash)) {
+      const h = new URLSearchParams(location.hash.slice(1))
+      ymToken = h.get('access_token') || ''
+      try { localStorage.setItem('ymToken', ymToken) } catch (e) {}
+      history.replaceState(null, '', ADMIN_URL)
+      try { localStorage.setItem('adminTab', 'stats') } catch (e) {}
+    }
+    $('stSiteUrl').textContent = SITE
+    $('stRedirect').textContent = ADMIN_URL
+    try { $('stClient').value = localStorage.getItem('ymClient') || '' } catch (e) {}
+    try { $('stNoTrack').checked = localStorage.getItem('noTrack') === '1' } catch (e) {}
+    $('stNoTrack').onchange = () => { try { localStorage.setItem('noTrack', $('stNoTrack').checked ? '1' : '0') } catch (e) {} }
+    const stStatus = (t, k) => { const e = $('stStatus'); e.textContent = t || ''; e.className = 'status' + (k ? ' ' + k : '') }
+
+    function setTab(t) {
+      const st = t === 'stats'
+      $('tabEdit').setAttribute('aria-pressed', !st); $('tabStats').setAttribute('aria-pressed', st)
+      $('edCtl').hidden = st; $('edCtl2').hidden = st; $('status').hidden = st
+      $('edView').hidden = st; $('statsView').hidden = !st
+      try { localStorage.setItem('adminTab', t) } catch (e) {}
+      if (st && !stLoaded) stInit()
+    }
+    $('tabEdit').onclick = () => setTab('edit')
+    $('tabStats').onclick = () => setTab('stats')
+    $('stSetupBtn').onclick = () => { $('stSetup').hidden = !$('stSetup').hidden }
+    $('stReload').onclick = () => stLoad()
+    $('stPeriod').onchange = () => stLoad()
+    $('stForget').onclick = () => { ymToken = ''; try { localStorage.removeItem('ymToken') } catch (e) {} ; stInit() }
+    $('stLogin').onclick = () => {
+      const id = $('stClient').value.trim()
+      if (!id) { stStatus('вставьте ClientID приложения', 'err'); return }
+      try { localStorage.setItem('ymClient', id) } catch (e) {}
+      if (dirty && !confirm('Есть несохранённые правки в редакторе — они пропадут. Продолжить?')) return
+      dirty = false
+      location.href = 'https://oauth.yandex.ru/authorize?response_type=token&client_id=' + encodeURIComponent(id) + '&redirect_uri=' + encodeURIComponent(ADMIN_URL)
+    }
+
+    // номер счётчика хранится прямо в assets/js/analytics.js
+    async function readCounter() {
+      const f = await getFile('assets/js/analytics.js')
+      const m = f.text.match(/var COUNTER_ID = (\d+)/)
+      return { id: m ? +m[1] : 0, file: f }
+    }
+    $('stCounterSave').onclick = async () => {
+      const id = $('stCounter').value.trim()
+      if (!/^\d{5,12}$/.test(id)) { stStatus('номер счётчика — только цифры', 'err'); return }
+      if (!token) { stStatus('сначала подключите ключ GitHub (кнопка «ключ»)', 'err'); return }
+      stStatus('сохраняю номер на сайт…')
+      try {
+        const { file } = await readCounter()
+        const text = file.text.replace(/var COUNTER_ID = \d+/, 'var COUNTER_ID = ' + id)
+        // меняем версию скрипта на страницах не нужно: кэш на сайте живёт ~10 минут
+        await commit([{ path: 'assets/js/analytics.js', text }], 'Статистика: счётчик Метрики ' + id)
+        counterId = +id
+        stStatus('счётчик подключён — статистика начнёт собираться в течение ~10 минут', 'ok')
+        stLoad()
+      } catch (e) { stStatus('не сохранилось: ' + e.message, 'err') }
+    }
+
+    async function stInit() {
+      stLoaded = true
+      if (!token) { $('stSetup').hidden = false; stStatus('подключите ключ GitHub (кнопка «ключ»), чтобы прочитать настройки', 'err'); return }
+      try { counterId = (await readCounter()).id } catch (e) { stStatus('не удалось прочитать настройки: ' + e.message, 'err'); return }
+      $('stCounter').value = counterId || ''
+      if (!counterId || !ymToken) {
+        $('stSetup').hidden = false
+        $('stGrid').innerHTML = ''
+        stStatus(!counterId ? 'статистика ещё не подключена — шаги ниже' : 'остался шаг 2: доступ к цифрам', 'dirty')
+        return
+      }
+      $('stSetup').hidden = true
+      stLoad()
+    }
+
+    async function ym(params) {
+      const q = new URLSearchParams({ ids: counterId, date1: $('stPeriod').value + 'daysAgo', date2: 'today', lang: 'ru', accuracy: 'full', ...params })
+      const r = await fetch(YM + '?' + q, { headers: { Authorization: 'OAuth ' + ymToken } })
+      const j = await r.json().catch(() => ({}))
+      if (!r.ok) { const e = new Error((j.errors && j.errors[0] && j.errors[0].message) || j.message || r.status); e.status = r.status; throw e }
+      return j
+    }
+    // первое измерение, которое Метрика примет (на случай переименований)
+    async function ymTry(dims, params) {
+      let last
+      for (const d of dims) { try { return await ym({ dimensions: d, ...params }) } catch (e) { last = e; if (e.status === 403) throw e } }
+      throw last
+    }
+    const escH = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+    const fmt = (n) => Math.round(n).toLocaleString('ru-RU')
+    // адрес страницы → понятное название
+    function pageName(u) {
+      if (!u) return '—'
+      let p = u
+      try { p = new URL(u, SITE).pathname } catch (e) {}
+      const root = new URL(SITE).pathname
+      if (p.startsWith(root)) p = p.slice(root.length)
+      p = p.replace(/index\.html$/, '')
+      const lg = /^en\//.test(p) ? ' · en' : ''
+      p = p.replace(/^en\//, '')
+      let m
+      if (p === '') return 'first screen' + lg
+      if ((m = p.match(/^(product|web)\/$/))) return 'главная ' + m[1] + lg
+      if ((m = p.match(/^projects\/([^/]+)\/$/))) return 'кейс ' + m[1] + lg
+      return '/' + p + lg
+    }
+    function bars(title, rows, opts = {}) {
+      const max = Math.max(1, ...rows.map((r) => r.v))
+      const total = rows.reduce((a, r) => a + r.v, 0) || 1
+      return '<div class="st-card' + (opts.wide ? ' st-wide' : '') + '"><h3>' + title + '</h3>' + (opts.note ? '<p class="hint">' + opts.note + '</p>' : '') +
+        (rows.length ? '<ul class="bars">' + rows.map((r) => '<li><span class="lb" title="' + escH(r.l) + '">' + escH(r.l) + '</span><span class="v">' + fmt(r.v) + (opts.pct === false ? '' : ' · ' + Math.round(r.v / total * 100) + '%') + (r.extra || '') + '</span><span class="meter"><i style="width:' + (r.v / max * 100).toFixed(1) + '%"></i></span></li>').join('') + '</ul>' : '<p class="muted">пока нет данных</p>') + '</div>'
+    }
+    const rowsOf = (j, map = (x) => x) => (j.data || []).map((d) => ({ l: map(d.dimensions.map((x) => x.name || '—').join(' · ')), v: d.metrics[0] }))
+
+    let funnelData = null
+    async function stLoad() {
+      if (!counterId || !ymToken) return stInit()
+      stStatus('загружаю статистику…')
+      const grid = $('stGrid')
+      try {
+        const tot = await ym({ metrics: 'ym:s:visits,ym:s:users,ym:s:bounceRate,ym:s:avgVisitDurationSeconds,ym:s:pageviews' })
+        const t = tot.totals || [0, 0, 0, 0, 0]
+        const sec = Math.round(t[3] || 0)
+        const parts = await Promise.allSettled([
+          ym({ dimensions: 'ym:s:lastTrafficSource', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
+          ym({ dimensions: 'ym:s:lastSourceEngine', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
+          ym({ dimensions: 'ym:s:deviceCategory', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 10 }),
+          ym({ dimensions: 'ym:s:regionCountry', metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 15 }),
+          ymTry(['ym:pv:URLPath', 'ym:pv:URL'], { metrics: 'ym:pv:pageviews', sort: '-ym:pv:pageviews', limit: 30 }),
+          ymTry(['ym:s:endURLPath', 'ym:s:endURL'], { metrics: 'ym:s:visits', sort: '-ym:s:visits', limit: 30 }),
+          ym({ dimensions: 'ym:s:paramsLevel2,ym:s:paramsLevel3', metrics: 'ym:s:visits', filters: "ym:s:paramsLevel1=='этап'", limit: 1000 }),
+        ])
+        const val = (i) => (parts[i].status === 'fulfilled' ? parts[i].value : { data: [], err: parts[i].reason })
+        const errs = parts.filter((p) => p.status === 'rejected').map((p) => p.reason.message)
+        // объединяем страницы с одинаковым названием (с / без index.html и т. п.)
+        const merge = (rows) => { const m = new Map(); rows.forEach((r) => m.set(r.l, (m.get(r.l) || 0) + r.v)); return [...m].map(([l, v]) => ({ l, v })).sort((a, b) => b.v - a.v) }
+        const pages = merge(rowsOf(val(4), pageName))
+        const exits = merge(rowsOf(val(5), pageName))
+        const pv = new Map(pages.map((r) => [r.l, r.v]))
+        exits.forEach((r) => { const p = pv.get(r.l); if (p) r.extra = ' · выход ' + Math.round(r.v / p * 100) + '%' })
+        // этапы: страница → [этап, визиты]
+        funnelData = new Map()
+        ;(val(6).data || []).forEach((d) => {
+          const pg = d.dimensions[0].name, st = d.dimensions[1].name
+          if (!funnelData.has(pg)) funnelData.set(pg, [])
+          funnelData.get(pg).push({ l: st, v: d.metrics[0] })
+        })
+        const fPages = [...funnelData.keys()].sort((a, b) => Math.max(...funnelData.get(b).map((x) => x.v)) - Math.max(...funnelData.get(a).map((x) => x.v)))
+        grid.innerHTML =
+          '<div class="st-card st-wide"><div class="kpis">' +
+          [['визиты', fmt(t[0])], ['посетители', fmt(t[1])], ['просмотры страниц', fmt(t[4])], ['отказы', Math.round(t[2] || 0) + '%'], ['время на сайте', Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0')]]
+            .map(([k, v]) => '<div class="kpi"><span>' + k + '</span><b>' + v + '</b></div>').join('') + '</div></div>' +
+          bars('откуда пришли', rowsOf(val(0))) +
+          bars('сайты и сервисы', rowsOf(val(1)), { note: 'Конкретный источник: поисковик, соцсеть, сайт со ссылкой.' }) +
+          bars('устройства', rowsOf(val(2))) +
+          bars('страны', rowsOf(val(3))) +
+          bars('популярные страницы', pages, { note: 'Просмотры страниц.' }) +
+          bars('где заканчивают визит', exits, { note: 'Последняя страница визита — после неё человек ушёл с сайта. «Выход» — какая доля просмотров этой страницы стала последней.' }) +
+          '<div class="st-card st-wide"><h3>на каком этапе уходят</h3><p class="hint">Сколько визитов дошло до каждого раздела страницы. Красным — сколько отвалилось по сравнению с предыдущим этапом.</p>' +
+          (fPages.length ? '<select class="funnel-sel" id="stFunnelSel">' + fPages.map((p) => '<option>' + escH(p) + '</option>').join('') + '</select><div id="stFunnel"></div>' : '<p class="muted">пока нет данных — этапы начнут собираться с первых визитов</p>') + '</div>'
+        if (fPages.length) { $('stFunnelSel').onchange = drawFunnel; drawFunnel() }
+        stStatus(errs.length ? 'часть отчётов не загрузилась: ' + errs.join('; ') : 'данные Яндекс Метрики за ' + $('stPeriod').selectedOptions[0].textContent + ' (обновляются с задержкой до нескольких минут)', errs.length ? 'err' : '')
+      } catch (e) {
+        if (e.status === 401 || e.status === 403) { stStatus('Метрика не пускает: ' + e.message + '. Проверьте ключ (шаг 2) и номер счётчика.', 'err'); $('stSetup').hidden = false }
+        else stStatus('не удалось загрузить: ' + e.message, 'err')
+      }
+    }
+    function drawFunnel() {
+      const rows = (funnelData.get($('stFunnelSel').value) || []).slice().sort((a, b) => a.l.localeCompare(b.l, 'ru', { numeric: true }))
+      const start = (rows.find((r) => /^00/.test(r.l)) || rows[0] || { v: 1 }).v || 1
+      let prev = null
+      const html = '<ul class="bars">' + rows.map((r) => {
+        const drop = prev && prev > r.v ? ' <span class="drop">−' + Math.round((prev - r.v) / prev * 100) + '%</span>' : ''
+        prev = r.v
+        return '<li><span class="lb">' + escH(r.l) + '</span><span class="v">' + fmt(r.v) + ' · ' + Math.round(r.v / start * 100) + '%' + drop + '</span><span class="meter"><i style="width:' + Math.min(100, r.v / start * 100).toFixed(1) + '%"></i></span></li>'
+      }).join('') + '</ul>'
+      $('stFunnel').innerHTML = html
+    }
+    try { if (localStorage.getItem('adminTab') === 'stats') setTab('stats') } catch (e) {}
 
     init()
   })()
