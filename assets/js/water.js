@@ -320,7 +320,7 @@ export function mountWater(host, hud) {
     const phone = FW < 810
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
-    len = phone ? Math.min(visH * 0.42, FW * 0.78) : Math.min(visH * 0.46, FW * 0.3)
+    len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     mask.width = tcols
