@@ -73,8 +73,8 @@ export function initOther(root) {
     const portrait = innerH > W * 0.95
     // вертикальный экран (телефон, планшет): карточки чуть уже экрана и выше — фото обрезается по краям, а не мельчит
     const cw = Math.round(portrait ? W * (W < 810 ? 0.86 : 0.8) : Math.min(innerH * 1446 / 1080, W * 0.9))
-    const ch = Math.round(portrait ? Math.min(innerH * 0.64, cw * 1.15) : cw * 1080 / 1446)
-    const k = ch / 1080
+    const ch = Math.round(portrait ? innerH : cw * 1080 / 1446) // на телефоне и планшете — на всю высоту экрана под шапкой
+    const k = cw / 1446 // масштаб подписей — по ширине карточки (на десктопе то же, что по высоте)
     const stripTop = Math.round((innerH - ch) / 2) // где стоит лента карточек в состоянии 2
     const st = root.style
     st.setProperty('--s', s.toFixed(4))
