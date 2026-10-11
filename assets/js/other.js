@@ -124,7 +124,7 @@ export function initOther(root) {
       const w = lerp(a.w, b.w, E)
       const f = lerp(a.f, b.f, E)
       // появление маленьких слов снизу
-      const ek = reduce ? 1 : easeOut(span(enter, 0.25 + i * 0.12, 0.8 + i * 0.12))
+      const ek = reduce ? 1 : easeOut(span(enter, 0.55 + i * 0.1, 0.9 + i * 0.1))
       const rise = (1 - ek) * a.f * 0.9
       const sA = wS[i].style
       sA.transformOrigin = a.ox.toFixed(2) + 'px ' + a.oy.toFixed(2) + 'px'

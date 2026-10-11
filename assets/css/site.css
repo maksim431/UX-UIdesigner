@@ -923,3 +923,15 @@ html.lb-open .ascii-cursor { display: none; }
 .op__big span { position: absolute; top: 0; left: 0; }
 .op__big span + span { left: auto; right: 0; top: calc(var(--s) * 132px); }
 .op__w { display: block; transform-origin: 0 0; will-change: transform, opacity; }
+/* карточка «добавить проект»: белая, пунктирная рамка 938×670 по центру, клик — окно с контактами */
+.op__card--add { background: #fff; }
+.op__add {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: calc(var(--k, 1) * 938px); height: calc(var(--k, 1) * 670px);
+  display: flex; align-items: center; justify-content: center; gap: calc(var(--k, 1) * 24px);
+  border: 1px dashed rgba(0, 0, 0, .34); color: #000; cursor: pointer;
+  font-size: calc(var(--k, 1) * 32px); line-height: .8; text-transform: lowercase; white-space: nowrap;
+  transition: border-color .25s var(--ease);
+}
+.op__add:hover, .op__add:focus-visible { border-color: rgba(0, 0, 0, .7); outline: none; }
+.op__plus { width: calc(var(--k, 1) * 32px); height: calc(var(--k, 1) * 32px); flex: none; }
