@@ -63,29 +63,32 @@ export function initOther(root) {
     const W = root.clientWidth
     const innerH = Math.max(320, vh - hdr)
     const s = W / 1920
-    const band = Math.min(369 * s, innerH * 0.38) // белая полоса с маленьким заголовком в состоянии 1
+    const band = Math.min(723 * s, innerH * 0.72) // белая полоса с маленьким заголовком в состоянии 1 (в макете 723 при 1920)
+    const k = innerH / 1080 // карточки как в макете: 1446×1080, высота — экран под шапкой
+    const cw = Math.round(innerH * 1446 / 1080)
     const st = root.style
     st.setProperty('--s', s.toFixed(4))
-    st.setProperty('--op-w', W + 'px')
+    st.setProperty('--op-cw', cw + 'px')
+    st.setProperty('--k', k.toFixed(4))
     st.setProperty('--inner-h', innerH + 'px')
     st.setProperty('--hdr-off', hdr + 'px')
     st.setProperty('--t1y', ((band - 57 * s) / 2).toFixed(1) + 'px')
-    const Lb = innerH * 1.0 // переход в состояние 2
+    const Lb = Math.max(band * 1.25, innerH * 0.6) // переход в состояние 2
     const hold = innerH * 0.2 // короткая пауза в состоянии 2
-    const Lc = (n - 1) * W // горизонтальная прокрутка: 1px вниз = 1px вбок
+    const Lc = Math.max(0, n * cw - W) // горизонтальная прокрутка: 1px вниз = 1px вбок
     st.setProperty('--op-h', innerH + Lb + hold + Lc + 'px')
     // сбрасываем трансформации, чтобы измерить слова в исходных местах
     ;[...wS, ...wB].forEach((w) => { w.style.transform = ''; w.style.opacity = '' })
     const A = wS.map((w) => boxOf(w, 0.8))
     const B = wB.map((w) => boxOf(w, 1.2))
-    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B }
+    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k }
     apply()
   }
 
   let lastKey = ''
   function apply() {
     if (!on || !g) return
-    const { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B } = g
+    const { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k } = g
     const top = root.getBoundingClientRect().top
     const d = hdr - top // сколько прокручено от момента закрепления
     // 1) появление, пока блок въезжает снизу
@@ -101,14 +104,16 @@ export function initOther(root) {
 
     // фото: в состоянии 1 начинается под белой полосой, в состоянии 2 — на весь экран
     const ee = reduce ? 1 : easeOut(span(enter, 0.15, 1))
-    const lift = easeInOut(span(pB, 0, 0.8))
+    const lift = easeInOut(pB)
     view.style.transform = 'translate3d(0,' + (band * (1 - lift)).toFixed(2) + 'px,0)'
     const side = (1 - ee) * 8
     view.style.clipPath = ee >= 1 ? '' : 'inset(' + ((1 - ee) * 14).toFixed(3) + '% ' + side.toFixed(3) + '% 0 ' + side.toFixed(3) + '%)'
     const img0 = cards[0].querySelector('img')
-    if (img0) img0.style.transform = ee >= 1 ? '' : 'scale(' + (1 + 0.14 * (1 - ee)).toFixed(4) + ')'
+    if (img0) img0.style.transform = ee >= 1 ? '' : 'scale(' + (1 + 0.06 * (1 - ee)).toFixed(4) + ')'
 
-    track.style.transform = 'translate3d(' + (-pC * (n - 1) * W).toFixed(2) + 'px,0,0)'
+    track.style.transform = 'translate3d(' + (-pC * Lc).toFixed(2) + 'px,0,0)'
+    // подписи уменьшаются вместе с переходом заголовка: 71.49 → 48
+    root.style.setProperty('--cap', (lerp(71.49, 48, E) * k).toFixed(2) + 'px')
 
     // заголовок: каждое слово едет и растёт из маленького в крупное, начертание меняется плавной сменой слоёв
     const fade = span(E, 0.18, 0.55)
