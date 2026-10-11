@@ -68,12 +68,17 @@ export function initOther(root) {
     lastVh = vh
     const innerH = Math.max(320, vh - hdr)
     const s = W / 1920
-    const band = Math.min(723 * s, innerH * 0.72) // белая полоса с маленьким заголовком в состоянии 1 (в макете 723 при 1920)
+    root.style.setProperty('--s', s.toFixed(4))
+    const tH = small.offsetHeight
+    let band = Math.min(723 * s, innerH * 0.72) // белая полоса с маленьким заголовком в состоянии 1 (в макете 723 при 1920)
+    // планшет и телефон: пустого места над и под «другие проекты» — в 3 раза больше
+    if (W < 1200) band = Math.min(tH + 3 * (band - tH), innerH * 0.95)
     // карточки как в макете: 1446×1080. На компьютере — по высоте экрана, на узком/вертикальном экране — по ширине
     const portrait = innerH > W * 0.95
     // вертикальный экран (телефон, планшет): карточки чуть уже экрана и выше — фото обрезается по краям, а не мельчит
-    const cw = Math.round(portrait ? W * (W < 810 ? 0.86 : 0.8) : Math.min(innerH * 1446 / 1080, W * 0.9))
-    const ch = Math.round(portrait ? innerH : cw * 1080 / 1446) // на телефоне и планшете — на всю высоту экрана под шапкой
+    // телефон: карточка ровно на ширину экрана; планшет: чуть уже, чтобы выглядывала следующая
+    const cw = Math.round(W < 810 ? W : portrait ? W * 0.8 : Math.min(innerH * 1446 / 1080, W * 0.9))
+    const ch = Math.round(portrait || W < 810 ? innerH : cw * 1080 / 1446) // на телефоне и планшете — на всю высоту экрана под шапкой
     const k = cw / 1446 // масштаб подписей — по ширине карточки (на десктопе то же, что по высоте)
     const stripTop = Math.round((innerH - ch) / 2) // где стоит лента карточек в состоянии 2
     const st = root.style
@@ -84,7 +89,7 @@ export function initOther(root) {
     st.setProperty('--hdr-off', hdr + 'px')
     st.setProperty('--ch', ch + 'px')
     st.setProperty('--strip-top', stripTop + 'px')
-    st.setProperty('--t1y', ((band - small.offsetHeight) / 2).toFixed(1) + 'px')
+    st.setProperty('--t1y', ((band - tH) / 2).toFixed(1) + 'px')
     const Lb = Math.max(band * 1.25, innerH * 0.6) // переход в состояние 2
     const hold = innerH * 0.2 // короткая пауза в состоянии 2
     const Lc = Math.max(0, n * cw - W) // горизонтальная прокрутка: 1px вниз = 1px вбок
