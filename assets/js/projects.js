@@ -284,6 +284,30 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3, after = n
     }, 220)
   }, { passive: true })
 
+  // телефон/планшет: инерция после отпускания пальца не пролетает кейсы — останавливается на первой встреченной карточке
+  if ('ontouchstart' in window) {
+    let lastY = window.scrollY
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY
+      if (!touching && !busy()) {
+        const list = []
+        for (let i = 0; i < n; i++) list.push(yAt(i))
+        if (y < lastY) list.reverse()
+        for (const st of list) {
+          if ((lastY < st - 3 && y > st + 3) || (lastY > st + 3 && y < st - 3)) {
+            lastY = st
+            const h = document.documentElement
+            h.style.overflow = 'hidden' // гасит инерцию в iOS
+            window.scrollTo(0, st)
+            setTimeout(() => { h.style.overflow = ''; window.scrollTo(0, st) }, 60)
+            return
+          }
+        }
+      }
+      lastY = y
+    }, { passive: true })
+  }
+
   measure(true)
 
   return {

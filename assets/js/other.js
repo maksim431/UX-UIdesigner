@@ -189,7 +189,8 @@ export function initOther(root, { prev = null } = {}) {
     if (!g) return null
     const y0 = Math.round(root.getBoundingClientRect().top + window.scrollY - g.hdr)
     const y2 = Math.round(y0 + g.Lb + g.hold)
-    const out = [y0, y2]
+    // шаги — только состояние 2 и карточки; переход заголовка (от начала блока до состояния 2) — обычная прокрутка
+    const out = [y2]
     for (let i = 1; i < n; i++) {
       const y = Math.round(y2 + Math.min(i * g.cw, g.Lc))
       if (y > out[out.length - 1] + 2) out.push(y)
