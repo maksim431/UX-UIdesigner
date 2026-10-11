@@ -5,7 +5,7 @@ import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js?v=2'
 import { mountWater } from './water.js?v=31'
 import { initProjects } from './projects.js?v=8'
-import { initOther } from './other.js?v=9'
+import { initOther } from './other.js?v=10'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=4'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
@@ -114,7 +114,7 @@ window.addEventListener(
 /* ---------- блок проектов ---------- */
 const works = document.getElementById('works')
 let otherApi = null
-const proj = initProjects(works, { smooth, after: () => (otherApi && otherApi.firstStop()) })
+const proj = initProjects(works, { smooth })
 
 /* ---------- «другие проекты» ---------- */
 otherApi = initOther(document.getElementById('other'), { prev: () => (proj ? proj.yFor(proj.count - 1) : null) }) || null

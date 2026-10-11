@@ -218,15 +218,14 @@ export function initOther(root, { prev = null } = {}) {
     if (!tDir && Math.abs(d) > 6) {
       tDir = Math.sign(d)
       const S = stops()
-      const py = prev ? prev() : null
-      const P = py != null ? [Math.round(py), ...S] : S.slice()
-      const off = py != null ? 1 : 0
+      const P = S
+      const off = 0
       const y = window.scrollY
       const mine = busy() && goalI >= 0
-      // наша зона: от последнего кейса (не включая — там листает блок «мои работы») до последней карточки
-      // а при свайпе назад — и чуть ниже блока (в пределах экрана), чтобы палец не проскакивал в карусель
+      // наша зона: от начала блока до последней карточки (между кейсами и блоком — обычная прокрутка, без доводки);
+      // при свайпе назад — и чуть ниже блока (в пределах экрана), чтобы палец не проскакивал в карусель
       const below = tDir < 0 ? g.innerH : 3
-      const inZone = mine || (y > (py != null ? P[0] + 3 : S[0] - 3) && y <= S[S.length - 1] + below)
+      const inZone = mine || (y >= S[0] - 3 && y <= S[S.length - 1] + below)
       if (inZone) {
         let t
         if (mine) t = goalI + tDir
@@ -246,7 +245,25 @@ export function initOther(root, { prev = null } = {}) {
     }
     if (take) e.preventDefault()
   }, { passive: false })
-  const tEnd = () => { touching = false; take = false }
+  // палец отпустили посреди блока (между шагами) — плавно доводим до ближайшего шага
+  let settleT = 0
+  const tEnd = () => {
+    touching = false
+    const was = take
+    take = false
+    clearTimeout(settleT)
+    if (was || !on || !g) return
+    settleT = setTimeout(function check(prevY) {
+      if (touching || busy()) return
+      const y = window.scrollY
+      if (prevY !== y) { settleT = setTimeout(() => check(y), 120); return } // ещё едет по инерции
+      const S = stops()
+      if (y < S[0] + 3 || y > S[S.length - 1] - 3) return
+      let best = S[0]
+      for (const st of S) if (Math.abs(st - y) < Math.abs(best - y)) best = st
+      if (Math.abs(best - y) > 3) { goalI = S.indexOf(best); glideTo(best, reduce ? 1 : 500) }
+    }, 120)
+  }
   window.addEventListener('touchend', tEnd, { passive: true })
   window.addEventListener('touchcancel', tEnd, { passive: true })
 
@@ -262,9 +279,14 @@ export function initOther(root, { prev = null } = {}) {
     const y = window.scrollY
     if (on && g && !touching && !busy() && ('ontouchstart' in window)) {
       const S = stops()
-      const a = S[0], b = S[S.length - 1]
-      if (lastY > b + 3 && y < b - 3) { lastY = b; stopAt(b); return }
-      if (lastY < a - 3 && y > a + 3) { lastY = a; stopAt(a); return }
+      const a = S[0]
+      // инерция (палец уже отпущен) не проскакивает шаги блока: останавливается на первом пересечённом
+      for (const st of (y > lastY ? S : S.slice().reverse())) {
+        if ((lastY < st - 3 && y > st + 3) || (lastY > st + 3 && y < st - 3)) { lastY = st; stopAt(st); return }
+      }
+      // инерция вверх из блока не пролетает основные кейсы — останавливается на последнем
+      const pv = prev ? prev() : null
+      if (pv != null && lastY > pv + 3 && lastY <= a + 3 && y < pv - 3) { lastY = pv; stopAt(pv); return }
     }
     lastY = y
   }, { passive: true })
