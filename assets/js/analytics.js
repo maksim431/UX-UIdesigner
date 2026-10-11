@@ -75,6 +75,9 @@
       })
     }
 
+    // веб-версия: блок «другие проекты»
+    seen(document.getElementById('other'), '90 · блок «другие проекты»')
+
     // first screen: какую версию выбрал
     var opts = document.querySelectorAll('.fs-opt')
     for (var o = 0; o < opts.length; o++) opts[o].addEventListener('click', function () {

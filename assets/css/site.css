@@ -895,3 +895,30 @@ html.lb-open .ascii-cursor { display: none; }
   .cmodal__item { font-size: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .cmodal__bg, .cmodal__box { transition: none; } }
+
+/* ---------- «другие проекты» (веб-версия, пока только десктоп) ----------
+   Блок закрепляется под шапкой: фото выезжает, заголовок вырастает в крупный (состояние 2)
+   и остаётся на месте, дальше карточки листаются по горизонтали вслед за прокруткой. */
+.op { display: none; }
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
+  .op { display: block; position: relative; background: #fff; height: var(--op-h, 500vh); --s: 1; }
+}
+.op__stage { position: sticky; top: var(--hdr-off, var(--hdr-h)); height: var(--inner-h, calc(100vh - var(--hdr-h))); overflow: hidden; background: #fff; }
+.op__view { position: absolute; inset: 0; overflow: hidden; transform: translate3d(0, var(--band, 0px), 0); will-change: transform, clip-path; }
+.op__track { display: flex; height: 100%; will-change: transform; }
+.op__card { flex: none; position: relative; width: var(--op-w, 100vw); height: 100%; margin: 0; overflow: hidden; background: #0d0d14; }
+.op__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.op__cap {
+  position: absolute; left: 0; top: 80%; transform: translateY(-50%); width: calc(var(--s) * 964px);
+  padding: 0 calc(var(--s) * 79px); font-size: calc(var(--s) * 71.49px); line-height: .8;
+  text-transform: lowercase; color: #fff; mix-blend-mode: color-dodge;
+}
+.op__title, .op__big {
+  position: absolute; left: 0; right: 0; margin: 0; color: #fff; mix-blend-mode: difference;
+  pointer-events: none; white-space: nowrap; text-transform: lowercase; z-index: 2;
+}
+.op__title { top: var(--t1y, 140px); display: flex; justify-content: center; gap: calc(var(--s) * 21px); font-size: calc(var(--s) * 71.49px); line-height: .8; font-weight: 400; }
+.op__big { top: calc(var(--s) * -49px); height: calc(var(--s) * 452px); font-size: calc(var(--s) * 266.667px); line-height: 1.2; font-weight: 700; letter-spacing: calc(var(--s) * -20.6061px); }
+.op__big span { position: absolute; top: 0; left: 0; }
+.op__big span + span { left: auto; right: 0; top: calc(var(--s) * 132px); }
+.op__w { display: block; transform-origin: 0 0; will-change: transform, opacity; }
