@@ -899,39 +899,36 @@ html.lb-open .ascii-cursor { display: none; }
 /* ---------- «другие проекты» (веб-версия, пока только десктоп) ----------
    Блок закрепляется под шапкой: фото выезжает, заголовок вырастает в крупный (состояние 2)
    и остаётся на месте, дальше карточки листаются по горизонтали вслед за прокруткой. */
-.op { display: none; }
-@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
-  .op { display: block; position: relative; background: #fff; height: var(--op-h, 500vh); --s: 1; }
-}
+.op { display: block; position: relative; background: #fff; height: var(--op-h, 500vh); --s: 1; }
 .op__stage { position: sticky; top: var(--hdr-off, var(--hdr-h)); height: var(--inner-h, calc(100vh - var(--hdr-h))); overflow: hidden; background: #fff; }
-.op__view { position: absolute; inset: 0; overflow: hidden; transform: translate3d(0, var(--band, 0px), 0); will-change: transform, clip-path; }
+.op__view { position: absolute; left: 0; right: 0; top: 0; height: var(--ch, 100%); overflow: hidden; transform: translate3d(0, var(--band, 0px), 0); will-change: transform, clip-path; }
 .op__track { display: flex; height: 100%; will-change: transform; }
 .op__card { flex: none; position: relative; width: var(--op-cw, 75vw); height: 100%; margin: 0; overflow: hidden; background: #0d0d14; }
 .op__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 /* подпись: внизу слева; в состоянии 1 — 71.49px, в состоянии 2 — 48px (при ширине 1920 / высоте 1080) */
 .op__cap {
-  position: absolute; left: 0; bottom: 0; width: calc(var(--k, 1) * 964px);
-  padding: calc(var(--k, 1) * 79px); font-size: var(--cap, 48px); line-height: .8;
+  position: absolute; left: 0; bottom: 0; width: max(calc(var(--k, 1) * 964px), 72%);
+  padding: max(calc(var(--k, 1) * 79px), 14px); font-size: var(--cap, 48px); line-height: .8;
   text-transform: lowercase; color: #fff; mix-blend-mode: color-dodge;
 }
 .op__title, .op__big {
   position: absolute; left: 0; right: 0; margin: 0; color: #fff; mix-blend-mode: difference;
   pointer-events: none; white-space: nowrap; text-transform: lowercase; z-index: 2;
 }
-.op__title { top: var(--t1y, 140px); display: flex; justify-content: center; gap: calc(var(--s) * 21px); font-size: calc(var(--s) * 71.49px); line-height: .8; font-weight: 400; }
-.op__big { top: calc(var(--s) * -63px); height: calc(var(--s) * 452px); font-size: calc(var(--s) * 266.667px); line-height: 1.2; font-weight: 700; letter-spacing: calc(var(--s) * -20.6061px); }
+.op__title { top: var(--t1y, 140px); display: flex; justify-content: center; gap: .3em; font-size: max(calc(var(--s) * 71.49px), 22px); line-height: .8; font-weight: 400; }
+.op__big { top: calc(var(--strip-top, 0px) - .236em); height: 1.695em; font-size: max(calc(var(--s) * 266.667px), 64px); line-height: 1.2; font-weight: 700; letter-spacing: -.0773em; }
 .op__big span { position: absolute; top: 0; left: 0; }
-.op__big span + span { left: auto; right: 0; top: calc(var(--s) * 132px); }
+.op__big span + span { left: auto; right: 0; top: .495em; }
 .op__w { display: block; transform-origin: 0 0; will-change: transform, opacity; }
 /* карточка «добавить проект»: белая, пунктирная рамка 938×670 по центру, клик — окно с контактами */
 .op__card--add { background: #fff; }
 .op__add {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: calc(var(--k, 1) * 938px); height: calc(var(--k, 1) * 670px);
-  display: flex; align-items: center; justify-content: center; gap: calc(var(--k, 1) * 24px);
+  width: 64.87%; height: 62.04%;
+  display: flex; align-items: center; justify-content: center; gap: max(calc(var(--k, 1) * 24px), 10px);
   border: 1px dashed rgba(0, 0, 0, .34); color: #000; cursor: pointer;
-  font-size: calc(var(--k, 1) * 32px); line-height: .8; text-transform: lowercase; white-space: nowrap;
+  font-size: max(calc(var(--k, 1) * 32px), 15px); line-height: .8; text-transform: lowercase; white-space: nowrap;
   transition: border-color .25s var(--ease);
 }
 .op__add:hover, .op__add:focus-visible { border-color: rgba(0, 0, 0, .7); outline: none; }
-.op__plus { width: calc(var(--k, 1) * 32px); height: calc(var(--k, 1) * 32px); flex: none; }
+.op__plus { width: 1em; height: 1em; flex: none; }

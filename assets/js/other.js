@@ -1,4 +1,4 @@
-// Блок «другие проекты» (веб-версия, десктоп).
+// Блок «другие проекты» (все версии портфолио, все размеры экрана).
 // 1) Появление: блок въезжает снизу — фото раскрывается из-под маски, заголовок поднимается.
 // 2) Блок закрепляется под шапкой: фото поднимается на весь экран, «другие проекты» из маленькой
 //    строки по центру вырастает в крупный жирный заголовок (состояние 2) и дальше стоит на месте.
@@ -17,7 +17,6 @@ const MID = 0.27
 
 export function initOther(root) {
   if (!root) return
-  const mq = window.matchMedia('(min-width: 1200px) and (hover: hover) and (pointer: fine)')
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const stage = root.querySelector('.op__stage')
   const view = root.querySelector('.op__view')
@@ -42,6 +41,8 @@ export function initOther(root) {
   const wB = [...big.querySelectorAll('.op__w')]
 
   let on = false
+  let lastW = -1
+  let lastVh = -1
   let g = null // размеры
 
   function boxOf(el, lh) {
@@ -55,24 +56,35 @@ export function initOther(root) {
   }
 
   function measure() {
-    on = mq.matches
+    on = root.offsetParent !== null
     if (!on) { g = null; return }
     const hdrEl = document.querySelector('.hdr')
     const hdr = hdrEl ? Math.round(hdrEl.getBoundingClientRect().height) : 0
-    const vh = window.innerHeight
     const W = root.clientWidth
+    // высоту экрана меняем только при смене ширины или заметной разнице — не от панели браузера на телефоне
+    const ih = window.innerHeight
+    const vh = W !== lastW || lastVh < 0 || Math.abs(ih - lastVh) > 140 ? ih : lastVh
+    lastW = W
+    lastVh = vh
     const innerH = Math.max(320, vh - hdr)
     const s = W / 1920
     const band = Math.min(723 * s, innerH * 0.72) // белая полоса с маленьким заголовком в состоянии 1 (в макете 723 при 1920)
-    const k = innerH / 1080 // карточки как в макете: 1446×1080, высота — экран под шапкой
-    const cw = Math.round(innerH * 1446 / 1080)
+    // карточки как в макете: 1446×1080. На компьютере — по высоте экрана, на узком/вертикальном экране — по ширине
+    const portrait = innerH > W * 0.95
+    // вертикальный экран (телефон, планшет): карточки чуть уже экрана и выше — фото обрезается по краям, а не мельчит
+    const cw = Math.round(portrait ? W * (W < 810 ? 0.86 : 0.8) : Math.min(innerH * 1446 / 1080, W * 0.9))
+    const ch = Math.round(portrait ? Math.min(innerH * 0.64, cw * 1.15) : cw * 1080 / 1446)
+    const k = ch / 1080
+    const stripTop = Math.round((innerH - ch) / 2) // где стоит лента карточек в состоянии 2
     const st = root.style
     st.setProperty('--s', s.toFixed(4))
     st.setProperty('--op-cw', cw + 'px')
     st.setProperty('--k', k.toFixed(4))
     st.setProperty('--inner-h', innerH + 'px')
     st.setProperty('--hdr-off', hdr + 'px')
-    st.setProperty('--t1y', ((band - 57 * s) / 2).toFixed(1) + 'px')
+    st.setProperty('--ch', ch + 'px')
+    st.setProperty('--strip-top', stripTop + 'px')
+    st.setProperty('--t1y', ((band - small.offsetHeight) / 2).toFixed(1) + 'px')
     const Lb = Math.max(band * 1.25, innerH * 0.6) // переход в состояние 2
     const hold = innerH * 0.2 // короткая пауза в состоянии 2
     const Lc = Math.max(0, n * cw - W) // горизонтальная прокрутка: 1px вниз = 1px вбок
@@ -81,14 +93,14 @@ export function initOther(root) {
     ;[...wS, ...wB].forEach((w) => { w.style.transform = ''; w.style.opacity = '' })
     const A = wS.map((w) => boxOf(w, 0.8))
     const B = wB.map((w) => boxOf(w, 1.2))
-    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k }
+    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k, stripTop }
     apply()
   }
 
   let lastKey = ''
   function apply() {
     if (!on || !g) return
-    const { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k } = g
+    const { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k, stripTop } = g
     const top = root.getBoundingClientRect().top
     const d = hdr - top // сколько прокручено от момента закрепления
     // 1) появление, пока блок въезжает снизу
@@ -105,7 +117,7 @@ export function initOther(root) {
     // фото: в состоянии 1 начинается под белой полосой, в состоянии 2 — на весь экран
     const ee = reduce ? 1 : easeOut(span(enter, 0.15, 1))
     const lift = easeInOut(pB)
-    view.style.transform = 'translate3d(0,' + (band * (1 - lift)).toFixed(2) + 'px,0)'
+    view.style.transform = 'translate3d(0,' + lerp(band, stripTop, lift).toFixed(2) + 'px,0)'
     const side = (1 - ee) * 8
     view.style.clipPath = ee >= 1 ? '' : 'inset(' + ((1 - ee) * 14).toFixed(3) + '% ' + side.toFixed(3) + '% 0 ' + side.toFixed(3) + '%)'
     const img0 = cards[0].querySelector('img')
@@ -113,7 +125,7 @@ export function initOther(root) {
 
     track.style.transform = 'translate3d(' + (-pC * Lc).toFixed(2) + 'px,0,0)'
     // подписи уменьшаются вместе с переходом заголовка: 71.49 → 48
-    root.style.setProperty('--cap', (lerp(71.49, 48, E) * k).toFixed(2) + 'px')
+    root.style.setProperty('--cap', Math.max(lerp(71.49, 48, E) * k, lerp(17, 13, E)).toFixed(2) + 'px')
 
     // заголовок: каждое слово едет и растёт из маленького в крупное, начертание меняется плавной сменой слоёв
     const fade = span(E, 0.18, 0.55)
@@ -160,7 +172,6 @@ export function initOther(root) {
   }, { passive: true })
   let rT = 0
   window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(measure, 80) })
-  if (mq.addEventListener) mq.addEventListener('change', measure)
   measure()
   setTimeout(measure, 600) // шапка могла сжаться позже
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure)
