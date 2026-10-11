@@ -15,7 +15,7 @@ function headerBottom() {
   return Math.max(0, Math.round(r.height))
 }
 
-export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
+export function initProjects(root, { smooth, stepVh = 100, hold = 0.3, after = null } = {}) {
   if (!root) return
   const sticky = root.querySelector('.ps__sticky')
   const panels = [...root.querySelectorAll('.ps__panel')]
@@ -254,9 +254,16 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
     if (!tDir && Math.abs(d) > 6) {
       tDir = Math.sign(d)
       const t = nextFor(tDir)
-      if (t === null && busy()) release() // свайп наружу с крайней карточки — сразу обычная прокрутка
-      tTake = t !== null
-      if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
+      // свайп вниз с последней карточки: не отдаём родной инерции (она пролетала следующий блок),
+      // а плавно доводим до начала следующего блока
+      const atLast = (busy() && goal === n - 1) || (!busy() && Math.abs(window.scrollY - yAt(n - 1)) <= 3)
+      const ay = t === null && tDir > 0 && atLast && after ? after() : null
+      if (ay != null) { goal = -1; glide(ay, reduce ? 1 : 1000); tTake = true; tFired = true }
+      else {
+        if (t === null && busy()) release() // свайп наружу с крайней карточки — сразу обычная прокрутка
+        tTake = t !== null
+        if (t !== null) { tFired = true; pageTo(t) } // анимация стартует прямо во время свайпа
+      }
     }
     if (tTake) e.preventDefault()
   }, { passive: false })
@@ -280,6 +287,9 @@ export function initProjects(root, { smooth, stepVh = 100, hold = 0.3 } = {}) {
   measure(true)
 
   return {
+    count: n,
+    // плавно перейти к карточке i (для соседних блоков)
+    goTo(i) { pageTo(clamp(i, 0, n - 1)) },
     // координата прокрутки, при которой полностью показана карточка i
     yFor(i) {
       const total = root.offsetHeight - box.innerH

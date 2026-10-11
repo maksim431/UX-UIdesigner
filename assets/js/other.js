@@ -15,7 +15,7 @@ const span = (v, a, b) => clamp((v - a) / (b - a), 0, 1)
 const ASC = 0.935
 const MID = 0.27
 
-export function initOther(root) {
+export function initOther(root, { prev = null } = {}) {
   if (!root) return
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const stage = root.querySelector('.op__stage')
@@ -98,7 +98,7 @@ export function initOther(root) {
     ;[...wS, ...wB].forEach((w) => { w.style.transform = ''; w.style.opacity = '' })
     const A = wS.map((w) => boxOf(w, 0.8))
     const B = wB.map((w) => boxOf(w, 1.2))
-    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k, stripTop }
+    g = { hdr, vh, W, innerH, band, Lb, hold, Lc, A, B, k, stripTop, cw }
     apply()
   }
 
@@ -180,4 +180,97 @@ export function initOther(root) {
   measure()
   setTimeout(measure, 600) // шапка могла сжаться позже
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure)
+
+  /* ---------- телефон и планшет: один свайп — один шаг ----------
+     Родная инерция пальца пролетала всю карусель (и кейсы выше при свайпе назад).
+     Внутри блока свайпы обрабатываем сами: шаги — состояние 1, состояние 2, каждая карточка.
+     Свайп вверх с первого шага возвращает на последний кейс блока «мои работы». */
+  function stops() {
+    if (!g) return null
+    const y0 = Math.round(root.getBoundingClientRect().top + window.scrollY - g.hdr)
+    const y2 = Math.round(y0 + g.Lb + g.hold)
+    const out = [y0, y2]
+    for (let i = 1; i < n; i++) {
+      const y = Math.round(y2 + Math.min(i * g.cw, g.Lc))
+      if (y > out[out.length - 1] + 2) out.push(y)
+    }
+    return out
+  }
+  const easeQ = (t) => 1 - Math.pow(1 - t, 4)
+  let raf = 0, busyUntil = 0, goalI = -1
+  const busy = () => performance.now() < busyUntil
+  function glideTo(y, ms) {
+    cancelAnimationFrame(raf)
+    busyUntil = performance.now() + ms + 80
+    const from = window.scrollY, t0 = performance.now()
+    const tick = (t) => {
+      const q = clamp((t - t0) / ms, 0, 1)
+      window.scrollTo(0, from + (y - from) * easeQ(q))
+      if (q < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+  }
+  let ty0 = 0, tDir = 0, take = false, touching = false
+  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; tDir = 0; take = false; touching = true }, { passive: true })
+  window.addEventListener('touchmove', (e) => {
+    if (!on || !g) return
+    const d = ty0 - e.touches[0].clientY
+    if (!tDir && Math.abs(d) > 6) {
+      tDir = Math.sign(d)
+      const S = stops()
+      const py = prev ? prev() : null
+      const P = py != null ? [Math.round(py), ...S] : S.slice()
+      const off = py != null ? 1 : 0
+      const y = window.scrollY
+      const mine = busy() && goalI >= 0
+      // наша зона: от последнего кейса (не включая — там листает блок «мои работы») до последней карточки
+      // а при свайпе назад — и чуть ниже блока (в пределах экрана), чтобы палец не проскакивал в карусель
+      const below = tDir < 0 ? g.innerH : 3
+      const inZone = mine || (y > (py != null ? P[0] + 3 : S[0] - 3) && y <= S[S.length - 1] + below)
+      if (inZone) {
+        let t
+        if (mine) t = goalI + tDir
+        else {
+          const i = P.findIndex((v) => Math.abs(v - y) <= 3)
+          if (i >= 0) t = i + tDir
+          else if (tDir > 0) t = P.findIndex((v) => v > y)
+          else { t = -1; for (let j = P.length - 1; j >= 0; j--) if (P[j] < y) { t = j; break } }
+        }
+        if (t > P.length - 1 || t < 0) { cancelAnimationFrame(raf); busyUntil = 0; goalI = -1 } // край — дальше обычная прокрутка
+        else {
+          take = true
+          goalI = t < off ? -1 : t
+          glideTo(P[t], reduce ? 1 : 750)
+        }
+      }
+    }
+    if (take) e.preventDefault()
+  }, { passive: false })
+  const tEnd = () => { touching = false; take = false }
+  window.addEventListener('touchend', tEnd, { passive: true })
+  window.addEventListener('touchcancel', tEnd, { passive: true })
+
+  // инерция снаружи (например, быстрый свайп вверх из конца страницы) не пролетает блок — останавливаем на краю
+  let lastY = window.scrollY
+  const stopAt = (y) => {
+    const h = document.documentElement
+    h.style.overflow = 'hidden' // гасит инерцию в iOS
+    window.scrollTo(0, y)
+    setTimeout(() => { h.style.overflow = ''; window.scrollTo(0, y) }, 60)
+  }
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY
+    if (on && g && !touching && !busy() && ('ontouchstart' in window)) {
+      const S = stops()
+      const a = S[0], b = S[S.length - 1]
+      if (lastY > b + 3 && y < b - 3) { lastY = b; stopAt(b); return }
+      if (lastY < a - 3 && y > a + 3) { lastY = a; stopAt(a); return }
+    }
+    lastY = y
+  }, { passive: true })
+
+  return {
+    // координата начала блока (состояние 1, блок закреплён)
+    firstStop() { const S = stops(); return S ? S[0] : null },
+  }
 }

@@ -4,8 +4,8 @@
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js?v=2'
 import { mountWater } from './water.js?v=31'
-import { initProjects } from './projects.js?v=7'
-import { initOther } from './other.js?v=8'
+import { initProjects } from './projects.js?v=8'
+import { initOther } from './other.js?v=9'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=4'
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
@@ -113,18 +113,27 @@ window.addEventListener(
 
 /* ---------- блок проектов ---------- */
 const works = document.getElementById('works')
-const proj = initProjects(works, { smooth })
+let otherApi = null
+const proj = initProjects(works, { smooth, after: () => (otherApi && otherApi.firstStop()) })
 
 /* ---------- «другие проекты» ---------- */
-initOther(document.getElementById('other'))
+otherApi = initOther(document.getElementById('other'), { prev: () => (proj ? proj.yFor(proj.count - 1) : null) }) || null
 
-/* ---------- финальный экран: кнопка и подвал появляются при скролле ---------- */
+/* ---------- финальный экран: кнопка и подвал появляются при скролле (каждый — когда до него доскроллили) ---------- */
 {
   const end = document.getElementById('end')
-  if (end && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { end.classList.add('is-in'); io.disconnect() } }, { threshold: 0.35 })
-    io.observe(end)
-  } else if (end) end.classList.add('is-in')
+  const cta = end && end.querySelector('.end__cta')
+  const ft = end && end.querySelector('.ft')
+  if (end && cta && ft && 'IntersectionObserver' in window) {
+    const io1 = new IntersectionObserver((es) => { if (es[0].isIntersecting) { end.classList.add('is-btn'); io1.disconnect() } }, { rootMargin: '0px 0px -15% 0px' })
+    io1.observe(end.querySelector('.end__btn'))
+    // подвал спрятан под край блока — следим за самим блоком: его низ подошёл к низу экрана
+    const io2 = new IntersectionObserver((es) => { if (es[0].isIntersecting) { end.classList.add('is-ft'); io2.disconnect() } }, { rootMargin: '0px 0px -10% 0px' })
+    const mark = document.createElement('div')
+    mark.style.cssText = 'position:absolute;left:0;bottom:0;width:1px;height:' + Math.max(40, Math.round(ft.offsetHeight * 0.6)) + 'px;pointer-events:none'
+    end.appendChild(mark)
+    io2.observe(mark)
+  } else if (end) end.classList.add('is-btn', 'is-ft')
 }
 
 // открыли кейс — запоминаем, какой; вернулись по «назад» — сразу показываем этот проект, без первого экрана

@@ -14,8 +14,8 @@
 
   /* ---------- плашка согласия на cookie ---------- */
   var T = lang === 'en'
-    ? { text: 'This site uses cookies and Yandex Metrica to collect anonymous visit statistics. Details are in the ', link: 'privacy policy', yes: 'accept', no: 'decline', label: 'Cookies' }
-    : { text: 'Сайт использует cookie и Яндекс Метрику, чтобы собирать обезличенную статистику посещений. Подробнее — в ', link: 'политике обработки персональных данных', yes: 'принять', no: 'отказаться', label: 'Cookie' }
+    ? { text: 'This site uses cookies to get better.', yes: 'accept', more: 'learn more', label: 'Cookies' }
+    : { text: 'Сайт использует cookie для того, чтобы стать лучше.', yes: 'принять', more: 'подробнее', label: 'Cookie' }
   var policy = root + (lang === 'en' ? 'en/' : '') + 'privacy/'
   var bar = null
   function hide() { if (bar) { bar.classList.remove('is-in'); var b = bar; setTimeout(function () { b.hidden = true }, 300) } }
@@ -25,11 +25,10 @@
       bar.className = 'cc'
       bar.setAttribute('role', 'region')
       bar.setAttribute('aria-label', T.label)
-      bar.innerHTML = '<p class="cc__t">' + T.text + '<a href="' + policy + '">' + T.link + '</a>.</p>' +
-        '<div class="cc__b"><button type="button" class="cc__yes">' + T.yes + '</button><button type="button" class="cc__no">' + T.no + '</button></div>'
+      bar.innerHTML = '<p class="cc__t">' + T.text + '</p>' +
+        '<div class="cc__b"><button type="button" class="cc__yes">' + T.yes + '</button><a class="cc__no" href="' + policy + '">' + T.more + '</a></div>'
       document.body.appendChild(bar)
       bar.querySelector('.cc__yes').addEventListener('click', function () { setC('yes'); hide(); start() })
-      bar.querySelector('.cc__no').addEventListener('click', function () { setC('no'); hide() })
     }
     bar.hidden = false
     requestAnimationFrame(function () { requestAnimationFrame(function () { bar.classList.add('is-in') }) })
