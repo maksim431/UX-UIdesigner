@@ -38,11 +38,10 @@
     setTimeout(function () { document.documentElement.classList.remove('ascii-pending') }, 4000)
     setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap">
+  <link rel="preload" href="../assets/fonts/FiraMono-Regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
   <link rel="modulepreload" href="../assets/js/water.js?v=31">
-  <link rel="stylesheet" href="../assets/css/site.css?v=10">
+  <link rel="stylesheet" href="../assets/css/site.css?v=11">
 </head>
 <body>
   <header class="hdr hdr--home is-hero">
@@ -183,9 +182,19 @@
         <h2 class="op__title"><span class="op__w">другие</span> <span class="op__w">проекты</span></h2>
       </div>
     </section>
+
+    <section class="end" id="end" aria-label="Обсудить проект">
+      <div class="end__cta"><button class="btn btn--dark end__btn" type="button" data-open-modal data-scramble="90" aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>обсудить проект</span></button></div>
+      <footer class="ft">
+        <div class="ft__who"><p>Максим</p><p>UX/UI-дизайнер</p></div>
+        <ul class="ft__tags" aria-label="Услуги"><li>лендинги</li><li>сайты</li><li>интернет-магазины</li><li>личные кабинеты</li><li>SaaS-сервисы</li><li>мобильные приложения</li><li>Telegram mini apps</li><li>внутренние инструменты</li><li>редизайн</li><li>UX-аудит</li></ul>
+        <div class="ft__legal"><p>© 2026 Максим Кощеев. Все права защищены.</p><p>Информация на сайте носит справочный характер и не является публичной офертой (ст. 437 ГК РФ).</p><p>Товарные знаки и материалы проектов принадлежат их правообладателям и показаны как примеры работ.</p><p class="ft__links"><a href="../privacy/">политика обработки персональных данных</a><button type="button" data-cookie-settings>настройки cookie</button></p></div>
+        <img class="ft__logo" src="../assets/img/logo.svg" alt="" width="39" height="29">
+      </footer>
+    </section>
   </main>
 
-  <script type="module" src="../assets/js/page.js?v=53"></script>
-  <script src="../assets/js/analytics.js?v=2" defer></script>
+  <script type="module" src="../assets/js/page.js?v=54"></script>
+  <script src="../assets/js/analytics.js?v=3" defer></script>
 </body>
 </html>

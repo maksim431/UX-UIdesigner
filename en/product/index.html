@@ -38,11 +38,10 @@
     setTimeout(function () { document.documentElement.classList.remove('ascii-pending') }, 4000)
     setTimeout(function () { if (!document.documentElement.classList.contains('fx-in')) document.documentElement.classList.remove('fx-pre') }, 6000)
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Sedgwick+Ave+Display&display=swap">
+  <link rel="preload" href="../../assets/fonts/FiraMono-Regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="../../assets/fonts/fonts.css?v=1">
   <link rel="modulepreload" href="../../assets/js/water.js?v=31">
-  <link rel="stylesheet" href="../../assets/css/site.css?v=10">
+  <link rel="stylesheet" href="../../assets/css/site.css?v=11">
 </head>
 <body>
   <header class="hdr hdr--home is-hero">
@@ -183,9 +182,19 @@
         <h2 class="op__title"><span class="op__w">other</span> <span class="op__w">projects</span></h2>
       </div>
     </section>
+
+    <section class="end" id="end" aria-label="Discuss a project">
+      <div class="end__cta"><button class="btn btn--dark end__btn" type="button" data-open-modal data-scramble="90" aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>discuss a project</span></button></div>
+      <footer class="ft">
+        <div class="ft__who"><p>Maksim</p><p>UX/UI designer</p></div>
+        <ul class="ft__tags" aria-label="Services"><li>landing pages</li><li>websites</li><li>online stores</li><li>dashboards</li><li>SaaS</li><li>mobile apps</li><li>Telegram mini apps</li><li>internal tools</li><li>redesign</li><li>UX audit</li></ul>
+        <div class="ft__legal"><p>© 2026 Maksim Koshcheev. All rights reserved.</p><p>The information on this site is for reference only and is not a public offer (Art. 437 of the Civil Code of the Russian Federation).</p><p>Trademarks and project materials belong to their respective owners and are shown as work examples.</p><p class="ft__links"><a href="../../en/privacy/">privacy policy</a><button type="button" data-cookie-settings>cookie settings</button></p></div>
+        <img class="ft__logo" src="../../assets/img/logo.svg" alt="" width="39" height="29">
+      </footer>
+    </section>
   </main>
 
-  <script type="module" src="../../assets/js/page.js?v=53"></script>
-  <script src="../../assets/js/analytics.js?v=2" defer></script>
+  <script type="module" src="../../assets/js/page.js?v=54"></script>
+  <script src="../../assets/js/analytics.js?v=3" defer></script>
 </body>
 </html>

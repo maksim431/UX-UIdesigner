@@ -26,9 +26,8 @@
     // выбран английский — сразу открываем английскую версию
     try { if (localStorage.getItem('lang') === 'en') location.replace('en/') } catch (e) {}
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&display=swap">
+  <link rel="preload" href="assets/fonts/FiraMono-Regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=1">
   <link rel="stylesheet" href="assets/css/site.css?v=3">
   <link rel="prefetch" href="assets/js/water.js">
 </head>
@@ -54,6 +53,6 @@
   </main>
 
   <script type="module" src="assets/js/first.js?v=3"></script>
-  <script src="assets/js/analytics.js?v=2" defer></script>
+  <script src="assets/js/analytics.js?v=3" defer></script>
 </body>
 </html>

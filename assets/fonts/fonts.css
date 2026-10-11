@@ -1,0 +1,6 @@
+/* Шрифты лежат на самом сайте (а не на Google Fonts): адреса посетителей не уходят третьим лицам за рубеж. Лицензия — SIL OFL (файлы OFL-*.txt). */
+@font-face { font-family: "Fira Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("FiraMono-Regular.woff") format("woff"); }
+@font-face { font-family: "Fira Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url("FiraMono-Medium.woff") format("woff"); }
+@font-face { font-family: "Fira Mono"; font-style: normal; font-weight: 700; font-display: swap; src: url("FiraMono-Bold.woff") format("woff"); }
+@font-face { font-family: "Fira Code"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("FiraCode-VF.woff") format("woff"); }
+@font-face { font-family: "Sedgwick Ave Display"; font-style: normal; font-weight: 400; font-display: swap; src: url("SedgwickAveDisplay-Regular.woff") format("woff"); }

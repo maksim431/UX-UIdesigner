@@ -115,8 +115,17 @@ window.addEventListener(
 const works = document.getElementById('works')
 const proj = initProjects(works, { smooth })
 
-/* ---------- «другие проекты» (веб-версия, десктоп) ---------- */
+/* ---------- «другие проекты» ---------- */
 initOther(document.getElementById('other'))
+
+/* ---------- финальный экран: кнопка и подвал появляются при скролле ---------- */
+{
+  const end = document.getElementById('end')
+  if (end && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { end.classList.add('is-in'); io.disconnect() } }, { threshold: 0.35 })
+    io.observe(end)
+  } else if (end) end.classList.add('is-in')
+}
 
 // открыли кейс — запоминаем, какой; вернулись по «назад» — сразу показываем этот проект, без первого экрана
 if (works) works.querySelectorAll('.ps__panel').forEach((panel, i) =>
