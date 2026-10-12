@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin/
 
-Sitemap: https://maksim431.github.io/UX-UIdesigner/sitemap.xml
+Sitemap: https://uxuidesign.ru/sitemap.xml
