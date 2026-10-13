@@ -95,7 +95,7 @@
       <button type="button" id="langEn" aria-pressed="false">en</button>
     </span>
     <button type="button" id="boldBtn" title="Жирный (Ctrl+B)" disabled><b>Ж</b></button>
-    <label class="chk"><input type="checkbox" id="syncPair" checked> картинки — в обеих версиях</label>
+    <label class="chk"><input type="checkbox" id="syncPair" checked> картинки — во всех версиях</label>
     <label class="chk" id="trWrap" title="Изменённый русский текст переводится и подставляется в английскую версию при сохранении"><input type="checkbox" id="trOn" checked> переводить на en</label>
     <button type="button" id="trBtn" title="Настройка перевода">перевод</button>
     </span>
@@ -639,6 +639,43 @@
       // атрибуты без значения оставляем в исходном виде: data-intro, а не data-intro=""
       return sMain.outerHTML.replace(/ (data-[\w-]+)=""/g, ' $1')
     }
+    // все страницы того же проекта: ru и en, продуктовая и веб-версия
+    function familyPaths(page) {
+      let fam
+      if (page.slug) { const base = page.slug.replace(/-web$/, ''); fam = pages.filter((x) => x.slug === base || x.slug === base + '-web') }
+      else if (page.id === 'product' || page.id === 'web') fam = pages.filter((x) => x.id === 'product' || x.id === 'web')
+      else fam = [page]
+      const out = []
+      fam.forEach((x) => { out.push(x.ru); if (x.en) out.push(x.en) })
+      return out
+    }
+    // «assets/cases/mytiger/03-mv71uykf.jpg?v=2» -> «assets/cases/mytiger/03»: одна и та же картинка, даже если её уже заменяли отдельно
+    const repoOf = (src, path) => { try { return new URL(src, 'https://r/' + path.replace(/[^/]*$/, '')).pathname.slice(1) } catch (e) { return '' } }
+    const stemOf = (repo) => repo.replace(/\.[a-z0-9]+$/i, '').replace(/-[a-z0-9]{6,}$/, '')
+    // заменить в чужой странице картинки, которые заменили в открытой (по месту на странице и по имени файла)
+    function syncImages(text, path) {
+      const a = text.indexOf('<main'), b = text.lastIndexOf('</main>')
+      if (a < 0 || b < 0) return { text, n: 0 }
+      const pre = prefixFor(path)
+      const items = [...pending.entries()].filter(([, p]) => p.oldRepo)
+      let i = -1, hit = 0
+      const tags = text.slice(a, b).match(/<img\b[^>]*>/g) || []
+      const mine = cur.src.slice(cur.src.indexOf('<main'), cur.src.lastIndexOf('</main>')).match(/<img\b[^>]*>/g) || []
+      const sameLayout = tags.length === mine.length
+      const main = text.slice(a, b).replace(/<img\b[^>]*>/g, (tag) => {
+        i++
+        const src = (tag.match(/\ssrc="([^"]*)"/) || [])[1]
+        if (!src) return tag
+        const repo = repoOf(src, path)
+        for (const [id, p] of items) {
+          const exact = repo === p.oldRepo
+          const samePlace = sameLayout && id === 'i' + i && stemOf(repo) === stemOf(p.oldRepo)
+          if (sameLayout ? samePlace : exact) { hit++; return fixImgTag(tag, pre + p.repoPath, p.w, p.h).replace(/\ssrcset="[^"]*"/, '').replace(/\ssizes="[^"]*"/, '') }
+        }
+        return tag
+      })
+      return { text: text.slice(0, a) + main + text.slice(b), n: hit ? 1 : 0 }
+    }
     $('saveBtn').onclick = async () => {
       if (!cur || !frame) return
       $('saveBtn').disabled = true
@@ -654,34 +691,36 @@
         const files = []
         for (const p of pending.values()) files.push({ path: p.repoPath, b64: await blobToB64(p.blob) })
         files.push({ path: cur.path, text: page })
-        // та же картинка во второй языковой версии
+        // перевод изменённого текста во вторую языковую версию
         const wantTr = lang === 'ru' && $('trOn').checked
         const changes = wantTr ? collectChanges() : []
         let trNote = ''
-        if ((($('syncPair').checked && pending.size) || changes.length)) {
-          const pairPath = cur.page[lang === 'ru' ? 'en' : 'ru']
+        const texts = new Map() // путь -> { orig, text } для остальных страниц
+        if (changes.length) {
+          const pairPath = cur.page.en
           try {
             const pair = await getFile(pairPath)
-            let t = pair.text
-            if (changes.length) {
-              status('перевожу на английский…')
-              const r = await translatePair(t, changes)
-              t = r.text; trNote = r.note
-            }
-            const pre = prefixFor(pairPath)
-            for (const p of pending.values()) {
-              if (!p.oldRepo) continue
-              const re = new RegExp('<img\\b[^>]*\\ssrc="' + esc(pre + p.oldRepo) + '"[^>]*>', 'g')
-              t = t.replace(re, (tag) => fixImgTag(tag, pre + p.repoPath, p.w, p.h))
-            }
-            if (t !== pair.text) files.push({ path: pairPath, text: t })
-          } catch (e) {
-            if (e.trError) throw e
-            /* второй версии может не быть */
+            status('перевожу на английский…')
+            const r = await translatePair(pair.text, changes)
+            texts.set(pairPath, { orig: pair.text, text: r.text }); trNote = r.note
+          } catch (e) { if (e.trError) throw e /* английской версии может не быть */ }
+        }
+        // та же картинка во всех версиях: ru/en, продуктовая/веб
+        let syncN = 0
+        if ($('syncPair').checked && pending.size) {
+          status('обновляю картинки в других версиях…')
+          for (const path of familyPaths(cur.page)) {
+            if (path === cur.path) continue
+            let entry = texts.get(path)
+            if (!entry) { try { const f = await getFile(path); entry = { orig: f.text, text: f.text } } catch (e) { continue } }
+            const r = syncImages(entry.text, path)
+            entry.text = r.text; syncN += r.n
+            texts.set(path, entry)
           }
         }
+        for (const [path, e] of texts) if (e.text !== e.orig) files.push({ path, text: e.text })
         const sha = await commit(files, 'Админка: правка ' + cur.path + (changes.length ? ' (+ перевод на en)' : ''))
-        savedNote = trNote
+        savedNote = [trNote, syncN ? 'картинки обновлены ещё на ' + syncN + ' ' + plural(syncN, 'странице', 'страницах', 'страницах') : ''].filter(Boolean).join(', ')
         setDirty(false)
         justSaved = true
         await load(sha)
