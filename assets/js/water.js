@@ -336,6 +336,7 @@ export function mountWater(host, hud) {
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
+    prevR = [0, 0, 0, 0]
     mask.width = tcols
     mask.height = trows
     buildDots()
@@ -455,6 +456,7 @@ export function mountWater(host, hud) {
     if (wake.length > 560) wake.splice(0, wake.length - 560)
   }
   let field = null, fox = null, foy = null
+  let prevR = [0, 0, 0, 0]
   const touched = []
 
   let last = 0, hudKey = -1
@@ -547,8 +549,18 @@ export function mountWater(host, hud) {
     }
 
     // плитки карпа
+    // всё, что относится к карпу (плитки, корм, свечение), рисуем только в прямоугольнике вокруг него, а не во весь экран
+    const ts0 = tile * sc
+    let rx0 = x0 * ts0, ry0 = y0 * ts0, rx1 = (x1 + 1) * ts0, ry1 = (y1 + 1) * ts0
+    for (const q of pellets) { const r = tile * 0.72 * 1.6 * sc * 3; rx0 = Math.min(rx0, q.x * sc - r); ry0 = Math.min(ry0, q.y * sc - r); rx1 = Math.max(rx1, q.x * sc + r); ry1 = Math.max(ry1, q.y * sc + r) }
+    const PAD = 64
+    const RX = clamp(Math.floor((rx0 - PAD) / 16) * 16, 0, layer.width), RY = clamp(Math.floor((ry0 - PAD) / 16) * 16, 0, layer.height)
+    const RW = clamp(Math.ceil((rx1 + PAD) / 16) * 16, 0, b16.width * 16) - RX, RH = clamp(Math.ceil((ry1 + PAD) / 16) * 16, 0, b16.height * 16) - RY
+    // стираем и прошлую область (карп сдвинулся), и новую
+    const UX = Math.min(RX, prevR[0]), UY = Math.min(RY, prevR[1]), UX1 = Math.max(RX + RW, prevR[0] + prevR[2]), UY1 = Math.max(RY + RH, prevR[1] + prevR[3])
+    prevR = [RX, RY, RW, RH]
     lctx.setTransform(1, 0, 0, 1, 0, 0)
-    lctx.clearRect(0, 0, layer.width, layer.height)
+    lctx.clearRect(UX, UY, UX1 - UX, UY1 - UY)
     lctx.font = '500 ' + Math.round(tile * 0.82 * sc) + 'px ' + font
     lctx.textAlign = 'center'
     lctx.textBaseline = 'middle'
@@ -621,31 +633,23 @@ export function mountWater(host, hud) {
       lctx.globalAlpha = 1
     }
 
-    // мягкий ореол-размытие под плитками (края силуэта расплываются)
-    g2.clearRect(0, 0, b2.width, b2.height)
-    g2.drawImage(layer, 0, 0, b2.width, b2.height)
-    g4.clearRect(0, 0, b4.width, b4.height)
-    g4.drawImage(b2, 0, 0, b4.width, b4.height)
-    g8.clearRect(0, 0, b8.width, b8.height)
-    g8.drawImage(b4, 0, 0, b8.width, b8.height)
-    g16.clearRect(0, 0, b16.width, b16.height)
-    g16.drawImage(b8, 0, 0, b16.width, b16.height)
-    ctx.imageSmoothingEnabled = true
-    ctx.globalAlpha = 0.55
-    ctx.drawImage(b4, 0, 0, canvas.width, canvas.height)
-    ctx.globalAlpha = 0.9
-    ctx.drawImage(layer, 0, 0)
-    ctx.globalAlpha = 0.35
-    ctx.drawImage(b2, 0, 0, canvas.width, canvas.height)
-
-    // bloom «осветлением» и бирюзовый ореол у головы
-    ctx.globalCompositeOperation = 'lighter'
-    ctx.globalAlpha = 0.22
-    ctx.drawImage(b4, 0, 0, canvas.width, canvas.height)
-    ctx.globalAlpha = 0.34
-    ctx.drawImage(b8, 0, 0, canvas.width, canvas.height)
-    ctx.globalAlpha = 0.34
-    ctx.drawImage(b16, 0, 0, canvas.width, canvas.height)
+    // мягкий ореол-размытие под плитками (края силуэта расплываются): уменьшенные копии только области карпа
+    if (RW > 0 && RH > 0) {
+      const down = (g, src, k, sk) => {
+        g.clearRect(UX / k, UY / k, (UX1 - UX) / k, (UY1 - UY) / k)
+        g.drawImage(src, RX / sk, RY / sk, RW / sk, RH / sk, RX / k, RY / k, RW / k, RH / k)
+      }
+      down(g2, layer, 2, 1); down(g4, b2, 4, 2); down(g8, b4, 8, 4); down(g16, b8, 16, 8)
+      const up = (src, k, a) => { ctx.globalAlpha = a; ctx.drawImage(src, RX / k, RY / k, RW / k, RH / k, RX, RY, RW, RH) }
+      ctx.imageSmoothingEnabled = true
+      up(b4, 4, 0.55)
+      ctx.globalAlpha = 0.9
+      ctx.drawImage(layer, RX, RY, RW, RH, RX, RY, RW, RH)
+      up(b2, 2, 0.35)
+      // bloom «осветлением» и бирюзовый ореол у головы
+      ctx.globalCompositeOperation = 'lighter'
+      up(b4, 4, 0.22); up(b8, 8, 0.34); up(b16, 16, 0.34)
+    } else ctx.globalCompositeOperation = 'lighter'
     ctx.globalAlpha = 1
     const pulse = 0.9 + 0.1 * Math.sin(t * 1.3)
     const hr = len * 0.24 * sc
