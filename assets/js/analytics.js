@@ -2,7 +2,7 @@
 // Номер счётчика записывает админка (вкладка «статистика»). 0 — статистика выключена.
 // Метрика (cookie, вебвизор) включается только после согласия посетителя — 152-ФЗ «О персональных данных».
 (function () {
-  var COUNTER_ID = 113597224
+  var COUNTER_ID = 113740716
   var me = document.currentScript && document.currentScript.src
   var root = me ? new URL('../../', me).pathname : '/'
   var rel = location.pathname.indexOf(root) === 0 ? location.pathname.slice(root.length) : location.pathname
