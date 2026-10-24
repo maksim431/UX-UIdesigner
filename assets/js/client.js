@@ -1,6 +1,7 @@
 // Версия для клиентов (/web/): шапка, появление блоков, частые вопросы и фон с карпом в финальном блоке.
 // Общая логика страницы (первый экран, контакты, «другие проекты») — в page.js.
 import { mountWater } from './water.js?v=32'
+import { PIXEL_CHARS } from './ascii.js'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -68,4 +69,62 @@ if (fin && finBg && finWater) {
   }
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => show(es[0].isIntersecting), { rootMargin: '10% 0px 10% 0px' }).observe(fin)
   else show(true)
+}
+
+/* ---------- большие цифры: ASCII-счётчик при появлении ----------
+   Числа «набегают» от нуля до своего значения, а знаки вокруг мерцают пиксельными символами
+   и успокаиваются к концу. Длина строки не меняется — соседний текст не прыгает. */
+function countUp(el, dur = 1600) {
+  const final = el.dataset.final || el.textContent
+  el.setAttribute('aria-label', final)
+  const parts = final.split(/(\d+(?:[.,]\d+)?)/) // нечётные элементы — числа
+  const nums = parts.map((p, i) => {
+    if (i % 2 === 0) return null
+    const sep = p.includes(',') ? ',' : p.includes('.') ? '.' : ''
+    const dec = sep ? p.split(sep)[1].length : 0
+    return { v: parseFloat(p.replace(',', '.')), sep, dec, len: p.length }
+  })
+  const glyph = () => PIXEL_CHARS[(Math.random() * PIXEL_CHARS.length) | 0]
+  el.classList.add('cl-count')
+  const t0 = performance.now()
+  let last = 0
+  const frame = (now) => {
+    const k = Math.min(1, (now - t0) / dur)
+    if (k < 1 && now - last < 45) return requestAnimationFrame(frame) // ~22 кадров в секунду, как у кнопок
+    last = now
+    const e = 1 - Math.pow(1 - k, 3)
+    const noise = (1 - k) * 0.55
+    let out = ''
+    parts.forEach((p, i) => {
+      if (i % 2 === 0) {
+        for (const ch of p) out += ch !== ' ' && Math.random() < noise ? glyph() : ch
+        return
+      }
+      const n = nums[i]
+      let s = (n.v * e).toFixed(n.dec)
+      if (n.sep === ',') s = s.replace('.', ',')
+      // недостающие разряды — пиксельные символы, чтобы ширина числа была постоянной
+      while (s.length < n.len) s = (k < 1 ? glyph() : ' ') + s
+      out += s
+    })
+    el.textContent = k < 1 ? out : final
+    if (k < 1) requestAnimationFrame(frame)
+    else el.classList.remove('cl-count')
+  }
+  requestAnimationFrame(frame)
+}
+const bigs = [...document.querySelectorAll('.cl-res__big, .cl-seg__v, .cl-fact__v')]
+if (!reduce && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return
+    io.unobserve(e.target)
+    countUp(e.target)
+  }), { threshold: 0.6 })
+  bigs.forEach((el) => {
+    // до появления цифры уже «зашумлены» — без вспышки готового значения перед стартом счётчика
+    el.dataset.final = el.textContent
+    el.setAttribute('aria-label', el.textContent)
+    el.textContent = el.textContent.replace(/\d/g, () => PIXEL_CHARS[(Math.random() * PIXEL_CHARS.length) | 0])
+    io.observe(el)
+  })
 }
