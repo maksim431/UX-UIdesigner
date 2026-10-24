@@ -1,6 +1,6 @@
 // Версия для клиентов (/web/): шапка, появление блоков, частые вопросы и фон с карпом в финальном блоке.
 // Общая логика страницы (первый экран, контакты, «другие проекты») — в page.js.
-import { mountWater } from './water.js?v=32'
+import { mountWater } from './water.js?v=33'
 import { PIXEL_CHARS } from './ascii.js'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -71,7 +71,30 @@ function fixedWater(sec, bgSel, hostSel) {
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => show(es[0].isIntersecting), { rootMargin: '10% 0px 10% 0px' }).observe(sec)
   else show(true)
 }
-fixedWater(document.querySelector('.cl-gets'), '.cl-gets__bg', '.cl-gets__water')
+
+/* ---------- «что вы получаете»: липкое окно справа, карп стоит головой вниз и «плывёт» вместе с прокруткой ----------
+   Положение и размер — как на макете: на компьютере центр карпа на ~68% ширины окна, голова на ~30% высоты окна. */
+const gets = document.querySelector('.cl-gets')
+const getsWater = gets && gets.querySelector('.cl-gets__water')
+if (getsWater && !/[?&]nokoi\b/.test(location.search)) {
+  const place = (FW, H) => {
+    const vw = document.documentElement.clientWidth
+    if (vw < 1200) {
+      const len = vw < 810 ? Math.min(H * 0.5, FW * 2) : Math.min(H * 0.6, FW * 1.4)
+      return { x: FW / 2, y: H * 0.3, len }
+    }
+    const len = Math.min(H * 0.68, FW)
+    const left = getsWater.getBoundingClientRect().left
+    const x = Math.max(len * 0.24, Math.min(FW - len * 0.24, vw * 0.681 - left))
+    return { x, y: H * 0.3, len }
+  }
+  let started = false
+  const go = () => { if (!started) { started = true; requestAnimationFrame(() => mountWater(getsWater, null, { mode: 'scroll', place })) } }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { go(); io.disconnect() } }, { rootMargin: '50% 0px 50% 0px' })
+    io.observe(gets)
+  } else go()
+}
 fixedWater(document.querySelector('.cl-final'), '.cl-final__bg', '.cl-final__water')
 
 /* ---------- большие цифры: ASCII-счётчик при появлении ----------

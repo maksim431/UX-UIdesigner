@@ -53,7 +53,12 @@ function koiOutline() {
 }
 const KOI = koiOutline()
 
-export function mountWater(host, hud) {
+// opts.mode === 'scroll' — режим «плывём вместе с карпом» (блок «что вы получаете»):
+//   карп стоит в заданной точке окна головой вниз; при прокрутке вода (фон и следы) уходит вверх,
+//   карп работает хвостом и оставляет клиновидный след; без прокрутки — почти стоит, от него расходятся круги.
+//   opts.place(FW, H) → { x, y, len }: центр по горизонтали, кончик головы по вертикали и длина карпа.
+export function mountWater(host, hud, opts = {}) {
+  const SCROLL = opts.mode === 'scroll'
   const canvas = document.createElement('canvas')
   canvas.setAttribute('aria-hidden', 'true')
   canvas.className = 'water'
@@ -68,6 +73,8 @@ export function mountWater(host, hud) {
 
   let W = 1, H = 1, FW = 1, dpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
   let dcell = 12
+  // сдвиг воды (режим прокрутки): off — сколько «проплыли», offm — то же по модулю периода фона
+  let off = 0, offm = 0, Hp = 1, lastScroll = -1, spd = 0, anchorX = 0, anchorY = 0, nextRing = 0
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
   /* ---------- движение: карп плывёт вперёд и плавно петляет; дойдя до края — уплывает за него
@@ -163,7 +170,33 @@ export function mountWater(host, hud) {
     resetTrail()
   }
   const wrap = (a) => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a }
+  function stepScroll(t) {
+    const dt = lastT < 0 ? 0 : clamp(t - lastT, 0, 0.1)
+    const y = window.scrollY || 0
+    const dy = lastScroll < 0 || dt === 0 ? 0 : y - lastScroll
+    lastScroll = y
+    off += dy
+    offm = ((off % Hp) + Hp) % Hp
+    const raw = dt > 0 ? dy / dt : 0
+    spd += (raw - spd) * Math.min(1, dt * 6)
+    const a = Math.abs(spd)
+    // сила работы хвоста — от скорости прокрутки; в покое карп едва шевелится
+    const vT = 0.08 + 0.92 * clamp(a / (len * 1.6), 0, 1)
+    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 6 : 1.4))
+    ampK = 0.55 + 1.0 * eff
+    const rate = 0.5 + 3.4 * eff
+    // курс — строго вниз с лёгким покачиванием
+    heading = Math.PI + (0.035 + 0.05 * eff) * Math.sin(t * 0.8 + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    omega = 0
+    px = anchorX; py = anchorY - len * 0.5
+    turn = 0
+    pushTrail()
+    phase += dt * rate
+    lastT = t
+    return { x: px, y: py, sp: a, sgn: Math.sign(spd) }
+  }
   function step(t) {
+    if (SCROLL) return stepScroll(t)
     const f = frameBox(), v = viewBox()
     if (px < 0 && py < 0) respawn(t) // первый показ — тоже заплывает из-за края
     const dt = lastT < 0 ? 0 : clamp(t - lastT, 0, 0.1)
@@ -257,6 +290,8 @@ export function mountWater(host, hud) {
     const dt = chainT < 0 ? 0 : clamp(lastT - chainT, 0, 0.1)
     chainT = lastT
     joints[0][0] = hx; joints[0][1] = hy
+    // режим прокрутки: голова стоит на месте, а вода «течёт» назад — тело тянется за головой и выпрямляется
+    if (SCROLL) { const d = (Math.abs(spd) + len * 0.35) * dt; for (let i = 1; i < NJ; i++) joints[i][1] -= d }
     // 1) каждый позвонок тянется за предыдущим (как верёвка)
     for (let i = 1; i < NJ; i++) {
       const p0 = joints[i - 1], q = joints[i]
@@ -316,7 +351,7 @@ export function mountWater(host, hud) {
 
   function resize() {
     FW = Math.max(1, host.clientWidth)
-    const w = Math.max(FW, document.documentElement.clientWidth)
+    const w = SCROLL ? FW : Math.max(FW, document.documentElement.clientWidth)
     const h = Math.max(1, host.clientHeight)
     const d = Math.min(1.25, window.devicePixelRatio || 1) // меньше пикселей — легче видеокарте при прокрутке
     if (w === W && h === H && d === dpr && tcols) return
@@ -334,6 +369,7 @@ export function mountWater(host, hud) {
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
+    if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; resetTrail() }
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     prevR = [0, 0, 0, 0]
@@ -350,7 +386,8 @@ export function mountWater(host, hud) {
   function buildDots() {
     dcell = FW < 810 ? 10 : 12
     bcols = Math.ceil(W / dcell)
-    brows = Math.ceil(H / dcell)
+    brows = Math.ceil(H / dcell) + (SCROLL ? 1 : 0)
+    Hp = brows * dcell
     bseed = new Float32Array(bcols * brows)
     for (let i = 0; i < bseed.length; i++) bseed[i] = hash(i, 13)
     const a = Math.ceil(dcell * dpr)
@@ -376,7 +413,7 @@ export function mountWater(host, hud) {
     // неподвижный фон рисуем ОДИН раз в отдельный холст; в кадре он ставится одной операцией
     bgStatic = document.createElement('canvas')
     bgStatic.width = canvas.width
-    bgStatic.height = canvas.height
+    bgStatic.height = Math.ceil(Hp * dpr)
     const gs = bgStatic.getContext('2d')
     gs.fillStyle = '#2c40c7'
     gs.fillRect(0, 0, bgStatic.width, bgStatic.height)
@@ -418,7 +455,9 @@ export function mountWater(host, hud) {
     for (let k = 0; k < bliveIdx.length; k++) {
       const i = bliveIdx[k]
       const r = (i / bcols) | 0, c = i - r * bcols
-      ctx.drawImage(batlas, bcur[i] * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
+      let y = r * dcell - offm
+      if (y < -dcell) y += Hp
+      ctx.drawImage(batlas, bcur[i] * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(y * dpr), a, a)
     }
   }
   const baseLevel = (s) => (s < 0.825 ? 0 : s < 0.905 ? 1 : s < 0.95 ? 2 : s < 0.975 ? 3 : s < 0.9875 ? 4 : s < 0.99625 ? 5 : BG.length - 1)
@@ -431,6 +470,7 @@ export function mountWater(host, hud) {
   let lastSpawn = -1
   let tailPrev = null
   function spawnWake(t, P, st) {
+    if (SCROLL) return spawnWakeScroll(t, P, st)
     if (lastSpawn < 0 || t < lastSpawn) lastSpawn = t
     const nx = Math.cos(heading), ny = Math.sin(heading) // нормаль вправо от курса
     while (t - lastSpawn > 0.06) {
@@ -438,8 +478,8 @@ export function mountWater(host, hud) {
       const vs = st.sp * 0.5 + len * 0.01
       const [rx, ry] = P(0.1, -0.36, 0)
       const [lx, ly] = P(-0.1, -0.36, 0)
-      wake.push({ x: rx, y: ry, nx, ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
-      wake.push({ x: lx, y: ly, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
+      wake.push({ x: rx, y: ry + off, nx, ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
+      wake.push({ x: lx, y: ly + off, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.8, life: 7 })
       // хвост: каждый взмах отталкивает воду в сторону и назад — за карпом остаётся
       // «дорожка» из завихрений поочерёдно слева и справа; чем сильнее взмах, тем заметнее
       const [tx, ty] = P(0, 0.52, 3)
@@ -448,14 +488,44 @@ export function mountWater(host, hud) {
         const rvx = (tx - tailPrev[0]) / 0.06 - bvx * 0.4, rvy = (ty - tailPrev[1]) / 0.06 - bvy * 0.4
         const rv = Math.hypot(rvx, rvy)
         const a = clamp(rv / (len * 0.9), 0, 1)
-        if (a > 0.05) wake.push({ x: tx, y: ty, nx: rvx / rv, ny: rvy / rv, v: Math.min(rv * 0.25, len * 0.14), t0: lastSpawn, a: 0.45 + 0.75 * a, life: 2.4 + 2 * a, w: 1.7 })
+        if (a > 0.05) wake.push({ x: tx, y: ty + off, nx: rvx / rv, ny: rvy / rv, v: Math.min(rv * 0.25, len * 0.14), t0: lastSpawn, a: 0.45 + 0.75 * a, life: 2.4 + 2 * a, w: 1.7 })
       }
       tailPrev = [tx, ty]
     }
     for (let i = wake.length - 1; i >= 0; i--) if (t - wake[i].t0 > wake[i].life || t < wake[i].t0) wake.splice(i, 1)
     if (wake.length > 560) wake.splice(0, wake.length - 560)
   }
+  // режим прокрутки: при движении — два расходящихся луча от боков головы (вода уносит их вверх — получается клин);
+  // в покое — изредка круги по воде от карпа
+  function spawnWakeScroll(t, P, st) {
+    if (lastSpawn < 0 || t < lastSpawn) lastSpawn = t
+    const moving = st.sp > len * 0.08
+    const nx = Math.cos(heading), ny = Math.sin(heading)
+    while (t - lastSpawn > 0.05) {
+      lastSpawn += 0.05
+      if (!moving) continue
+      const k = clamp(st.sp / (len * 1.6), 0, 1)
+      const vs = st.sp * 0.7 + len * 0.03
+      const [rx, ry] = P(0.16, -0.36, 0)
+      const [lx, ly] = P(-0.16, -0.36, 0)
+      wake.push({ x: rx, y: ry + off, nx, ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 3.2, w: 1.7 })
+      wake.push({ x: lx, y: ly + off, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 3.2, w: 1.7 })
+    }
+    if (!moving && t > nextRing) {
+      // круг: от тела карпа, чуть ниже середины
+      const [cx, cy] = P(0, -0.15, 0)
+      const n = 44
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2
+        wake.push({ x: cx + Math.cos(a) * len * 0.16, y: cy + Math.sin(a) * len * 0.3 + off, nx: Math.cos(a), ny: Math.sin(a), v: len * 0.06, t0: t, a: 1.1, life: 3.6, w: 1.8 })
+      }
+      nextRing = t + 1.6 + Math.random() * 1.2
+    } else if (moving) nextRing = Math.max(nextRing, t + 0.8)
+    for (let i = wake.length - 1; i >= 0; i--) if (t - wake[i].t0 > wake[i].life || t < wake[i].t0) wake.splice(i, 1)
+    if (wake.length > 560) wake.splice(0, wake.length - 560)
+  }
   let field = null, fox = null, foy = null
+  const touchedR = []
   let prevR = [0, 0, 0, 0]
   const touched = []
 
@@ -509,21 +579,23 @@ export function mountWater(host, hud) {
     if (!field || field.length !== nb) { field = new Float32Array(nb); fox = new Float32Array(nb); foy = new Float32Array(nb); touched.length = 0 }
     for (let k = 0; k < touched.length; k++) { const i = touched[k]; field[i] = 0; fox[i] = 0; foy[i] = 0 }
     touched.length = 0
+    touchedR.length = 0
+    const rLo = Math.floor(offm / dcell), rHi = SCROLL ? Math.ceil((offm + H) / dcell) : brows - 1
     for (const q of wake) {
       const age = t - q.t0
       const k = 1 - age / q.life
       const amp = q.a * Math.pow(k, 1.3) * Math.min(1, age * 1.5)
       const w = len * (0.014 + 0.006 * age) * (q.w || 1)
-      const x = q.x + q.nx * q.v * age, y = q.y + q.ny * q.v * age
+      const x = q.x + q.nx * q.v * age, y = q.y - off + offm + q.ny * q.v * age // y — в координатах сетки фона
       const c0 = Math.max(0, Math.floor((x - w * 2.5) / dcell)), c1 = Math.min(bcols - 1, Math.floor((x + w * 2.5) / dcell))
-      const r0 = Math.max(0, Math.floor((y - w * 2.5) / dcell)), r1 = Math.min(brows - 1, Math.floor((y + w * 2.5) / dcell))
+      const r0 = Math.max(rLo, Math.floor((y - w * 2.5) / dcell)), r1 = Math.min(rHi, Math.floor((y + w * 2.5) / dcell))
       for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) {
         const dx = (c + 0.5) * dcell - x, dy = (r + 0.5) * dcell - y
         const e = (dx * dx + dy * dy) / (w * w)
         if (e > 6) continue
         const h = Math.exp(-e) * amp
-        const i = r * bcols + c
-        if (field[i] === 0) touched.push(i)
+        const i = (((r % brows) + brows) % brows) * bcols + c
+        if (field[i] === 0) { touched.push(i); touchedR.push(r) }
         field[i] += h
         fox[i] += q.nx * h * 1.8
         foy[i] += q.ny * h * 1.8
@@ -531,17 +603,18 @@ export function mountWater(host, hud) {
     }
     // фон неподвижен: готовый холст одной операцией; перерисовываем только клетки, по которым идёт след
     tickBg(t)
-    ctx.drawImage(bgStatic, 0, 0)
+    ctx.drawImage(bgStatic, 0, -Math.round(offm * sc))
+    if (Hp - offm < H) ctx.drawImage(bgStatic, 0, Math.round((Hp - offm) * sc))
     drawLive()
     const ba = batlas.height
     for (let k = 0; k < touched.length; k++) {
       const i = touched[k]
       const wv = Math.min(1.2, field[i])
       if (wv <= 0.06) continue
-      const r = (i / bcols) | 0, c = i - r * bcols
+      const r = touchedR[k], c = i % bcols
       const base = bcur[i]
-      const l = Math.max(base === BG.length ? 0 : base, Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
-      const x = Math.round(c * dcell * sc), y = Math.round(r * dcell * sc)
+      const l = Math.max(base === BG.length ? 0 : base, SCROLL ? Math.min(BG.length - 1, Math.round(1.5 + wv * 7)) : Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
+      const x = Math.round(c * dcell * sc), y = Math.round((r * dcell - offm) * sc)
       // стираем исходный символ клетки и ставим символ гребня волны (чуть сдвинутый по ходу волны)
       ctx.fillStyle = '#2c40c7'
       ctx.fillRect(x, y, ba, ba)
@@ -700,8 +773,8 @@ export function mountWater(host, hud) {
   window.addEventListener('resize', resize)
   // клик/тап по фрейму — бросить корм (не больше трёх пикселей одновременно)
   const box = host.parentElement || host
-  box.classList.add('can-feed')
-  box.addEventListener('click', (e) => {
+  if (!SCROLL) box.classList.add('can-feed')
+  if (!SCROLL) box.addEventListener('click', (e) => {
     if (e.target.closest && e.target.closest('a, button')) return
     if (reduce && reduce.matches) return
     if (pellets.filter((q) => q.eaten < 0).length >= 3) return
@@ -713,7 +786,7 @@ export function mountWater(host, hud) {
     // от упавшего пикселя расходится маленький круг
     for (let k = 0; k < 14; k++) {
       const a = (k / 14) * Math.PI * 2
-      wake.push({ x, y, nx: Math.cos(a), ny: Math.sin(a), v: len * 0.12, t0: last, a: 0.5, life: 1.6 })
+      wake.push({ x, y: y + off, nx: Math.cos(a), ny: Math.sin(a), v: len * 0.12, t0: last, a: 0.5, life: 1.6 })
     }
   })
   const io = new IntersectionObserver((e) => { visible = e[0].isIntersecting; update() })

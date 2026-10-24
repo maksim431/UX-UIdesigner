@@ -281,11 +281,12 @@
 /* ==========================================================================
    Что вы получаете
    ========================================================================== */
-.cl-sec.cl-gets { background: var(--blue); color: #fff; padding-top: 310px; padding-bottom: 454px; clip-path: inset(0); overflow: hidden; }
-/* синий фон с ASCII-водой и карпом закреплён на экране справа от карточек */
-.cl-gets__bg { position: fixed; top: 0; bottom: 0; right: 0; left: calc(var(--pad) + 692px + var(--gap)); background: var(--blue); }
+.cl-sec.cl-gets { background: var(--blue); color: #fff; padding-top: 310px; padding-bottom: 454px; overflow: clip; }
+/* правая колонка во всю высоту блока; внутри — «липкое» окно с водой и карпом */
+.cl-gets__col { position: absolute; top: 0; bottom: 0; right: 0; left: calc(var(--pad) + 692px + var(--gap)); }
+.cl-gets__sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--blue); }
 .cl-gets__water { position: absolute; inset: 0; }
-.cl-gets__water canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cl-gets__water canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .cl-gets__px { position: absolute; z-index: 1; left: 0; top: -1px; width: max(100%, 1920px); max-width: none; height: auto; }
 .cl-gets__px--b { top: auto; bottom: -1px; transform: scaleY(-1); }
 .cl-gets .cl-h, .cl-gets__list { position: relative; z-index: 1; }
@@ -300,7 +301,7 @@
 @media (max-width: 1199.98px) {
   .cl-sec.cl-gets { padding-top: 220px; padding-bottom: 300px; }
   .cl-gets__list { width: 60%; margin-top: 64px; }
-  .cl-gets__bg { left: calc(var(--pad) + 60% - var(--pad) * 1.2 + var(--gap)); }
+  .cl-gets__col { left: calc(var(--pad) + (100% - 2 * var(--pad)) * .6 + var(--gap)); }
   .cl-get { height: 300px; }
   .cl-get__h { font-size: 24px; }
 }
@@ -309,7 +310,7 @@
   .cl-gets__px { width: 1200px; }
   /* карточки — 2/3 ширины экрана, карп — в правой трети */
   .cl-gets__list { width: calc(66.667vw - var(--pad)); margin-top: 40px; gap: 12px; }
-  .cl-gets__bg { left: 66.667%; }
+  .cl-gets__col { left: 66.667%; }
   .cl-get { height: auto; min-height: 220px; gap: 32px; padding: 14px 14px 18px; }
   .cl-get__n { width: 32px; height: 32px; font-size: 14px; }
   .cl-get__h { font-size: 18px; }
