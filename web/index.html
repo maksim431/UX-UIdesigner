@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Максим Кощеев — веб-дизайнер: лендинги, интернет-магазины, сервисы</title>
-  <meta name="description" content="Проектирую сайты и цифровые продукты для бизнеса: лендинги, интернет-магазины, личные кабинеты и Telegram mini apps. Кейсы и контакты.">
+  <title>Максим Кощеев — сайты и внутренние системы для бизнеса</title>
+  <meta name="description" content="Проектирую лендинги, сайты компаний, интернет-магазины, внутренние системы и приложения. Лендинг за 5 дней от 40 000 ₽, бесплатный разбор сайта, договор и оплата в три этапа.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Максим Кощеев — веб-дизайнер: лендинги, интернет-магазины, сервисы">
-  <meta property="og:description" content="Проектирую сайты и цифровые продукты для бизнеса: лендинги, интернет-магазины, личные кабинеты и Telegram mini apps. Кейсы и контакты.">
+  <meta property="og:title" content="Максим Кощеев — сайты и внутренние системы для бизнеса">
+  <meta property="og:description" content="Проектирую лендинги, сайты компаний, интернет-магазины, внутренние системы и приложения. Лендинг за 5 дней от 40 000 ₽, бесплатный разбор сайта, договор и оплата в три этапа.">
   <meta property="og:image" content="https://uxuidesign.ru/assets/img/og-cover.gif?v=2">
   <meta property="og:image:type" content="image/gif">
   <meta property="og:image:width" content="900">
@@ -43,32 +43,33 @@
   <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
   <link rel="modulepreload" href="../assets/js/water.js?v=32">
   <link rel="stylesheet" href="../assets/css/site.css?v=12">
+  <link rel="stylesheet" href="../assets/css/client.css?v=1">
 </head>
-<body>
-  <header class="hdr hdr--home is-hero">
+<body class="cl">
+  <header class="hdr hdr--cl is-top">
     <div class="hdr__bar">
-      <a class="logo" href="./" aria-label="Портфолио — наверх">
-        <img src="../assets/img/logo.svg" alt="" width="39" height="29"><img class="logo__light" src="../assets/img/logo-light.svg" alt="" width="39" height="29">
-      </a>
+      <div class="hdr__left">
+        <a class="logo" href="./" aria-label="Портфолио — наверх"><img src="../assets/img/logo-light.svg" alt="" width="39" height="29"></a>
+        <nav class="hdr__nav" aria-label="Разделы"><a class="hdr__link" href="#tasks" data-scramble="140">задачи</a><a class="hdr__link" href="#results" data-scramble="140">результаты</a><a class="hdr__link" href="#process" data-scramble="140">как я работаю</a><a class="hdr__link" href="#prices" data-scramble="140">цены</a><a class="hdr__link" href="#terms" data-scramble="140">условия</a><a class="hdr__link" href="#faq" data-scramble="140">вопросы</a></nav>
+      </div>
       <div class="hdr__right">
-        <a class="hdr__cv" href="../assets/cv/maksim-koshcheev-cv-ru.pdf?v=2" download="Кощеев_Максим_CV.pdf" data-scramble="140">скачать cv</a>
         <button class="hdr__contacts" type="button" data-open-contacts data-scramble="140" aria-controls="contacts" aria-expanded="false">контакты</button>
         <nav class="lang" aria-label="Язык"><span aria-current="true">ru</span><i aria-hidden="true">/</i><a href="../en/web/" hreflang="en" lang="en" data-lang="en" data-scramble="140">en</a></nav>
-      <button class="hdr__burger" type="button" data-open-contacts aria-label="Открыть контакты" aria-controls="contacts" aria-expanded="false">
+      <button class="hdr__burger" type="button" data-open-contacts aria-label="Открыть меню" aria-controls="contacts" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
       </button>
-      <button class="hdr__close" type="button" data-close-contacts aria-label="Закрыть контакты">
+      <button class="hdr__close" type="button" data-close-contacts aria-label="Закрыть меню">
         <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
       </button>
       </div>
     </div>
   </header>
 
-  <div class="contacts" id="contacts" role="dialog" aria-modal="true" aria-label="Контакты" aria-hidden="true">
+  <div class="contacts" id="contacts" role="dialog" aria-modal="true" aria-label="Меню и контакты" aria-hidden="true">
+    <nav class="contacts__nav" aria-label="Разделы"><a class="contacts__link" href="#tasks" data-scramble="140">задачи</a><a class="contacts__link" href="#results" data-scramble="140">результаты</a><a class="contacts__link" href="#process" data-scramble="140">как я работаю</a><a class="contacts__link" href="#prices" data-scramble="140">цены</a><a class="contacts__link" href="#terms" data-scramble="140">условия</a><a class="contacts__link" href="#faq" data-scramble="140">вопросы</a></nav>
     <a class="contacts__item" data-scramble="120" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" data-always>telegram</a>
     <a class="contacts__item" data-scramble="120" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">вконтакте</a>
     <button class="contacts__item" type="button" data-scramble="120" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button>
-    <a class="contacts__item contacts__cv" href="../assets/cv/maksim-koshcheev-cv-ru.pdf?v=2" download="Кощеев_Максим_CV.pdf" data-scramble="120">скачать cv</a>
     <nav class="lang contacts__lang" aria-label="Язык"><span aria-current="true">ru</span><i aria-hidden="true">/</i><a href="../en/web/" hreflang="en" lang="en" data-lang="en" data-scramble="140">en</a></nav>
   </div>
 
@@ -90,79 +91,199 @@
       <div class="hero__frame">
         <div class="hero__box">
           <div class="hero__portrait" role="img" aria-label="Вид сверху на воду и японского карпа из пиксельной мозаики"></div>
-          <div class="hero__foot">
-            <h1 class="hero__label" data-intro data-par="1">[проектирую сайты <br>и приложения,которыми<br>удобно пользоваться]</h1>
-            <div class="hero__note" data-intro data-par="1.7">
-              <p class="hero__text">клиенту проще выбрать, сотрудник быстрее делает свою работу, а бизнес видит, что изменилось. Работаю с сайтами, сервисами, внутренними системами и приложениями</p>
+          <div class="hero__foot cl-hf">
+            <div class="cl-hf__l">
+              <h1 class="hero__label" data-intro data-par="1">[проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников]</h1>
+              <p class="hero__text" data-intro data-par="1.4">сначала разбираюсь в вашем бизнесе и в том, что пишут ваши клиенты. потом делаю дизайн и живой прототип, который вы проверяете до разработки</p>
+              <div class="cl-hf__btns" data-intro data-par="1.7"><a class="cl-btn cl-btn--line" href="#prices" ><span data-scramble-text>Посмотреть цены</span></a><a class="cl-bar cl-bar--white" href="#audit" ><span class="cl-bar__t" data-scramble-text>Получить бесплатный разбор сайта</span><span class="cl-bar__a" aria-hidden="true">→</span></a></div>
             </div>
-            <div class="hero__act" data-intro data-par="2"><button class="hero__cta" type="button" data-open-modal data-scramble="90" aria-controls="cmodal" aria-expanded="false"><span class="hero__cta-t" data-scramble-text>связаться со мной</span></button></div>
+            <ul class="cl-hf__glass" data-intro data-par="2"><li>лендинг за 5 дней, от 40 000 ₽</li><li>60+ успешных проектов</li><li>договор, оплата в три этапа</li></ul>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="ps ps--wide" id="works" aria-label="Мои работы">
-      <h2 class="sr-only">Мои работы</h2>
-      <div class="ps__sticky">
-        <article class="ps__panel" aria-label="SCP LAB">
-          <div class="ps__inner">
-            <a class="ps__media" href="../projects/scplab-web/" aria-label="SCP LAB — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/scplab/01.jpg" srcset="../assets/cases/scplab/01-w640.jpg 640w, ../assets/cases/scplab/01-w960.jpg 960w, ../assets/cases/scplab/01-w1280.jpg 1280w, ../assets/cases/scplab/01-w1600.jpg 1600w, ../assets/cases/scplab/01-w1920.jpg 1920w, ../assets/cases/scplab/01.jpg 2400w" sizes="(min-width: 1025px) 70vw, 100vw" data-alt="../assets/cases/scplab/01.png|../assets/cases/scplab/01.jpeg|../assets/cases/scplab/01.webp" onerror="__img(this)" alt="SCP LAB" loading="lazy" decoding="async">
-            </a>
-            <div class="ps__top">
-              <div class="ps__row"><span class="ps__num" data-rise>01</span><span class="ps__tag" data-rise>(UX/UI design/b2c)</span></div>
-              <div class="ps__tw"><h3 class="ps__title" data-rise>SCP LAB</h3></div>
-              <div class="ps__sw"><p class="ps__sphere" data-rise>Фитнес-приложение для профессиональных спортсменов</p></div>
-            </div>
-            <div class="ps__cta ps-r5"><a class="btn btn--dark" href="../projects/scplab-web/" data-scramble aria-label="подробнее: SCP LAB"><span data-scramble-text>подробнее</span></a></div>
-          </div>
-        </article>
-        <article class="ps__panel" aria-label="FOODBOT">
-          <div class="ps__inner">
-            <a class="ps__media" href="../projects/foodbot-web/" aria-label="FOODBOT — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/foodbot/01-mv5ogfjw.jpg" srcset="../assets/cases/foodbot/01-mv5ogfjw-w640.jpg 640w, ../assets/cases/foodbot/01-mv5ogfjw-w960.jpg 960w, ../assets/cases/foodbot/01-mv5ogfjw-w1280.jpg 1280w, ../assets/cases/foodbot/01-mv5ogfjw-w1600.jpg 1600w, ../assets/cases/foodbot/01-mv5ogfjw-w1920.jpg 1920w, ../assets/cases/foodbot/01-mv5ogfjw.jpg 2560w" sizes="(min-width: 1025px) 70vw, 100vw" onerror="__img(this)" alt="FOODBOT" loading="lazy" decoding="async">
-            </a>
-            <div class="ps__top">
-              <div class="ps__row"><span class="ps__num" data-rise>02</span><span class="ps__tag" data-rise>(UX/UI design/b2b)</span></div>
-              <div class="ps__tw"><h3 class="ps__title" data-rise>FOODBOT</h3></div>
-              <div class="ps__sw"><p class="ps__sphere" data-rise>SaaS для кафе и ресторанов: <br>боты доставки в Telegram</p></div>
-            </div>
-            <div class="ps__cta"><a class="btn btn--dark" href="../projects/foodbot-web/" data-scramble aria-label="подробнее: FOODBOT"><span data-scramble-text>подробнее</span></a></div>
-          </div>
-        </article>
-        <article class="ps__panel" aria-label="МОЙ ТИГР">
-          <div class="ps__inner">
-            <a class="ps__media" href="../projects/mytiger-web/" aria-label="МОЙ ТИГР — открыть кейс" tabindex="-1"><img src="../assets/cases/mytiger/01-mvan5nqj.jpg" srcset="../assets/cases/mytiger/01-mvan5nqj-w640.jpg 640w, ../assets/cases/mytiger/01-mvan5nqj-w960.jpg 960w, ../assets/cases/mytiger/01-mvan5nqj-w1280.jpg 1280w, ../assets/cases/mytiger/01-mvan5nqj-w1600.jpg 1600w, ../assets/cases/mytiger/01-mvan5nqj-w1920.jpg 1920w, ../assets/cases/mytiger/01-mvan5nqj.jpg 2560w" sizes="(min-width: 1025px) 70vw, 100vw" alt="" loading="lazy" decoding="async" onload="this.parentNode.classList.add('is-loaded')" onerror="__img(this)"><div class="ps__soon">[ обложка скоро ]</div></a>
-            <div class="ps__top">
-              <div class="ps__row"><span class="ps__num" data-rise>03</span><span class="ps__tag" data-rise>(UX/UI design/b2c)</span></div>
-              <div class="ps__tw"><h3 class="ps__title" data-rise>МОЙ ТИГР</h3></div>
-              <div class="ps__sw"><p class="ps__sphere" data-rise>Премиальная клиника для животных: <br>лендинг для заявок</p></div>
-            </div>
-            <div class="ps__cta"><a class="btn btn--dark" href="../projects/mytiger-web/" data-scramble aria-label="подробнее: МОЙ ТИГР"><span data-scramble-text>подробнее</span></a></div>
-          </div>
-        </article>
-        <article class="ps__panel" aria-label="VICI">
-          <div class="ps__inner">
-            <a class="ps__media" href="../projects/vici-web/" aria-label="VICI — открыть кейс" tabindex="-1">
-              <img src="../assets/cases/vici/01.jpg" srcset="../assets/cases/vici/01-w640.jpg 640w, ../assets/cases/vici/01-w960.jpg 960w, ../assets/cases/vici/01-w1280.jpg 1280w, ../assets/cases/vici/01-w1600.jpg 1600w, ../assets/cases/vici/01.jpg 2048w" sizes="(min-width: 1025px) 70vw, 100vw" data-alt="../assets/cases/vici/01.png|../assets/cases/vici/01.jpeg|../assets/cases/vici/01.webp" onerror="__img(this)" alt="VICI" loading="lazy" decoding="async">
-            </a>
-            <div class="ps__top">
-              <div class="ps__row"><span class="ps__num" data-rise>04</span><span class="ps__tag" data-rise>(Web-design/b2c)</span></div>
-              <div class="ps__tw"><h3 class="ps__title" data-rise>VICI</h3></div>
-              <div class="ps__sw"><p class="ps__sphere" data-rise>Производитель морепродуктов: <br>сайт-каталог и рецепты</p></div>
-            </div>
-            <div class="ps__cta"><a class="btn btn--dark" href="../projects/vici-web/" data-scramble aria-label="подробнее: VICI"><span data-scramble-text>подробнее</span></a></div>
-          </div>
-        </article>
-        <nav class="ps__nav ps-r5" aria-label="Проекты">
-          <button type="button" aria-label="Проект 1: SCP LAB" aria-current="true"><span>01</span><b></b></button>
-          <button type="button" aria-label="Проект 2: FOODBOT" aria-current="false"><span>02</span><b></b></button>
-          <button type="button" aria-label="Проект 3: МОЙ ТИГР" aria-current="false"><span>03</span><b></b></button>
-          <button type="button" aria-label="Проект 4: VICI" aria-current="false"><span>04</span><b></b></button>
-        </nav>
+    <section class="cl-sec cl-tasks" id="tasks" aria-labelledby="tasks-h">
+      <h2 class="cl-h cl-rv" id="tasks-h">[с какими задачами<br><span class="cl-i" style="--i:10">ко мне приходят]</span></h2>
+      <div class="cl-tasks__grid"><article class="cl-task cl-rv c1"><div class="cl-task__img"><img src="../assets/client/task-01-w1280.jpg" srcset="../assets/client/task-01-w640.jpg 640w, ../assets/client/task-01-w960.jpg 960w, ../assets/client/task-01-w1280.jpg 1280w, ../assets/client/task-01-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Лендинг клиники «Мой тигр» на ноутбуке" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">01</span><span class="cl-meta__t">(лендинг)</span></div><h3 class="cl-task__h">Нужны заявки из рекламы</h3><p class="cl-task__p">Лендинг, на котором человек быстро понимает, что вы предлагаете, и оставляет заявку</p><a class="cl-btn cl-btn--dark" href="../projects/mytiger-web/" ><span data-scramble-text>подробнее</span></a></div></article><article class="cl-task cl-rv c3"><div class="cl-task__img"><img src="../assets/client/task-02-w1280.jpg" srcset="../assets/client/task-02-w640.jpg 640w, ../assets/client/task-02-w960.jpg 960w, ../assets/client/task-02-w1280.jpg 1280w, ../assets/client/task-02-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Сайт VICI на ноутбуке" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">02</span><span class="cl-meta__t">(многостраничный сайт)</span></div><h3 class="cl-task__h">Нужно, чтобы вам доверяли</h3><p class="cl-task__p">Сайт компании, который показывает, как вы работаете, и отвечает на вопросы клиента до звонка</p><a class="cl-btn cl-btn--dark" href="../projects/vici-web/" ><span data-scramble-text>подробнее</span></a></div></article><article class="cl-task cl-rv c2"><div class="cl-task__img"><img src="../assets/client/task-03-w1280.jpg" srcset="../assets/client/task-03-w640.jpg 640w, ../assets/client/task-03-w960.jpg 960w, ../assets/client/task-03-w1280.jpg 1280w, ../assets/client/task-03-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Интернет-магазин на ноутбуке" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">03</span><span class="cl-meta__t">(интернет-магазин)</span></div><h3 class="cl-task__h">Нужно продавать онлайн</h3><p class="cl-task__p">Интернет-магазин, где легко найти товар и оформить заказ</p><button class="cl-btn cl-btn--dark" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>подробнее</span></button></div></article><article class="cl-task cl-rv c3"><div class="cl-task__img"><img src="../assets/client/task-04-w1280.jpg" srcset="../assets/client/task-04-w640.jpg 640w, ../assets/client/task-04-w960.jpg 960w, ../assets/client/task-04-w1280.jpg 1280w, ../assets/client/task-04-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Кабинет FoodBot на ноутбуке и телефоне" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">04</span><span class="cl-meta__t">(внутренний инструмент)</span></div><h3 class="cl-task__h">Сотрудники тратят время на рутину</h3><p class="cl-task__p">Внутренний инструмент или кабинет, в котором работа идёт быстрее и с меньшим числом ошибок</p><a class="cl-btn cl-btn--dark" href="../projects/foodbot-web/" ><span data-scramble-text>подробнее</span></a></div></article><article class="cl-task cl-rv c1"><div class="cl-task__img"><img src="../assets/client/task-05-w1280.jpg" srcset="../assets/client/task-05-w640.jpg 640w, ../assets/client/task-05-w960.jpg 960w, ../assets/client/task-05-w1280.jpg 1280w, ../assets/client/task-05-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Редизайн сайта на ноутбуке" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">05</span><span class="cl-meta__t">(аудит и редизайн)</span></div><h3 class="cl-task__h">Сайт есть, но заявок мало</h3><p class="cl-task__p">Нахожу, что мешает клиентам выбрать вас, и исправляю это</p><button class="cl-btn cl-btn--dark" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>подробнее</span></button></div></article><article class="cl-task cl-rv c2"><div class="cl-task__img"><img src="../assets/client/task-06-w1280.jpg" srcset="../assets/client/task-06-w640.jpg 640w, ../assets/client/task-06-w960.jpg 960w, ../assets/client/task-06-w1280.jpg 1280w, ../assets/client/task-06-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Имиджевый лендинг на ноутбуке" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">06</span><span class="cl-meta__t">(имиджевый лендинг)</span></div><h3 class="cl-task__h">Нужно запомниться или запустить акцию</h3><p class="cl-task__p">Лендинг под запуск продукта, коллаборацию или акцию со сроком</p><button class="cl-btn cl-btn--dark" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>подробнее</span></button></div></article><article class="cl-task cl-rv c1"><div class="cl-task__img"><img src="../assets/client/task-07-w1280.jpg" srcset="../assets/client/task-07-w640.jpg 640w, ../assets/client/task-07-w960.jpg 960w, ../assets/client/task-07-w1280.jpg 1280w, ../assets/client/task-07-w1920.jpg 1920w" sizes="(max-width: 809px) 100vw, (max-width: 1199px) 50vw, 31vw" alt="Приложение SCP LAB на телефоне" loading="lazy" decoding="async"></div><div class="cl-task__body"><div class="cl-meta"><span class="cl-meta__n">07</span><span class="cl-meta__t">(мобильное приложение)</span></div><h3 class="cl-task__h">Нужно своё приложение</h3><p class="cl-task__p">Приложение для iOS, Android или Telegram, которое не удаляют после первого дня</p><a class="cl-btn cl-btn--dark" href="../projects/scplab-web/" ><span data-scramble-text>подробнее</span></a></div></article><div class="cl-task cl-task--cta cl-rv c3"><div class="cl-task__ct"><p class="cl-task__ch">[не нашли свою задачу?]</p><p class="cl-task__cp">Опишите её в Telegram. Отвечу, как её решить и сколько это будет стоить.</p></div><a class="cl-btn cl-btn--white" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" ><span data-scramble-text>Написать в Telegram</span></a></div></div>
+    </section>
+
+    <section class="cl-sec cl-results" id="results" aria-labelledby="results-h">
+      <h2 class="cl-h cl-rv" id="results-h">[что изменилось<br><span class="cl-i" style="--i:3">у клиентов после запуска]</span></h2>
+      <div class="cl-results__list"><div class="cl-res cl-rv"><p class="cl-res__big">35%</p><div class="cl-res__t"><p class="cl-res__tag">(внутренний инструмент/b2b)</p><h3 class="cl-res__h">Инструмент для менеджеров закупки кабеля</h3><p class="cl-res__p">Менеджеры оформляют заказ на 35% быстрее. Заказов с неполным списком позиций больше нет.</p><button class="cl-btn cl-btn--outline" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>Как я к этому пришёл →</span></button></div></div><div class="cl-res cl-rv"><p class="cl-res__big">8% → 10,5%</p><div class="cl-res__t"><p class="cl-res__tag">(сайт клиники/b2c)</p><h3 class="cl-res__h">Сайт клиники</h3><p class="cl-res__p">Конверсия сайта выросла с 8% до 10,5%. При том же трафике заявок стало почти на треть больше.</p><button class="cl-btn cl-btn--outline" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>Как я к этому пришёл →</span></button></div></div><div class="cl-res cl-rv"><p class="cl-res__big">40%</p><div class="cl-res__t"><p class="cl-res__tag">(SaaS/b2b)</p><h3 class="cl-res__h">FoodBot, сервис для ресторанов</h3><p class="cl-res__p">Пропущенных заказов на 40% меньше. На 25% меньше людей бросают подключение на середине.</p><a class="cl-btn cl-btn--outline" href="../projects/foodbot-web/" ><span data-scramble-text>Как я к этому пришёл →</span></a></div></div><div class="cl-res cl-rv"><p class="cl-res__big">5 дней</p><div class="cl-res__t"><p class="cl-res__tag">(лендинг/b2c)</p><h3 class="cl-res__h">Клиника для животных «Мой тигр»</h3><p class="cl-res__p">Лендинг за 5 дней от первой встречи до передачи в разработку.</p><a class="cl-btn cl-btn--outline" href="../projects/mytiger-web/" ><span data-scramble-text>Как я к этому пришёл →</span></a></div></div></div>
+    </section>
+
+    <section class="cl-sec cl-reviews" id="reviews" aria-labelledby="reviews-h">
+      <div class="cl-reviews__head cl-rv"><h2 class="cl-h" id="reviews-h">[что пишут клиенты]</h2><p class="cl-sub">Названия компаний скрыты по договорённости</p></div>
+      <div class="cl-reviews__row" role="list"><figure class="cl-rvw cl-rv" role="listitem" aria-label="Отзывы клиентов, скриншот 1"><span class="cl-rvw__a cl-mask " style="left:-15.061%;top:4.706%;width:203.152%" aria-hidden="true"></span><img class="cl-rvw__p" src="../assets/client/rv-62.png" style="right:0;top:0;width:69.352%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-71.png" style="left:0;top:46.003%;width:100%" alt="" loading="lazy" decoding="async"></figure><figure class="cl-rvw cl-rv" role="listitem" aria-label="Отзывы клиентов, скриншот 2"><div class="cl-rvw__rot" aria-hidden="true"><span class="cl-mask"></span></div><img class="cl-rvw__p" src="../assets/client/rv-65.png" style="left:0;top:57.798%;width:65.324%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-73.png" style="left:0;bottom:0;width:100%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-74.png" style="left:16.287%;top:34.570%;width:83.713%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-72.png" style="left:48.161%;top:0;width:51.839%" alt="" loading="lazy" decoding="async"></figure><figure class="cl-rvw cl-rv" role="listitem" aria-label="Отзывы клиентов, скриншот 3"><span class="cl-rvw__a cl-mask " style="left:0;bottom:0;width:203.152%" aria-hidden="true"></span><img class="cl-rvw__p" src="../assets/client/rv-64.png" style="right:0;bottom:0;width:53.065%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-67.png" style="left:-1.634%;top:48.899%;width:45.709%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-68.png" style="left:0.876%;top:20.241%;width:98.249%" alt="" loading="lazy" decoding="async"><img class="cl-rvw__p" src="../assets/client/rv-69.png" style="left:0;top:0;width:99.825%" alt="" loading="lazy" decoding="async"></figure></div>
+    </section>
+
+    <section class="cl-sec cl-audit" id="audit" aria-labelledby="audit-h">
+      <pre class="cl-ascii cl-audit__ascii" aria-hidden="true">+*%@@@@@%#*+=--:---==++++==---:--=+*#%@@@@%#*+-:.
+#%@@@@@%#+=-::..::-==+++++===-===+*#%%@@%#*+=:.
+%@@@@%#*+-:..  ..:-=++***+++===++**#####*+=-:.    .:
+%%%%#*+=-..    .:-=+**#***++====+++****++=-:.    .:-
+###*+=-:.     .:=+*#####**+========+++==--:.....:-=+
+**++=-:.    .:-=+*##%%#**+=---:---=====--:::.:::-=+*
++==-::.    .:-=+*#%%%#*+=--::.:::---===----::--==+*#
+=--::.....:-=+*###%##*+=-:.....::--======-----==++**
+---:::.:::-=+**####*+=-:.    ..:--==+++====---==++++
+----::::--==+*****+=-:..     .:-==++++++==-----=====
+==-------==++++++==-:.      .:-=++***++==--::::-----
+===-------=======-::.     .::-=+****++=--::..::::---
+===---::--------::...   ..:-==+***++==-:.......::---
+=--:::::::::---:::......::-==+++++==-:..    ..::----
+--::.....:::::::::....:::--==+++==-::.      ..:---==
+:...   ...::::::::::::::--======--:..      .::--====
+.      ..:::----::::::::--------:..       .::-======
+      ..::------:::::::::::-::::..      ..:--=====--
+     ..::------::::.....::::::...     ...:---===--::
+    ..::------:::.................  ....::------::..
+  ...::-----:::...    .................:::----:::..
+ ...:::---:::..        ................:::::::...
+...::::::::..         ...................::....
+....::::....         .....:...................
+..........          ............       .....
+.......             ..........
+                   ........
+                     ..</pre>
+      <div class="cl-audit__l">
+        <h2 class="cl-h cl-rv" id="audit-h">[бесплатно разберу<br>ваш сайт и покажу,<br>где он теряет заявки]</h2>
+        <div class="cl-audit__txt cl-rv"><p>Изучу ваш бизнес, сайт, конкурентов и отзывы ваших клиентов. Пришлю список: что на сайте работает, что мешает выбрать вас и что поменять в первую очередь. Разбор пришлю за 1 день. Он ни к чему не обязывает.</p><p class="cl-audit__p2">Если захотите, по итогам изучения соберу новую структуру и тексты, от 4 000 ₽.</p></div>
+        <div class="cl-audit__act cl-rv"><a class="cl-btn cl-btn--white" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" ><span data-scramble-text>Получить бесплатный разбор в Telegram</span></a><p class="cl-audit__note">Нужна только ссылка на сайт.</p></div>
+      </div>
+      <div class="cl-audit__r cl-rv"><img src="../assets/client/audit.jpg" alt="Пример разбора сайта: понимание задачи и ключевые смыслы" width="1380" height="1318" loading="lazy" decoding="async"></div>
+    </section>
+
+    <section class="cl-sec cl-process" id="process" aria-labelledby="process-h">
+      <div class="cl-process__l"><div class="cl-sticky">
+        <h2 class="cl-h" id="process-h">[как проходит работа:<br>от разбора<br>до готового продукта]</h2>
+        <div class="cl-process__notes"><p>Сроки на примере лендинга. Для многостраничного сайта и внутренних систем шаги те же, дней больше.</p><p>От вас потребуются только доступы к сайту и метрике, материалы и фото (могу создать и подготовить сам), 1–2 созвона.</p></div>
+      </div></div>
+      <ol class="cl-process__steps"><li class="cl-step cl-rv"><div class="cl-meta"><span class="cl-meta__n">01</span><span class="cl-meta__t">(день 1)</span></div><h3 class="cl-step__h">Разбор бизнеса</h3><p class="cl-step__p">Изучаю ваш продукт, конкурентов и отзывы клиентов. Нахожу, что для ваших клиентов важно при выборе.</p><span class="cl-step__pay">оплата 30%</span></li><li class="cl-step cl-rv"><div class="cl-meta"><span class="cl-meta__n">02</span><span class="cl-meta__t">(день 2)</span></div><h3 class="cl-step__h">Структура и тексты</h3><p class="cl-step__p">Решаю, что и в каком порядке сказать на сайте. Тексты пишу сам. 2 круга правок.</p></li><li class="cl-step cl-rv"><div class="cl-meta"><span class="cl-meta__n">03</span><span class="cl-meta__t">(день 3)</span></div><h3 class="cl-step__h">Дизайн и живой прототип</h3><p class="cl-step__p">Собираю прототип на коде. Вы открываете его на телефоне и компьютере и видите, как всё будет работать.</p></li><li class="cl-step cl-rv"><div class="cl-meta"><span class="cl-meta__n">04</span><span class="cl-meta__t">(день 4)</span></div><h3 class="cl-step__h">Правки и согласование</h3><p class="cl-step__p">2 круга правок по дизайну. После согласования вы вносите вторую часть оплаты.</p><span class="cl-step__pay">оплата 40%</span></li><li class="cl-step cl-rv"><div class="cl-meta"><span class="cl-meta__n">05</span><span class="cl-meta__t">(день 5)</span></div><h3 class="cl-step__h">Передача или сборка</h3><p class="cl-step__p">Передаю файл Figma и инструкции разработчикам. Или собираю готовый сайт с админкой, здесь тоже 2 круга правок.</p><span class="cl-step__pay">оплата 30%</span></li></ol>
+    </section>
+
+    <section class="cl-sec cl-gets" id="deliverables" aria-labelledby="gets-h">
+      <img class="cl-gets__px" src="../assets/client/pixels-top.svg" alt="" aria-hidden="true">
+      <pre class="cl-ascii cl-gets__ascii" aria-hidden="true">+*%@@@@@%#*+=--:---==++++==---:--=+*#%@@@@%#*+-:.
+#%@@@@@%#+=-::..::-==+++++===-===+*#%%@@%#*+=:.
+%@@@@%#*+-:..  ..:-=++***+++===++**#####*+=-:.    .:
+%%%%#*+=-..    .:-=+**#***++====+++****++=-:.    .:-
+###*+=-:.     .:=+*#####**+========+++==--:.....:-=+
+**++=-:.    .:-=+*##%%#**+=---:---=====--:::.:::-=+*
++==-::.    .:-=+*#%%%#*+=--::.:::---===----::--==+*#
+=--::.....:-=+*###%##*+=-:.....::--======-----==++**
+---:::.:::-=+**####*+=-:.    ..:--==+++====---==++++
+----::::--==+*****+=-:..     .:-==++++++==-----=====
+==-------==++++++==-:.      .:-=++***++==--::::-----
+===-------=======-::.     .::-=+****++=--::..::::---
+===---::--------::...   ..:-==+***++==-:.......::---
+=--:::::::::---:::......::-==+++++==-:..    ..::----
+--::.....:::::::::....:::--==+++==-::.      ..:---==
+:...   ...::::::::::::::--======--:..      .::--====
+.      ..:::----::::::::--------:..       .::-======
+      ..::------:::::::::::-::::..      ..:--=====--
+     ..::------::::.....::::::...     ...:---===--::
+    ..::------:::.................  ....::------::..
+  ...::-----:::...    .................:::----:::..
+ ...:::---:::..        ................:::::::...
+...::::::::..         ...................::....
+....::::....         .....:...................
+..........          ............       .....
+.......             ..........
+                   ........
+                     ..</pre>
+      <div class="cl-gets__grid">
+        <h2 class="cl-h cl-rv" id="gets-h">[что вы получаете]</h2><div class="cl-get cl-rv g1"><div class="cl-get__top"><span class="cl-get__n">1</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Разбор вашего бизнеса</h3><p class="cl-get__p">Сильные и слабые стороны. Пригодится и для рекламы, и для коммерческих предложений.</p></div></div><div class="cl-get cl-rv g2"><div class="cl-get__top"><span class="cl-get__n">2</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Структура и тексты сайта</h3><p class="cl-get__p">Написаны под ваш бизнес. Их можно сразу ставить на сайт.</p></div></div><div class="cl-get cl-rv g3"><div class="cl-get__top"><span class="cl-get__n">3</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Файл Figma с дизайн-системой</h3><p class="cl-get__p">Новые страницы потом добавлять быстрее и дешевле.</p></div></div><div class="cl-get cl-rv g4"><div class="cl-get__top"><span class="cl-get__n">4</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Живой прототип на коде</h3><p class="cl-get__p">Разработчики берут готовые элементы и не гадают, как должна работать кнопка.</p></div></div><div class="cl-get cl-rv g5"><div class="cl-get__top"><span class="cl-get__n">5</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Инструкции для разработчиков</h3><p class="cl-get__p">Что и как работает на каждом экране. Меньше вопросов и переделок при разработке.</p></div></div><div class="cl-get cl-rv g6"><div class="cl-get__top"><span class="cl-get__n">6</span><span class="cl-get__line"></span></div><div class="cl-get__t"><h3 class="cl-get__h">Помощь после передачи</h3><p class="cl-get__p">Мелкие правки после запуска.</p></div></div>
       </div>
     </section>
 
+    <section class="cl-sec cl-prices" id="prices" aria-labelledby="prices-h">
+      <h2 class="cl-h cl-rv" id="prices-h">[сколько стоит<br><span class="cl-i" style="--i:9">и сроки]</span></h2>
+      <div class="cl-ptable cl-rv">
+        <div class="cl-phead" aria-hidden="true"><span>(№)</span><span>(задача)</span><span>(цена)</span><span>(срок)</span><span></span></div>
+        <ol class="cl-prows"><li class="cl-prow"><span class="cl-prow__n">01</span><h3 class="cl-prow__h">Лендинг</h3><p class="cl-price"><span class="cl-price__v">от 40 000 ₽</span><span class="cl-price__sub">с разработкой от 70 000 ₽</span></p><p class="cl-prow__d">(до 5 дней)</p><button class="cl-arrow" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false" aria-label="Обсудить: Лендинг"><span aria-hidden="true">→</span></button></li><li class="cl-prow"><span class="cl-prow__n">02</span><h3 class="cl-prow__h">Многостраничный сайт</h3><p class="cl-price"><span class="cl-price__v">от 60 000 ₽</span><span class="cl-price__sub">с разработкой от 100 000 ₽</span></p><p class="cl-prow__d">(от 5 дней)</p><button class="cl-arrow" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false" aria-label="Обсудить: Многостраничный сайт"><span aria-hidden="true">→</span></button></li><li class="cl-prow"><span class="cl-prow__n">03</span><h3 class="cl-prow__h">Внутренний инструмент, система, кабинет</h3><p class="cl-price"><span class="cl-price__v">от 50 000 ₽</span><span class="cl-price__sub">дизайн и живой прототип для тестов</span></p><p class="cl-prow__d">(от 1,5 недель)</p><button class="cl-arrow" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false" aria-label="Обсудить: Внутренний инструмент, система, кабинет"><span aria-hidden="true">→</span></button></li><li class="cl-prow is-free"><span class="cl-prow__n">04</span><h3 class="cl-prow__h">Разбор сайта</h3><p class="cl-price"><span class="cl-price__v">бесплатно</span><span class="cl-price__sub">с этого удобно начать</span></p><p class="cl-prow__d">(1 день)</p><a class="cl-arrow cl-arrow--blue" href="#audit" aria-label="Обсудить: Разбор сайта"><span aria-hidden="true">→</span></a></li><li class="cl-prow"><span class="cl-prow__n">05</span><h3 class="cl-prow__h">UX-аудит</h3><p class="cl-price"><span class="cl-price__v">от 10 000 ₽</span></p><p class="cl-prow__d">(1 день)</p><button class="cl-arrow" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false" aria-label="Обсудить: UX-аудит"><span aria-hidden="true">→</span></button></li><li class="cl-prow"><span class="cl-prow__n">06</span><h3 class="cl-prow__h">Структура и тексты сайта</h3><p class="cl-price"><span class="cl-price__v">от 4 000 ₽</span></p><p class="cl-prow__d">(1 день)</p><button class="cl-arrow" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false" aria-label="Обсудить: Структура и тексты сайта"><span aria-hidden="true">→</span></button></li></ol>
+        <p class="cl-pnote">На цену влияет число страниц и сценариев, нужна ли админка, есть ли у вас тексты и фото.</p>
+      </div>
+      <div class="cl-ppanel cl-rv">
+        <pre class="cl-ascii cl-ppanel__ascii" aria-hidden="true">+*%@@@@@%#*+=--:---==++++==---:--=+*#%@@@@%#*+-:.
+#%@@@@@%#+=-::..::-==+++++===-===+*#%%@@%#*+=:.
+%@@@@%#*+-:..  ..:-=++***+++===++**#####*+=-:.    .:
+%%%%#*+=-..    .:-=+**#***++====+++****++=-:.    .:-
+###*+=-:.     .:=+*#####**+========+++==--:.....:-=+
+**++=-:.    .:-=+*##%%#**+=---:---=====--:::.:::-=+*
++==-::.    .:-=+*#%%%#*+=--::.:::---===----::--==+*#
+=--::.....:-=+*###%##*+=-:.....::--======-----==++**
+---:::.:::-=+**####*+=-:.    ..:--==+++====---==++++
+----::::--==+*****+=-:..     .:-==++++++==-----=====
+==-------==++++++==-:.      .:-=++***++==--::::-----
+===-------=======-::.     .::-=+****++=--::..::::---
+===---::--------::...   ..:-==+***++==-:.......::---
+=--:::::::::---:::......::-==+++++==-:..    ..::----
+--::.....:::::::::....:::--==+++==-::.      ..:---==
+:...   ...::::::::::::::--======--:..      .::--====
+.      ..:::----::::::::--------:..       .::-======
+      ..::------:::::::::::-::::..      ..:--=====--
+     ..::------::::.....::::::...     ...:---===--::
+    ..::------:::.................  ....::------::..
+  ...::-----:::...    .................:::----:::..
+ ...:::---:::..        ................:::::::...
+...::::::::..         ...................::....
+....::::....         .....:...................
+..........          ............       .....
+.......             ..........
+                   ........
+                     ..</pre>
+        <div class="cl-ppanel__cta"><p class="cl-ppanel__h">[точную цену и срок назову после бесплатного разбора]</p><button class="cl-bar cl-bar--white cl-bar--full" type="button" data-open-modal aria-controls="cmodal" aria-expanded="false"><span class="cl-bar__t" data-scramble-text>Узнать цену для вашей задачи</span><span class="cl-bar__a" aria-hidden="true">→</span></button></div>
+      </div>
+    </section>
+
+    <section class="cl-sec cl-terms" id="terms" aria-labelledby="terms-h">
+      <h2 class="cl-h cl-rv" id="terms-h">[работаю по договору,<br><span class="cl-i" style="--i:9">оплата в три этапа]</span></h2>
+      <div class="cl-segs"><div class="cl-seg cl-rv is-first"><p class="cl-seg__d">(день 1)</p><div class="cl-seg__t"><p class="cl-seg__v">30%</p><p class="cl-seg__l">на старте</p></div></div><div class="cl-seg cl-rv"><p class="cl-seg__d">(день 4)</p><div class="cl-seg__t"><p class="cl-seg__v">40%</p><p class="cl-seg__l">после согласования дизайна</p></div></div><div class="cl-seg cl-rv"><p class="cl-seg__d">(день 5)</p><div class="cl-seg__t"><p class="cl-seg__v">30%</p><p class="cl-seg__l">после передачи файлов или запуска сайта</p></div></div></div>
+      <div class="cl-terms__row">
+        <ol class="cl-terms__list cl-rv"><li class="cl-term"><span class="cl-term__n">01</span><p class="cl-term__t">Самозанятый, работаю по договору. На каждый платёж выдаю чек.</p></li><li class="cl-term"><span class="cl-term__n">02</span><p class="cl-term__t">Цена фиксируется в договоре.</p></li><li class="cl-term"><span class="cl-term__n">03</span><p class="cl-term__t">Следующий платёж вы вносите только после того, как приняли этап.</p></li><li class="cl-term"><span class="cl-term__n">04</span><p class="cl-term__t">На каждом этапе 2 круга правок: по структуре и текстам, по дизайну и по готовому сайту.</p></li></ol>
+        <div class="cl-contract cl-rv"><div class="cl-contract__img"><p>[скоро будет первая страница договора]</p></div><div class="cl-contract__cap"><span class="cl-contract__f">(pdf)</span><span class="cl-contract__t">Образец договора</span><span aria-hidden="true">→</span></div></div>
+      </div>
+    </section>
+
+    <section class="cl-sec cl-compare" id="compare" aria-labelledby="compare-h">
+      <h2 class="cl-h cl-rv" id="compare-h">[чем это отличается от tilda,<br><span class="cl-i" style="--i:9">нейросети, фрилансера и студии]</span></h2>
+      <div class="cl-cmp__wrap cl-rv"><div class="cl-cmp" role="table"><div class="cl-cmp__c cl-cmp__lab cl-cmp__hd"></div><div class="cl-cmp__c cl-cmp__hd">Tilda или нейросеть своими силами</div><div class="cl-cmp__c cl-cmp__hd">Фрилансер с биржи</div><div class="cl-cmp__c cl-cmp__hd">Студия</div><div class="cl-cmp__c cl-cmp__hd cl-cmp__me"><img class="cl-cmp__px" src="../assets/client/pixels-col.svg" alt="" aria-hidden="true"><span>я</span></div><div class="cl-cmp__c cl-cmp__lab">Кто разбирается в вашем бизнесе на текущий момент</div><div class="cl-cmp__c">вы</div><div class="cl-cmp__c">обычно работает по вашему ТЗ и не погружается в суть</div><div class="cl-cmp__c">аналитик (дизайнер)</div><div class="cl-cmp__c cl-cmp__me">я, совместно с вами</div><div class="cl-cmp__c cl-cmp__lab">Тексты</div><div class="cl-cmp__c">пишете сами</div><div class="cl-cmp__c">чаще ваши</div><div class="cl-cmp__c">копирайтер (дизайнер)</div><div class="cl-cmp__c cl-cmp__me">пишу сам</div><div class="cl-cmp__c cl-cmp__lab">Видите результат до разработки</div><div class="cl-cmp__c">да, но это уже готовый сайт</div><div class="cl-cmp__c">картинки</div><div class="cl-cmp__c">картинки или прототип</div><div class="cl-cmp__c cl-cmp__me">живой прототип на коде</div><div class="cl-cmp__c cl-cmp__lab">Цена</div><div class="cl-cmp__c">дешевле всего</div><div class="cl-cmp__c">разная</div><div class="cl-cmp__c">от 100 000 ₽</div><div class="cl-cmp__c cl-cmp__me">от 40 000 ₽</div><div class="cl-cmp__c cl-cmp__lab">Кто отвечает за результат</div><div class="cl-cmp__c">вы</div><div class="cl-cmp__c">исполнитель</div><div class="cl-cmp__c">менеджер</div><div class="cl-cmp__c cl-cmp__me">я, напрямую</div></div></div>
+      <div class="cl-cmp__cta"><a class="cl-bar cl-bar--black" href="#audit" ><span class="cl-bar__t" data-scramble-text>Начать с бесплатного разбора</span><span class="cl-bar__a" aria-hidden="true">→</span></a></div>
+    </section>
+
+    <section class="cl-sec cl-about" id="about" aria-labelledby="about-h">
+      <div class="cl-about__photo cl-rv">
+        <img class="cl-about__bg" src="../assets/client/me-1-w2000.jpg" srcset="../assets/client/me-1-w1000.jpg 1000w, ../assets/client/me-1-w2000.jpg 2000w" sizes="(max-width: 809px) 180vw, (max-width: 1199px) 120vw, 66vw" alt="Максим Кощеев, UX/UI-дизайнер" loading="lazy" decoding="async">
+        <span class="cl-about__ascii cl-mask" aria-hidden="true"></span>
+        <img class="cl-about__fg" src="../assets/client/me-2-w2000.webp" srcset="../assets/client/me-2-w1000.webp 1000w, ../assets/client/me-2-w2000.webp 2000w" sizes="(max-width: 809px) 180vw, (max-width: 1199px) 120vw, 66vw" alt="" aria-hidden="true" loading="lazy" decoding="async">
+      </div>
+      <div class="cl-about__t">
+        <h2 class="cl-h cl-rv" id="about-h">[максим кощеев, ux/ui-дизайнер]</h2>
+        <div class="cl-about__b">
+          <p class="cl-about__lead cl-rv">Я работаю один. Вы общаетесь напрямую с тем, кто делает ваш проект. <span>Каждое решение объясняю через задачу вашего бизнеса.</span></p>
+          <div class="cl-facts cl-rv"><div class="cl-fact"><p class="cl-fact__v">5 лет</p><p class="cl-fact__l">опыта</p></div><div class="cl-fact"><p class="cl-fact__v">60+</p><p class="cl-fact__l">проектов дошли до релиза и решили проблему бизнеса</p></div></div>
+          <p class="cl-about__ai cl-rv">Нейросети помогают мне быстрее собирать данные и готовить файлы для разработчиков. Решения я принимаю сам.</p>
+          <div class="cl-rv"><a class="cl-btn cl-btn--dark" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" ><span data-scramble-text>Написать в Telegram</span></a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cl-sec cl-faq" id="faq" aria-labelledby="faq-h">
+      <div class="cl-faq__l"><div class="cl-sticky"><h2 class="cl-h" id="faq-h">[частые вопросы перед началом работы]</h2><p class="cl-sub">Не нашли ответ? Напишите в Telegram, отвечу лично.</p></div></div>
+      <ol class="cl-faq__list"><li class="cl-q is-open"><button class="cl-q__b" type="button" aria-expanded="true" aria-controls="faq-a1" id="faq-q1"><span class="cl-q__n">01</span><span class="cl-q__t">Сколько стоит сайт?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a1" role="region" aria-labelledby="faq-q1"><p>Лендинг от 40 000 ₽ за дизайн и от 70 000 ₽ за готовый сайт с админкой. Точную цену назову после бесплатного разбора.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a2" id="faq-q2"><span class="cl-q__n">02</span><span class="cl-q__t">Почему лендинг всего за 5 дней?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a2" role="region" aria-labelledby="faq-q2"><p>Сбор данных и подготовку файлов я ускоряю нейросетями. А живой прототип убирает долгие согласования картинок: вы сразу видите, как всё работает.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a3" id="faq-q3"><span class="cl-q__n">03</span><span class="cl-q__t">Вы делаете дизайн нейросетью?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a3" role="region" aria-labelledby="faq-q3"><p>Нет. Нейросети собирают данные и берут на себя рутину. Структуру, дизайн и решения делаю я.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a4" id="faq-q4"><span class="cl-q__n">04</span><span class="cl-q__t">У нас есть разработчик. Можно заказать только дизайн?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a4" role="region" aria-labelledby="faq-q4"><p>Да. Передам файл Figma, прототип на коде и инструкции, с ними разработчику не придётся гадать.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a5" id="faq-q5"><span class="cl-q__n">05</span><span class="cl-q__t">Тексты тоже ваши?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a5" role="region" aria-labelledby="faq-q5"><p>Да, структуру и тексты пишу под ваш бизнес, они входят в работу.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a6" id="faq-q6"><span class="cl-q__n">06</span><span class="cl-q__t">Что если дизайн не понравится?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a6" role="region" aria-labelledby="faq-q6"><p>До разработки вы проверяете живой прототип. На дизайн есть 2 круга правок. Следующую часть оплаты вы вносите только после того, как согласовали дизайн.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a7" id="faq-q7"><span class="cl-q__n">07</span><span class="cl-q__t">Что нужно от нас?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a7" role="region" aria-labelledby="faq-q7"><p>Пройти начальный брифинг: ответить примерно на 20 вопросов о вашем бизнесе.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a8" id="faq-q8"><span class="cl-q__n">08</span><span class="cl-q__t">Работаете с юрлицами?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a8" role="region" aria-labelledby="faq-q8"><p>Да. Я самозанятый, работаю по договору и выдаю чек на каждый платёж.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a9" id="faq-q9"><span class="cl-q__n">09</span><span class="cl-q__t">У вас есть опыт в нашей нише?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a9" role="region" aria-labelledby="faq-q9"><p>Я делал проекты для клиник, интернет-магазинов, производства, ресторанов и внутренние системы компаний. Любой проект начинаю с изучения вашей ниши и отзывов ваших клиентов.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a10" id="faq-q10"><span class="cl-q__n">10</span><span class="cl-q__t">Можно оплатить частями?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a10" role="region" aria-labelledby="faq-q10"><p>Да, оплата в три этапа: 30% на старте, 40% после согласования дизайна и 30% после передачи файлов или запуска сайта.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a11" id="faq-q11"><span class="cl-q__n">11</span><span class="cl-q__t">Что будет после запуска?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a11" role="region" aria-labelledby="faq-q11"><p>Помогаю с мелкими правками. Дизайн-система в Figma позволит дальше добавлять страницы без меня.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a12" id="faq-q12"><span class="cl-q__n">12</span><span class="cl-q__t">Чем бесплатный разбор отличается от структуры за 4 000 ₽?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a12" role="region" aria-labelledby="faq-q12"><p>Разбор показывает, что не так и что поменять. За 4 000 ₽ я собираю новую структуру и пишу тексты, которые можно сразу ставить на сайт.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a13" id="faq-q13"><span class="cl-q__n">13</span><span class="cl-q__t">Подписываете NDA?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a13" role="region" aria-labelledby="faq-q13"><p>Да, делаю проекты под NDA.</p></div></li><li class="cl-q"><button class="cl-q__b" type="button" aria-expanded="false" aria-controls="faq-a14" id="faq-q14"><span class="cl-q__n">14</span><span class="cl-q__t">Можно сделать сайт на Tilda?</span><span class="cl-q__s" aria-hidden="true"></span></button><div class="cl-q__a" id="faq-a14" role="region" aria-labelledby="faq-q14"><p>Да, могу собрать сайт на Tilda, Framer или на коде.</p></div></li></ol>
+    </section>
+
+    <section class="cl-sec cl-final" id="contact" aria-labelledby="final-h">
+      <div class="cl-final__bg" aria-hidden="true"><div class="cl-final__water"></div></div>
+      <div class="cl-final__t">
+        <h2 class="cl-h cl-rv" id="final-h">[напишите,<br><span class="cl-i" style="--i:4">какая у вас задача]</span></h2>
+        <p class="cl-final__p cl-rv">Отвечу, как её решить<br>и сколько это будет стоить. Отвечаю быстро.</p>
+        <div class="cl-final__btns cl-rv"><a class="cl-bar cl-bar--white cl-bar--wide" href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener" ><span class="cl-bar__t" data-scramble-text>Написать в Telegram</span><span class="cl-bar__a" aria-hidden="true">→</span></a><div class="cl-final__sec"><a class="cl-bar cl-bar--line" href="mailto:v1122706@yandex.ru" ><span class="cl-bar__t" data-scramble-text>Почта</span><span class="cl-bar__a" aria-hidden="true">→</span></a><a class="cl-bar cl-bar--line" href="https://vk.ru/maksakosheev" target="_blank" rel="noopener" ><span class="cl-bar__t" data-scramble-text>ВКонтакте</span><span class="cl-bar__a" aria-hidden="true">→</span></a></div></div>
+        <p class="cl-final__note cl-rv">Разбор бесплатный. Даже если мы не начнём работу, у вас останется список того, что поправить на сайте.</p>
+      </div>
+    </section>
     <section class="op" id="other" aria-label="Другие проекты">
       <div class="op__stage">
         <div class="op__view"><div class="op__track">
@@ -183,18 +304,26 @@
       </div>
     </section>
 
-    <section class="end" id="end" aria-label="Обсудить проект">
-      <div class="end__cta"><button class="btn btn--dark end__btn" type="button" data-open-modal data-scramble="90" aria-controls="cmodal" aria-expanded="false"><span data-scramble-text>обсудить проект</span></button></div>
-      <footer class="ft">
-        <div class="ft__who"><p>Максим</p><p>UX/UI-дизайнер</p></div>
-        <ul class="ft__tags" aria-label="Услуги"><li>лендинги</li><li>сайты</li><li>интернет-магазины</li><li>личные кабинеты</li><li>SaaS-сервисы</li><li>мобильные приложения</li><li>Telegram mini apps</li><li>внутренние инструменты</li><li>редизайн</li><li>UX-аудит</li></ul>
-        <div class="ft__legal"><p>© 2026 Максим Кощеев. Все права защищены.</p><p>Информация на сайте носит справочный характер и не является публичной офертой (ст. 437 ГК РФ).</p><p>Товарные знаки и материалы проектов принадлежат их правообладателям и показаны как примеры работ.</p><p class="ft__links"><a href="../privacy/">политика обработки персональных данных</a><button type="button" data-cookie-settings>настройки cookie</button></p></div>
-        <img class="ft__logo" src="../assets/img/logo.svg" alt="" width="39" height="29">
+    <section class="cl-ft" id="end" aria-label="Контакты и подвал">
+      <footer class="cl-ft__in">
+        <div class="cl-ft__cols">
+          <div class="cl-ft__about"><p class="cl-ft__name"><b>Максим Кощеев</b><span>UX/UI-дизайнер</span></p><p>Проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников.</p><p>Самозанятый, работаю по договору.</p></div>
+          <div class="cl-ft__groups">
+            <div class="cl-ft__g cl-ft__g--tasks"><p class="cl-ft__gt">(задачи)</p><ul><li><a href="#tasks">Лендинги для заявок</a></li><li><a href="#tasks">Сайты компаний</a></li><li><a href="#tasks">Интернет-магазины</a></li><li><a href="#tasks">Внутренние инструменты и кабинеты</a></li><li><a href="#tasks">Аудит и редизайн</a></li><li><a href="#tasks">Приложения</a></li></ul></div>
+            <div class="cl-ft__g cl-ft__g--nav"><p class="cl-ft__gt">(разделы)</p><ul><li><a href="#tasks">задачи</a></li><li><a href="#results">результаты</a></li><li><a href="#process">как я работаю</a></li><li><a href="#prices">цены</a></li><li><a href="#terms">условия</a></li><li><a href="#faq">вопросы</a></li></ul></div>
+            <div class="cl-ft__g cl-ft__g--ct"><p class="cl-ft__gt">(связаться)</p><ul><li><a href="https://t.me/maksim_koshcheev" target="_blank" rel="noopener">Telegram&nbsp; @maksim_koshcheev</a></li><li><button type="button" data-copy="v1122706@yandex.ru" aria-label="Скопировать почту v1122706@yandex.ru">v1122706@yandex.ru</button></li><li><a href="https://vk.ru/maksakosheev" target="_blank" rel="noopener">vk.ru/maksakosheev</a></li></ul><a class="cl-ft__audit" href="#audit">Бесплатный разбор сайта →</a></div>
+          </div>
+        </div>
+        <div class="cl-ft__legal">
+          <div><p>© 2026 Максим Кощеев. Все права защищены.</p><p>Информация на сайте носит справочный характер и не является публичной офертой (ст. 437 ГК РФ).</p><p>Товарные знаки и материалы проектов принадлежат их правообладателям и показаны как примеры работ.</p><p class="cl-ft__links"><a href="../privacy/">политика обработки персональных данных</a><button type="button" data-cookie-settings>настройки cookie</button></p></div>
+          <img class="cl-ft__logo" src="../assets/img/logo.svg" alt="" width="39" height="29">
+        </div>
       </footer>
     </section>
   </main>
 
   <script type="module" src="../assets/js/page.js?v=59"></script>
-  <script src="../assets/js/analytics.js?v=4" defer></script>
+  <script type="module" src="../assets/js/client.js?v=1"></script>
+  <script src="../assets/js/analytics.js?v=5" defer></script>
 </body>
 </html>
