@@ -73,7 +73,7 @@ function fixedWater(sec, bgSel, hostSel) {
 }
 
 /* ---------- «что вы получаете»: липкое окно справа, карп стоит головой вниз и «плывёт» вместе с прокруткой ----------
-   Карп целиком в кадре и по центру окна по вертикали; на компьютере центр карпа на ~68% ширины окна. */
+   Карп стоит по центру окна по вертикали; в начале блока выплывает из-за его верхнего края, в конце уходит за нижний; на компьютере центр карпа на ~68% ширины окна. */
 const gets = document.querySelector('.cl-gets')
 const getsWater = gets && gets.querySelector('.cl-gets__water')
 if (getsWater && !/[?&]nokoi\b/.test(location.search)) {
@@ -88,12 +88,16 @@ if (getsWater && !/[?&]nokoi\b/.test(location.search)) {
     const x = Math.max(len * 0.37, Math.min(FW - len * 0.37, vw * 0.681 - left))
     return { x, y: H / 2 + len / 2, len }
   }
+  // окно показываем и анимируем только пока блок рядом с экраном
+  const win = gets.querySelector('.cl-gets__sticky')
   let started = false
-  const go = () => { if (!started) { started = true; requestAnimationFrame(() => mountWater(getsWater, null, { mode: 'scroll', place })) } }
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { go(); io.disconnect() } }, { rootMargin: '50% 0px 50% 0px' })
-    io.observe(gets)
-  } else go()
+  win.style.display = 'none'
+  const show = (on) => {
+    win.style.display = on ? '' : 'none'
+    if (on && !started) { started = true; requestAnimationFrame(() => mountWater(getsWater, null, { mode: 'scroll', place })) }
+  }
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => show(es[0].isIntersecting), { rootMargin: '10% 0px 10% 0px' }).observe(gets)
+  else show(true)
 }
 fixedWater(document.querySelector('.cl-final'), '.cl-final__bg', '.cl-final__water')
 
