@@ -37,7 +37,7 @@ else {
   }, { rootMargin: '0px 0px -8% 0px' })
   rv.forEach((el) => io.observe(el))
   // элементы одного ряда появляются по очереди
-  document.querySelectorAll('.cl-tasks__grid, .cl-gets__grid, .cl-reviews__row, .cl-segs, .cl-process__steps, .cl-results__list').forEach((g) =>
+  document.querySelectorAll('.cl-tasks__grid, .cl-gets__list, .cl-reviews__row, .cl-segs, .cl-process__steps, .cl-results__list').forEach((g) =>
     [...g.querySelectorAll(':scope > .cl-rv')].forEach((el, i) => (el.style.transitionDelay = ((i % 3) * 0.08).toFixed(2) + 's'))
   )
 }
@@ -52,24 +52,27 @@ document.querySelectorAll('.cl-q__b').forEach((b) =>
   })
 )
 
-/* ---------- финальный блок: тот же синий фон с карпом, закреплён на экране ----------
-   Фон показываем и анимируем только пока блок рядом с экраном — в остальное время карп не тратит ресурсы. */
-const fin = document.querySelector('.cl-final')
-const finBg = fin && fin.querySelector('.cl-final__bg')
-const finWater = fin && fin.querySelector('.cl-final__water')
-if (fin && finBg && finWater) {
+/* ---------- фон с карпом, закреплённый на экране: «что вы получаете» и финальный блок ----------
+   Фон стоит на месте, а блок прокручивается поверх: карп появляется сверху и уходит за нижний край блока.
+   Показываем и анимируем фон только пока блок рядом с экраном — в остальное время карп не тратит ресурсы. */
+function fixedWater(sec, bgSel, hostSel) {
+  const bg = sec && sec.querySelector(bgSel)
+  const host = sec && sec.querySelector(hostSel)
+  if (!bg || !host) return
   let mounted = false
-  finBg.style.display = 'none'
+  bg.style.display = 'none'
   const show = (on) => {
-    finBg.style.display = on ? '' : 'none'
+    bg.style.display = on ? '' : 'none'
     if (on && !mounted && !/[?&]nokoi\b/.test(location.search)) {
       mounted = true
-      requestAnimationFrame(() => mountWater(finWater, null))
+      requestAnimationFrame(() => mountWater(host, null))
     }
   }
-  if ('IntersectionObserver' in window) new IntersectionObserver((es) => show(es[0].isIntersecting), { rootMargin: '10% 0px 10% 0px' }).observe(fin)
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => show(es[0].isIntersecting), { rootMargin: '10% 0px 10% 0px' }).observe(sec)
   else show(true)
 }
+fixedWater(document.querySelector('.cl-gets'), '.cl-gets__bg', '.cl-gets__water')
+fixedWater(document.querySelector('.cl-final'), '.cl-final__bg', '.cl-final__water')
 
 /* ---------- большие цифры: ASCII-счётчик при появлении ----------
    Числа «набегают» от нуля до своего значения, а знаки вокруг мерцают пиксельными символами
