@@ -1,6 +1,6 @@
 // Версия для клиентов (/web/): шапка, появление блоков, частые вопросы и фон с карпом в финальном блоке.
 // Общая логика страницы (первый экран, контакты, «другие проекты») — в page.js.
-import { mountWater } from './water.js?v=33'
+import { mountWater } from './water.js?v=34'
 import { PIXEL_CHARS } from './ascii.js'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -73,20 +73,20 @@ function fixedWater(sec, bgSel, hostSel) {
 }
 
 /* ---------- «что вы получаете»: липкое окно справа, карп стоит головой вниз и «плывёт» вместе с прокруткой ----------
-   Положение и размер — как на макете: на компьютере центр карпа на ~68% ширины окна, голова на ~30% высоты окна. */
+   Карп целиком в кадре и по центру окна по вертикали; на компьютере центр карпа на ~68% ширины окна. */
 const gets = document.querySelector('.cl-gets')
 const getsWater = gets && gets.querySelector('.cl-gets__water')
 if (getsWater && !/[?&]nokoi\b/.test(location.search)) {
   const place = (FW, H) => {
     const vw = document.documentElement.clientWidth
     if (vw < 1200) {
-      const len = vw < 810 ? Math.min(H * 0.5, FW * 2) : Math.min(H * 0.6, FW * 1.4)
-      return { x: FW / 2, y: H * 0.3, len }
+      const len = vw < 810 ? Math.min(H * 0.6, FW * 1.35) : Math.min(H * 0.62, FW * 1.3)
+      return { x: FW / 2, y: H / 2 + len / 2, len }
     }
-    const len = Math.min(H * 0.68, FW)
+    const len = Math.min(H * 0.68, FW * 1.35)
     const left = getsWater.getBoundingClientRect().left
-    const x = Math.max(len * 0.24, Math.min(FW - len * 0.24, vw * 0.681 - left))
-    return { x, y: H * 0.3, len }
+    const x = Math.max(len * 0.37, Math.min(FW - len * 0.37, vw * 0.681 - left))
+    return { x, y: H / 2 + len / 2, len }
   }
   let started = false
   const go = () => { if (!started) { started = true; requestAnimationFrame(() => mountWater(getsWater, null, { mode: 'scroll', place })) } }
