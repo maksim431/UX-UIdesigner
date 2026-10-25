@@ -204,12 +204,12 @@ export function mountWater(host, hud, opts = {}) {
       // компьютер: всё сглажено — рывки колёсика/тачпада не передаются телу, разгон и успокоение плавные
       spd += (raw - spd) * Math.min(1, dt * 3)
       const vT = 0.08 + 0.92 * sstep(0, 1, Math.abs(spd) / (len * 1.6))
-      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 2.5 : 1.1))
-      ampK = 0.55 + 0.9 * eff
-      rate = 0.6 + 3.4 * eff
+      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 2.9 : 1.25))
+      ampK = 0.55 + 1.05 * eff
+      rate = 0.6 + 3.9 * eff
       // покачивание корпуса: фаза накапливается, поэтому смена темпа не даёт скачка
-      wph += dt * (0.8 + 0.6 * eff)
-      heading = Math.PI + (0.035 + 0.04 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+      wph += dt * (0.8 + 0.7 * eff)
+      heading = Math.PI + (0.035 + 0.046 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
     } else {
       spd += (raw - spd) * Math.min(1, dt * 6)
       const a = Math.abs(spd)
