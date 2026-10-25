@@ -1,6 +1,6 @@
 // Версия для клиентов (/web/): шапка, появление блоков, частые вопросы и фон с карпом в финальном блоке.
 // Общая логика страницы (первый экран, контакты, «другие проекты») — в page.js.
-import { mountWater } from './water.js?v=35'
+import { mountWater } from './water.js?v=36'
 import { PIXEL_CHARS } from './ascii.js'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -80,12 +80,12 @@ if (getsWater && !/[?&]nokoi\b/.test(location.search)) {
   const place = (FW, H) => {
     const vw = document.documentElement.clientWidth
     if (vw < 1200) {
-      const len = vw < 810 ? Math.min(H * 0.6, FW * 1.35) : Math.min(H * 0.62, FW * 1.3)
+      const len = vw < 810 ? Math.min(H * 0.6, FW * 1.4) : Math.min(H * 0.62, FW * 1.2)
       return { x: FW / 2, y: H / 2 + len / 2, len }
     }
     const len = Math.min(H * 0.68, FW * 1.35)
     const left = getsWater.getBoundingClientRect().left
-    const x = Math.max(len * 0.37, Math.min(FW - len * 0.37, vw * 0.681 - left))
+    const x = Math.max(len * 0.42, Math.min(FW - len * 0.42, vw * 0.681 - left))
     return { x, y: H / 2 + len / 2, len }
   }
   // окно показываем и анимируем только пока блок рядом с экраном

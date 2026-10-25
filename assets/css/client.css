@@ -306,6 +306,7 @@
 .cl-gets__water { position: absolute; inset: 0; }
 .cl-gets__water canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .cl-gets__water .water-bg { will-change: transform; }
+.cl-gets__water .water-glow { mix-blend-mode: screen; mix-blend-mode: plus-lighter; pointer-events: none; }
 .cl-gets__px { position: absolute; z-index: 1; left: 0; top: -1px; width: max(100%, 1920px); max-width: none; height: auto; }
 .cl-gets__px--b { top: auto; bottom: -1px; transform: scaleY(-1); }
 .cl-gets .cl-h, .cl-gets__list { position: relative; z-index: 1; }

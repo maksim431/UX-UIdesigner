@@ -74,6 +74,16 @@ export function mountWater(host, hud, opts = {}) {
     host.insertBefore(bgc, canvas)
     bgx = bgc.getContext('2d', { alpha: false })
   }
+  // свечение — отдельный холст поверх, браузер складывает его с картинкой под ним (mix-blend-mode: plus-lighter),
+  // как «осветление» на первом экране; без этого на прозрачном холсте вокруг карпа появляется грязный ореол
+  let gcv = null, gctx = null
+  if (SCROLL) {
+    gcv = document.createElement('canvas')
+    gcv.setAttribute('aria-hidden', 'true')
+    gcv.className = 'water-glow'
+    host.appendChild(gcv)
+    gctx = gcv.getContext('2d')
+  }
   const layer = document.createElement('canvas') // слой карпа — из него же делается свечение
   const lctx = layer.getContext('2d')
   const b2 = document.createElement('canvas'), b4 = document.createElement('canvas'), b8 = document.createElement('canvas'), b16 = document.createElement('canvas')
@@ -192,11 +202,12 @@ export function mountWater(host, hud, opts = {}) {
     const a = Math.abs(spd)
     // сила работы хвоста — от скорости прокрутки; в покое карп едва шевелится
     const vT = 0.08 + 0.92 * clamp(a / (len * 1.6), 0, 1)
-    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 6 : 1.4))
-    ampK = 0.55 + 0.6 * eff
-    const rate = 0.5 + 3.4 * eff
+    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 12 : 1.6))
+    // при прокрутке — резкие широкие взмахи всем телом
+    ampK = 0.55 + (FW < 400 ? 0.75 : 1.2) * eff
+    const rate = 0.5 + 5 * eff
     // курс — строго вниз с лёгким покачиванием
-    heading = Math.PI + (0.035 + 0.05 * eff) * Math.sin(t * 0.8 + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    heading = Math.PI + (0.035 + 0.06 * eff) * Math.sin(t * (0.8 + 1.6 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
     omega = 0
     px = anchorX; py = anchorY - len * 0.5
     turn = 0
@@ -372,6 +383,7 @@ export function mountWater(host, hud, opts = {}) {
     canvas.width = Math.round(W * dpr)
     canvas.height = Math.round(H * dpr)
     layer.width = canvas.width
+    if (gcv) { gcv.width = canvas.width; gcv.height = canvas.height }
     layer.height = canvas.height
     b2.width = Math.max(1, canvas.width >> 1); b2.height = Math.max(1, canvas.height >> 1)
     b4.width = Math.max(1, canvas.width >> 2); b4.height = Math.max(1, canvas.height >> 2)
@@ -381,7 +393,7 @@ export function mountWater(host, hud, opts = {}) {
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
-    if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; tile = clamp(Math.round(len / 52), 9, 14); resetTrail() }
+    if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; tile = FW < 400 || document.documentElement.clientWidth < 810 ? clamp(Math.round(len / 52), 9, 14) * 0.85 : clamp(Math.round(len / 52), 9, 14); resetTrail() }
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     prevR = [0, 0, 0, 0]
@@ -537,7 +549,7 @@ export function mountWater(host, hud, opts = {}) {
       lastSpawn += 0.08
       if (!moving) continue
       const k = clamp(st.sp / (len * 1.6), 0, 1)
-      const vs = st.sp * 0.7 + len * 0.03
+      const vs = st.sp * (FW < 400 ? 0.3 : 0.7) + len * 0.03
       const [rx, ry] = P(0.16, -0.36, 0)
       const [lx, ly] = P(-0.16, -0.36, 0)
       wake.push({ x: rx, y: ry + off, nx, ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 2.6, w: 1.7 })
@@ -617,7 +629,7 @@ export function mountWater(host, hud, opts = {}) {
       const age = t - q.t0
       const k = 1 - age / q.life
       const amp = q.a * Math.pow(k, 1.3) * Math.min(1, age * 1.5)
-      const w = len * (0.014 + 0.006 * age) * (q.w || 1)
+      const w = (SCROLL ? Math.max(len * (0.014 + 0.006 * age), dcell * (0.55 + 0.25 * age)) : len * (0.014 + 0.006 * age)) * (q.w || 1)
       const x = q.x + q.nx * q.v * age, y = q.y - off + offm + q.ny * q.v * age // y — в координатах сетки фона
       const c0 = Math.max(0, Math.floor((x - w * 2.5) / dcell)), c1 = Math.min(bcols - 1, Math.floor((x + w * 2.5) / dcell))
       const r0 = Math.max(rLo, Math.floor((y - w * 2.5) / dcell)), r1 = Math.min(rHi, Math.floor((y + w * 2.5) / dcell))
@@ -756,20 +768,31 @@ export function mountWater(host, hud, opts = {}) {
       ctx.drawImage(layer, RX, RY, RW, RH, RX, RY, RW, RH)
       up(b2, 2, 0.35)
       // bloom «осветлением» и бирюзовый ореол у головы
-      ctx.globalCompositeOperation = 'lighter'
-      // на прозрачном холсте свечение не складывается с фоном — делаем его плотнее
-      const gk = SCROLL ? 1.7 : 1
-      up(b4, 4, 0.22 * gk); up(b8, 8, 0.34 * gk); up(b16, 16, Math.min(1, 0.34 * gk))
+      if (gctx) {
+        gctx.setTransform(1, 0, 0, 1, 0, 0)
+        gctx.globalAlpha = 1
+        gctx.globalCompositeOperation = 'source-over'
+        gctx.clearRect(0, 0, gcv.width, gcv.height)
+        gctx.globalCompositeOperation = 'lighter'
+        gctx.imageSmoothingEnabled = true
+        const upg = (src, k, a) => { gctx.globalAlpha = a; gctx.drawImage(src, RX / k, RY / k, RW / k, RH / k, RX, RY, RW, RH) }
+        upg(b4, 4, 0.22); upg(b8, 8, 0.34); upg(b16, 16, 0.34)
+      } else {
+        ctx.globalCompositeOperation = 'lighter'
+        up(b4, 4, 0.22); up(b8, 8, 0.34); up(b16, 16, 0.34)
+      }
     } else ctx.globalCompositeOperation = 'lighter'
     ctx.globalAlpha = 1
+    const G = gctx || ctx
+    G.globalAlpha = 1
     const pulse = 0.9 + 0.1 * Math.sin(t * 1.3)
     const hr = len * 0.24 * sc
-    const hg = ctx.createRadialGradient(hx * sc, hy * sc, 0, hx * sc, hy * sc, hr)
+    const hg = G.createRadialGradient(hx * sc, hy * sc, 0, hx * sc, hy * sc, hr)
     hg.addColorStop(0, 'rgba(150,240,255,' + (0.26 * pulse).toFixed(3) + ')')
     hg.addColorStop(0.4, 'rgba(90,200,240,' + (0.1 * pulse).toFixed(3) + ')')
     hg.addColorStop(1, 'rgba(40,120,200,0)')
-    ctx.fillStyle = hg
-    ctx.fillRect(hx * sc - hr, hy * sc - hr, hr * 2, hr * 2)
+    G.fillStyle = hg
+    G.fillRect(hx * sc - hr, hy * sc - hr, hr * 2, hr * 2)
 
     updateHud(t, st)
   }
