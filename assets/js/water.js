@@ -94,7 +94,8 @@ export function mountWater(host, hud, opts = {}) {
   let W = 1, H = 1, FW = 1, dpr = 1, bdpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
   let dcell = 12
   // сдвиг воды (режим прокрутки): off — сколько «проплыли», offm — то же по модулю периода фона
-  let DESK = false, wph = 0
+  // hb — курс без покачивания (вниз π, вверх 0), hbT — куда разворачиваемся, side — в какую сторону идёт разворот, bend — изгиб тела в развороте
+  let DESK = false, wph = 0, hb = Math.PI, hbT = Math.PI, side = 1, bend = 0, hbPrev = Math.PI
   let off = 0, offm = 0, Hp = 1, lastScroll = -1, spd = 0, anchorX = 0, anchorY = 0, nextRing = 0
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
@@ -202,14 +203,26 @@ export function mountWater(host, hud, opts = {}) {
     let rate
     if (DESK) {
       // компьютер: всё сглажено — рывки колёсика/тачпада не передаются телу, разгон и успокоение плавные
-      spd += (raw - spd) * Math.min(1, dt * 3)
-      const vT = 0.08 + 0.92 * sstep(0, 1, Math.abs(spd) / (len * 1.6))
-      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 2.9 : 1.25))
-      ampK = 0.55 + 1.05 * eff
-      rate = 0.6 + 3.9 * eff
+      spd += (raw - spd) * Math.min(1, dt * 5)
+      // отклик и на короткую прокрутку: сила движений набирается уже на небольшой скорости
+      const vT = 0.08 + 0.92 * sstep(0, 1, Math.abs(spd) / (len * 0.9))
+      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 3.2 : 1.1))
+      ampK = 0.55 + 1.16 * eff
+      rate = 0.6 + 4.3 * eff
+      // направление: листаем вниз — плывёт вниз, вверх — плавно разворачивается и плывёт вверх
+      if (spd < -len * 0.06 && hbT !== 0) { hbT = 0; side = Math.sin(wph + seed) >= 0 ? 1 : -1 }
+      else if (spd > len * 0.06 && hbT !== Math.PI) { hbT = Math.PI; side = Math.sin(wph + seed) >= 0 ? 1 : -1 }
+      let diff = wrap(hbT - hb)
+      if (Math.abs(diff) > 3.1) diff = side * Math.PI // ровно 180° — разворот в сторону текущего изгиба
+      const turnV = clamp(diff * 1.6, -1.9, 1.9)
+      hb = wrap(hb + turnV * Math.min(dt, Math.abs(diff) / Math.max(0.01, Math.abs(turnV))))
+      // в развороте тело изгибается дугой в сторону поворота
+      const w = dt > 0 ? wrap(hb - hbPrev) / dt : 0
+      hbPrev = hb
+      bend += (clamp(-w * 0.45, -1.3, 1.3) - bend) * Math.min(1, dt * 4)
       // покачивание корпуса: фаза накапливается, поэтому смена темпа не даёт скачка
-      wph += dt * (0.8 + 0.7 * eff)
-      heading = Math.PI + (0.035 + 0.046 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+      wph += dt * (0.8 + 0.77 * eff)
+      heading = hb + (0.035 + 0.05 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
     } else {
       spd += (raw - spd) * Math.min(1, dt * 6)
       const a = Math.abs(spd)
@@ -325,8 +338,19 @@ export function mountWater(host, hud, opts = {}) {
     chainT = lastT
     joints[0][0] = hx; joints[0][1] = hy
     // режим прокрутки: голова стоит на месте, а вода «течёт» назад — тело тянется за головой и выпрямляется
-    // компьютер: позвоночник прямой по курсу, изгибы — только плавная волна по телу
-    if (DESK) { resetTrail(); return }
+    // компьютер: позвоночник — плавная дуга (в развороте), поверх неё идёт волна по телу
+    if (DESK) {
+      const seg = (len * 1.05) / (NJ - 1)
+      const [hx, hy] = headTip()
+      joints.length = 0
+      let x = hx, y = hy
+      for (let i = 0; i < NJ; i++) {
+        joints.push([x, y])
+        const ang = heading + bend * (i / (NJ - 1))
+        x -= Math.sin(ang) * seg; y += Math.cos(ang) * seg
+      }
+      return
+    }
     if (SCROLL) { const d = (Math.abs(spd) + len * 0.35) * dt; for (let i = 1; i < NJ; i++) joints[i][1] -= d }
     // 1) каждый позвонок тянется за предыдущим (как верёвка)
     for (let i = 1; i < NJ; i++) {
