@@ -96,6 +96,8 @@ export function mountWater(host, hud, opts = {}) {
   // сдвиг воды (режим прокрутки): off — сколько «проплыли», offm — то же по модулю периода фона
   // hb — курс без покачивания (вниз π, вверх 0), hbT — куда разворачиваемся, side — в какую сторону идёт разворот, bend — изгиб тела в развороте
   let DESK = false, wph = 0, hb = Math.PI, hbT = Math.PI, side = 1, bend = 0, hbPrev = Math.PI
+  // разворот по дуге: hu — курс без «заворачивания» через ±π, h0 — курс в начале разворота, ox/oy — сдвиг карпа от его места
+  let hu = Math.PI, h0 = Math.PI, turning = false, ax = 0, ay = 0, rx = 0, ry = 0
   let off = 0, offm = 0, Hp = 1, lastScroll = -1, spd = 0, anchorX = 0, anchorY = 0, nextRing = 0
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
@@ -210,16 +212,34 @@ export function mountWater(host, hud, opts = {}) {
       ampK = 0.55 + 1.16 * eff
       rate = 0.6 + 4.3 * eff
       // направление: листаем вниз — плывёт вниз, вверх — плавно разворачивается и плывёт вверх
-      if (spd < -len * 0.06 && hbT !== 0) { hbT = 0; side = Math.sin(wph + seed) >= 0 ? 1 : -1 }
-      else if (spd > len * 0.06 && hbT !== Math.PI) { hbT = Math.PI; side = Math.sin(wph + seed) >= 0 ? 1 : -1 }
+      const startTurn = (target) => {
+        hbT = target
+        // разворачивается в ту сторону, где в колонке больше места: после дуги карп окажется ближе к середине
+        side = anchorX + rx > FW / 2 ? 1 : -1
+        rx += ax; ry += ay; ax = 0; ay = 0
+        h0 = hu; turning = true
+      }
+      if (spd < -len * 0.06 && hbT !== 0) startTurn(0)
+      else if (spd > len * 0.06 && hbT !== Math.PI) startTurn(Math.PI)
       let diff = wrap(hbT - hb)
-      if (Math.abs(diff) > 3.1) diff = side * Math.PI // ровно 180° — разворот в сторону текущего изгиба
+      if (Math.abs(diff) > 3.1) diff = side * Math.PI // ровно 180° — разворот в выбранную сторону
       const turnV = clamp(diff * 1.6, -1.9, 1.9)
-      hb = wrap(hb + turnV * Math.min(dt, Math.abs(diff) / Math.max(0.01, Math.abs(turnV))))
+      const dh = turnV * Math.min(dt, Math.abs(diff) / Math.max(0.01, Math.abs(turnV)))
+      hb = wrap(hb + dh); hu += dh
+      // разворот по дуге: карп плывёт вперёд и описывает полукруг, тело тянется за головой
+      const Rr = len * 0.18
+      if (turning) {
+        const k = Math.sign(dh) || side
+        ax = k * Rr * (Math.cos(h0) - Math.cos(hu)); ay = k * Rr * (Math.sin(h0) - Math.sin(hu))
+        if (Math.abs(diff) < 0.002) { turning = false; rx += ax; ry += ay; ax = 0; ay = 0 }
+      }
+      // после разворота карп не спеша возвращается на своё место
+      const back = Math.min(1, dt * 0.7)
+      rx -= rx * back; ry -= ry * back
       // в развороте тело изгибается дугой в сторону поворота
       const w = dt > 0 ? wrap(hb - hbPrev) / dt : 0
       hbPrev = hb
-      bend += (clamp(-w * 0.45, -1.3, 1.3) - bend) * Math.min(1, dt * 4)
+      bend += (clamp(-w * 0.7, -1.4, 1.4) - bend) * Math.min(1, dt * 4)
       // покачивание корпуса: фаза накапливается, поэтому смена темпа не даёт скачка
       wph += dt * (0.8 + 0.77 * eff)
       heading = hb + (0.035 + 0.05 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
@@ -235,7 +255,7 @@ export function mountWater(host, hud, opts = {}) {
       heading = Math.PI + (0.035 + 0.045 * eff) * Math.sin(t * (0.8 + 0.8 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
     }
     omega = 0
-    px = anchorX; py = anchorY - len * 0.5
+    px = anchorX + (DESK ? ax + rx : 0); py = anchorY - len * 0.5 + (DESK ? ay + ry : 0)
     turn = 0
     pushTrail()
     phase += dt * rate
