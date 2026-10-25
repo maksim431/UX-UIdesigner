@@ -3,7 +3,7 @@
 
 import { revealIfNeeded } from './ascii.js'
 import { initChrome } from './ui.js?v=2'
-import { mountWater } from './water.js?v=41'
+import { mountWater } from './water.js?v=42'
 import { initProjects } from './projects.js?v=9'
 import { initOther } from './other.js?v=11'
 import { initSmoothScroll, scrollToY } from './smooth.js?v=4'

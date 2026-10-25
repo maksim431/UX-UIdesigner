@@ -209,7 +209,7 @@ export function mountWater(host, hud, opts = {}) {
       // отклик и на короткую прокрутку: сила движений набирается уже на небольшой скорости
       const vT = 0.08 + 0.92 * sstep(0, 1, Math.abs(spd) / (len * 0.9))
       eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 3.2 : 1.1))
-      ampK = 0.55 + 1.16 * eff
+      ampK = 0.55 + (FW < 400 ? 0.8 : 1.16) * eff
       rate = 0.6 + 4.3 * eff
       // направление: листаем вниз — плывёт вниз, вверх — плавно разворачивается и плывёт вверх
       const startTurn = (target) => {
@@ -227,7 +227,7 @@ export function mountWater(host, hud, opts = {}) {
       const dh = turnV * Math.min(dt, Math.abs(diff) / Math.max(0.01, Math.abs(turnV)))
       hb = wrap(hb + dh); hu += dh
       // разворот по дуге: карп плывёт вперёд и описывает полукруг, тело тянется за головой
-      const Rr = len * 0.18
+      const Rr = len * (FW < 400 ? 0.04 : 0.18)
       if (turning) {
         const k = Math.sign(dh) || side
         ax = k * Rr * (Math.cos(h0) - Math.cos(hu)); ay = k * Rr * (Math.sin(h0) - Math.sin(hu))
@@ -452,7 +452,8 @@ export function mountWater(host, hud, opts = {}) {
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
-    DESK = SCROLL && document.documentElement.clientWidth >= 1200
+    // плавная модель движения — на всех ширинах (на узкой колонке размах и дуга меньше, чтобы карп не обрезался)
+    DESK = SCROLL
     if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; tile = FW < 400 || document.documentElement.clientWidth < 810 ? clamp(Math.round(len / 52), 9, 14) * 0.85 : clamp(Math.round(len / 52), 9, 14); resetTrail() }
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
