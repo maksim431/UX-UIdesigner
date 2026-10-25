@@ -62,7 +62,7 @@
    на первом экране прозрачная с белым текстом, после начала прокрутки — белая с чёрным
    ========================================================================== */
 .hdr--cl { inset: 14px 14px auto 14px; background: transparent; border: 0; color: #fff; transition: background-color .35s, color .35s, box-shadow .35s; }
-.hdr--cl .hdr__bar { height: 57px; min-height: 0; max-width: none; padding: 14px 58px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.hdr--cl .hdr__bar { height: 57px; min-height: 0; max-width: none; padding: 14px 65px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .hdr--cl .hdr__left { display: flex; align-items: center; }
 .hdr--cl .hdr__right { justify-self: end; }
 .hdr--cl .logo img:first-child { display: none; }
