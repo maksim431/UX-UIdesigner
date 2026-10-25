@@ -1,4 +1,30 @@
+# Сайт открыт для поисковиков и нейросетей; закрыта только админка.
+
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Googlebot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: YandexBot
+User-agent: YandexAdditional
+User-agent: YandexAdditionalBot
+User-agent: Bingbot
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: cohere-ai
+Allow: /
+Disallow: /admin/
+
 User-agent: *
+Allow: /
 Disallow: /admin/
 
 Sitemap: https://uxuidesign.ru/sitemap.xml

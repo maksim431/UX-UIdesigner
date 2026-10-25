@@ -1,0 +1,82 @@
+# Максим Кощеев — UX/UI-дизайнер (Maksim Koshcheev, UX/UI designer)
+
+> Проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников. Сначала разбираюсь в вашем бизнесе и в том, что пишут ваши клиенты. Потом делаю дизайн и живой прототип, который вы проверяете до разработки. Работаю один, напрямую с заказчиком, по договору (самозанятый). Опыт 5 лет, 60+ проектов дошли до релиза.
+
+Сайт разделён на две версии: для заказчиков (услуги, цены, сроки) и для работодателей (продуктовые кейсы, метрики, резюме).
+
+## Для заказчиков: услуги и цены
+
+- Страница услуг: https://uxuidesign.ru/web/
+- Что делаю: лендинги, многостраничные сайты компаний, интернет-магазины, внутренние инструменты и личные кабинеты, аудит и редизайн, мобильные приложения и Telegram Mini Apps.
+- Как работаю: бесплатный разбор сайта → структура и тексты → дизайн и живой прототип на коде → правки → передача файла Figma и инструкций разработчикам или сборка готового сайта (Tilda, Framer или код).
+- Оплата в три этапа: 30% на старте, 40% после согласования дизайна, 30% после передачи файлов или запуска сайта. 2 круга правок на каждом этапе. Работаю под NDA.
+
+- Лендинг: от 40 000 ₽ (с разработкой от 70 000 ₽), до 5 дней
+- Многостраничный сайт: от 60 000 ₽ (с разработкой от 100 000 ₽), от 5 дней
+- Внутренний инструмент, система, кабинет: от 50 000 ₽ (дизайн и живой прототип для тестов), от 1,5 недель
+- Разбор сайта: бесплатно (с этого удобно начать), 1 день
+- UX-аудит: от 10 000 ₽, 1 день
+- Структура и тексты сайта: от 4 000 ₽, 1 день
+
+## Для работодателей
+
+- Продуктовое портфолио: https://uxuidesign.ru/product/
+- Резюме (PDF): https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-ru.pdf
+- Продуктовый UX/UI-дизайн: мобильные приложения, SaaS, внутренние системы; исследования, гипотезы с оценкой ICE, метрики до и после.
+
+## Кейсы
+
+- [FOODBOT — дизайн SaaS для ресторанов: боты доставки в Telegram — продуктовый кейс](https://uxuidesign.ru/projects/foodbot/): FoodBot это SaaS-платформа, на которой можно без кода запустить свой WebApp чат-бот в Telegram для приёма заказов на доставку еды.
+- [FOODBOT — дизайн SaaS для ресторанов: боты доставки в Telegram — версия для заказчиков](https://uxuidesign.ru/projects/foodbot-web/): FoodBot это сервис, в котором кафе и рестораны без программистов запускают своего бота в Telegram для приёма заказов на доставку.
+- [МОЙ ТИГР — лендинг для ветеринарной клиники — продуктовый кейс](https://uxuidesign.ru/projects/mytiger/): «Мой тигр» это клиника красоты и здоровья животных в Москве, где ветеринария и груминг находятся под одной крышей. Я спроектировал для клиники отдельный…
+- [МОЙ ТИГР — лендинг для ветеринарной клиники — версия для заказчиков](https://uxuidesign.ru/projects/mytiger-web/): «Мой тигр» это премиальная клиника для животных в Москве, где есть ветеринария и груминг. Я сделал для неё отдельный лендинг, который приводит заявки на приём.
+- [SCP LAB — дизайн фитнес-приложения для спортсменов — продуктовый кейс](https://uxuidesign.ru/projects/scplab/): SCP LAB это мобильное приложение, которое работает как персональный тренер для профессиональных спортсменов. Оно оценивает физические данные спортсмена и…
+- [SCP LAB — дизайн фитнес-приложения для спортсменов — версия для заказчиков](https://uxuidesign.ru/projects/scplab-web/): SCP LAB это мобильное приложение-тренер для профессиональных спортсменов. Оно подбирает программу тренировок, показывает видеоуроки от профессионалов и…
+- [VICI — сайт-каталог производителя морепродуктов — продуктовый кейс](https://uxuidesign.ru/projects/vici/): VICI это крупная пищевая компания, один из главных производителей рыбы и морепродуктов в Европе.
+- [VICI — сайт-каталог производителя морепродуктов — версия для заказчиков](https://uxuidesign.ru/projects/vici-web/): VICI это крупный производитель рыбы и морепродуктов, известный своими крабовыми палочками.
+
+## Контакты
+
+- Telegram: https://t.me/maksim_koshcheev (@maksim_koshcheev)
+- Почта: v1122706@yandex.ru
+- ВКонтакте: https://vk.ru/maksakosheev
+
+---
+
+# English
+
+> UX/UI designer. I design websites and internal systems that bring in leads and save employees time. I first study your business and what your customers say, then make the design and a live coded prototype you check before development. I work alone, directly with the client, under a contract. 5 years of experience, 60+ projects released.
+
+## For clients: services and prices
+
+- Services page: https://uxuidesign.ru/en/web/
+- Landing pages, company websites, online stores, internal tools and dashboards, audit and redesign, mobile apps and Telegram Mini Apps.
+- Payment in three stages: 30% at start, 40% after design approval, 30% after handoff or launch. NDA available.
+
+- Landing page: from $500 (with development from $870), up to 5 days
+- Multi-page website: from $750 (with development from $1,240), from 5 days
+- Internal tool, system, dashboard: from $620 (design and a live prototype for testing), from 1.5 weeks
+- Website review: free (an easy place to start), 1 day
+- UX audit: from $125, 1 day
+- Website structure and texts: from $50, 1 day
+
+## For employers
+
+- Product portfolio: https://uxuidesign.ru/en/product/
+- CV (PDF): https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-en.pdf
+
+## Case studies
+
+- [FOODBOT — SaaS design for restaurants: Telegram delivery bots — product case study](https://uxuidesign.ru/en/projects/foodbot/): FoodBot is a SaaS platform where you can launch your own Telegram WebApp chatbot for food delivery orders without code.
+- [FOODBOT — SaaS design for restaurants: Telegram delivery bots — client version](https://uxuidesign.ru/en/projects/foodbot-web/): FoodBot is a service where cafés and restaurants launch their own Telegram bot for delivery orders without programmers.
+- [MY TIGER — landing page for a veterinary clinic — product case study](https://uxuidesign.ru/en/projects/mytiger/): “My Tiger” is a beauty and health clinic for animals in Moscow, with veterinary care and grooming under one roof. I designed a separate landing page for the…
+- [MY TIGER — landing page for a veterinary clinic — client version](https://uxuidesign.ru/en/projects/mytiger-web/): “My Tiger” is a premium pet clinic in Moscow with veterinary care and grooming. I built a separate landing page for it that brings in booking requests.
+- [SCP LAB — fitness app design for athletes — product case study](https://uxuidesign.ru/en/projects/scplab/): SCP LAB is a mobile app that works as a personal trainer for professional athletes. It assesses an athlete’s physical data and builds a strength training…
+- [SCP LAB — fitness app design for athletes — client version](https://uxuidesign.ru/en/projects/scplab-web/): SCP LAB is a trainer app for professional athletes. It picks a training program, shows video lessons from professionals and tracks progress.
+- [VICI — catalogue website for a seafood producer — product case study](https://uxuidesign.ru/en/projects/vici/): VICI is a large food company and one of the main producers of fish and seafood in Europe.
+- [VICI — catalogue website for a seafood producer — client version](https://uxuidesign.ru/en/projects/vici-web/): VICI is a large producer of fish and seafood, known for its crab sticks.
+
+## Contacts
+
+- Telegram: https://t.me/maksim_koshcheev
+- Email: v1122706@yandex.ru
