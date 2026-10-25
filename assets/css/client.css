@@ -6,7 +6,7 @@
 
 .cl { --pad: 79px; --sec: 160px; --gap: 24px; --h2: 56px; background: #fff; }
 @media (max-width: 1199.98px) { .cl { --pad: 42px; --sec: 112px; --h2: 44px; } }
-@media (max-width: 809.98px)  { .cl { --pad: 16px; --sec: 80px; --gap: 16px; --h2: 30px; } }
+@media (max-width: 809.98px)  { .cl { --pad: 16px; --sec: 120px; --gap: 16px; --h2: 30px; } }
 
 .cl-sec { position: relative; padding: var(--sec) var(--pad); }
 .cl-h {
@@ -15,7 +15,10 @@
 }
 /* сдвиг второй строки заголовка, как пробелы в макете */
 .cl-i { display: inline-block; padding-left: calc(var(--i, 0) * 1ch); }
-@media (max-width: 809.98px) { .cl-i { padding-left: calc(var(--i, 0) * .45ch); } }
+@media (max-width: 809.98px) { .cl-i { padding-left: calc(var(--im, var(--i, 0) * .45) * 1ch); } }
+/* переносы только для телефона: br.cl-mb — перенос строки, .cl-mi — строка со сдвигом */
+.cl-mb { display: none; }
+@media (max-width: 809.98px) { .cl-mb { display: inline; } .cl-db { display: none; } .cl-mi { display: block; padding-left: 8ch; } }
 .cl-sub { font-size: 20px; line-height: 1.3; color: rgba(0, 0, 0, .7); }
 @media (max-width: 809.98px) { .cl-sub { font-size: 16px; } }
 
@@ -99,13 +102,19 @@
 .cl .hero .hero__foot .hero__label { font-size: 38px; line-height: 1.2; }
 .cl .hero .hero__foot .hero__text { width: 600px; max-width: 100%; font-size: 20px; line-height: 24px; text-transform: lowercase; }
 .cl-hf__btns { display: flex; gap: 16px; flex-wrap: wrap; pointer-events: auto; }
-.cl-hf__btns .cl-bar { height: 58px; }
-/* плашка с фактами: фрейм в правом нижнем углу, список прижат к его правому нижнему углу, текст — по левому краю */
+.cl-hf__btns .cl-bar { height: 56px; }
+/* плашка с фактами: фрейм в правом нижнем углу, список прижат к его правому нижнему углу, текст — по левому краю;
+   в левом верхнем углу плашки — ссылка «посмотреть цены» */
 .cl-hf__glass {
-  flex: none; align-self: flex-end; width: 452px; height: 175px; padding: 6px;
+  position: relative; flex: none; align-self: flex-end; width: 571px; max-width: 100%; height: 187px; padding: 6px;
   display: flex; align-items: flex-end; justify-content: flex-end;
   background: rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); color: #fff;
 }
+.cl-hf__link {
+  position: absolute; left: 0; top: 0; height: 58px; padding: 0 20px; display: flex; align-items: center;
+  font-size: 18px; line-height: 1.2; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; pointer-events: auto;
+}
+.cl-hf__link:hover { opacity: .75; }
 .cl-hf__glass ul { margin: 0; padding: 0; list-style: disc outside; text-align: left; font-size: 16px; line-height: 1.7; }
 .cl-hf__glass li { margin-left: 24px; white-space: nowrap; }
 @media (max-width: 1199.98px) {
@@ -113,19 +122,20 @@
   .cl-hf__l { gap: 32px; }
   .cl .hero .hero__foot .hero__label { font-size: 32px; }
   .cl .hero .hero__foot .hero__text { font-size: 18px; width: 560px; }
-  .cl-hf__glass { width: auto; height: auto; padding: 12px 16px 12px 0; }
+  .cl-hf__glass { align-self: flex-start; height: 170px; }
 }
 @media (max-width: 809.98px) {
+  /* телефон: внизу первого экрана видно только «посмотреть цены», факты — сразу под краем экрана */
+  .cl .hero__foot.cl-hf { gap: 10px; bottom: calc(20svh - 72px); }
   .cl-hf__l { gap: 20px; }
   .cl .hero .hero__foot .hero__label { font-size: 23px; line-height: 1.2; }
   .cl .hero .hero__foot .hero__text { font-size: 14px; line-height: 1.35; }
-  .cl-hf__btns { flex-direction: column; gap: 10px; width: 100%; }
-  .cl-hf__btns > * { width: 100%; }
-  .cl-hf__btns .cl-bar, .cl-hf__btns .cl-btn--line { height: 52px; font-size: 15px; }
-  .cl .hero__foot.cl-hf { gap: 16px; }
-  .cl-hf__glass { align-self: stretch; padding: 10px 14px 10px 0; justify-content: flex-start; }
+  .cl-hf__btns { width: 100%; }
+  .cl-hf__btns .cl-bar { width: 100%; height: 52px; gap: 4px; padding: 2px 2px 2px 12px; font-size: 14px; }
+  .cl-hf__glass { align-self: stretch; width: auto; height: 151px; padding: 10px 14px 10px 0; }
+  .cl-hf__link { height: 40px; padding: 0 12px; font-size: 14px; }
   .cl-hf__glass ul { font-size: 13px; line-height: 1.6; }
-  .cl-hf__glass li { margin-left: 20px; white-space: normal; }
+  .cl-hf__glass li { margin-left: 20px; }
 }
 
 /* ==========================================================================
@@ -134,7 +144,7 @@
 .cl-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .cl-meta__n { font-size: 39px; line-height: .7; }
 .cl-meta__t { font-size: 20px; line-height: 1.2; color: rgba(0, 0, 0, .6); text-align: right; }
-@media (max-width: 809.98px) { .cl-meta__n { font-size: 30px; } .cl-meta__t { font-size: 15px; } }
+@media (max-width: 809.98px) { .cl-meta__n { font-size: 30px; } .cl-meta__t { font-size: 16px; } }
 .cl-ascii { position: absolute; margin: 0; font-family: var(--font); line-height: 1; white-space: pre; pointer-events: none; user-select: none; }
 
 /* ==========================================================================
@@ -170,7 +180,7 @@
 @media (max-width: 809.98px) {
   .cl-tasks__grid { grid-template-columns: 1fr; row-gap: 24px; margin-top: 40px; }
   .cl-task { gap: 0; }
-  .cl-task__h br, .cl-pnote br { display: none; }
+  .cl-pnote br { display: none; }
   .cl-task__body { padding: 16px; gap: 14px; }
   .cl-task__h { font-size: 22px; }
   .cl-task__p, .cl-task__cp { font-size: 15px; }
@@ -232,6 +242,11 @@
 .cl-audit__p2 { color: rgba(255, 255, 255, .7); max-width: 568px; }
 .cl-audit__act { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .cl-audit__note { font-size: 16px; line-height: 1.3; color: rgba(255, 255, 255, .7); }
+/* кнопка разбора: на компьютере — простая белая кнопка, на телефоне — с синей стрелкой */
+.cl-audit__btn { height: 44px; padding: 10px 24px; font-size: 20px; }
+.cl-audit__btn .cl-bar__a { display: none; }
+.cl-audit__r { margin: 0; }
+.cl-audit__cap { margin-top: 24px; font-size: 16px; line-height: 1.3; color: rgba(255, 255, 255, .7); text-align: right; }
 .cl-audit__r { position: relative; width: 809px; max-width: 48%; flex: none; align-self: flex-end; padding: 119px 0 0 119px; }
 .cl-audit__r img { width: 100%; max-width: 691px; height: auto; margin-left: auto; }
 @media (max-width: 1199.98px) {
@@ -290,6 +305,7 @@
 .cl-gets__sticky { position: fixed; top: 0; height: 100vh; overflow: hidden; background: var(--blue); }
 .cl-gets__water { position: absolute; inset: 0; }
 .cl-gets__water canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.cl-gets__water .water-bg { will-change: transform; }
 .cl-gets__px { position: absolute; z-index: 1; left: 0; top: -1px; width: max(100%, 1920px); max-width: none; height: auto; }
 .cl-gets__px--b { top: auto; bottom: -1px; transform: scaleY(-1); }
 .cl-gets .cl-h, .cl-gets__list { position: relative; z-index: 1; }
@@ -577,3 +593,38 @@
 
 /* ASCII-счётчик больших цифр: пока идёт, символы не меняют ширину строки */
 .cl-count { white-space: pre; }
+
+/* ==========================================================================
+   Телефон — по мобильному макету 2091:24519
+   ========================================================================== */
+@media (max-width: 809.98px) {
+  .cl-tasks__grid { row-gap: 40px; }
+  .cl-task--cta { min-height: 530px; padding: 24px; }
+  .cl-task--cta .cl-btn { width: 100%; justify-content: center; font-size: 20px; }
+  .cl-res { gap: 120px; }
+  .cl-reviews__row { display: flex; flex-direction: column; gap: 40px; overflow: visible; margin: 40px 0 0; padding: 0; }
+  .cl-rvw { flex: none; width: 100%; }
+  .cl-sec.cl-audit { padding-top: 198px; gap: 40px; }
+  .cl-audit__ascii { left: -75px; right: auto; top: -251px; font-size: 16px; }
+  .cl-audit__btn { width: 100%; height: 52px; gap: 4px; padding: 2px 2px 2px 12px; font-size: 14px; }
+  .cl-audit__btn .cl-bar__a { display: grid; }
+  .cl-step { min-height: 260px; justify-content: flex-end; }
+  .cl-step .cl-meta { flex: 1; align-items: flex-start; }
+  .cl-step__pay { margin-top: 0; }
+  .cl-sec.cl-gets { padding-top: 200px; padding-bottom: 200px; }
+  .cl-gets__list { width: calc(66.667vw - var(--pad) - 30px); }
+  .cl-seg { height: 260px; }
+  .cl-final { min-height: 780px; }
+  .cl-results__list { display: flex; flex-direction: column; gap: 40px; }
+  .cl-res:last-child { border-bottom: 0; }
+  .cl-process__steps { display: flex; flex-direction: column; gap: 40px; margin-top: 40px; }
+  .cl-get { min-height: 250px; gap: 34px; padding: 14px 14px 18px; }
+  .cl-about__t, .cl-about__b { display: flex; flex-direction: column; gap: 55px; }
+  .cl-about__lead span { display: block; }
+  .cl-facts { gap: 16px; }
+  .cl-fact { padding-bottom: 33px; }
+  .cl-fact__v { font-size: 48px; } .cl-fact__l { font-size: 14px; }
+  .cl-about__row { gap: 24px; }
+  .cl-about__ai { font-size: 15px; }
+  .cl-about .cl-btn--dark { font-size: 16px; padding: 10px 24px; }
+}

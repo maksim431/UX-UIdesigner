@@ -63,7 +63,17 @@ export function mountWater(host, hud, opts = {}) {
   canvas.setAttribute('aria-hidden', 'true')
   canvas.className = 'water'
   host.appendChild(canvas)
-  const ctx = canvas.getContext('2d', { alpha: false })
+  const ctx = canvas.getContext('2d', { alpha: SCROLL })
+  // режим прокрутки: неподвижный ASCII-фон — отдельный холст, который сдвигается CSS-трансформацией
+  // (это делает видеокарта); основной холст прозрачный, в нём каждый кадр только карп и следы
+  let bgc = null, bgx = null
+  if (SCROLL) {
+    bgc = document.createElement('canvas')
+    bgc.setAttribute('aria-hidden', 'true')
+    bgc.className = 'water-bg'
+    host.insertBefore(bgc, canvas)
+    bgx = bgc.getContext('2d', { alpha: false })
+  }
   const layer = document.createElement('canvas') // слой карпа — из него же делается свечение
   const lctx = layer.getContext('2d')
   const b2 = document.createElement('canvas'), b4 = document.createElement('canvas'), b8 = document.createElement('canvas'), b16 = document.createElement('canvas')
@@ -71,7 +81,7 @@ export function mountWater(host, hud, opts = {}) {
   const mask = document.createElement('canvas')
   const mctx = mask.getContext('2d', { willReadFrequently: true })
 
-  let W = 1, H = 1, FW = 1, dpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
+  let W = 1, H = 1, FW = 1, dpr = 1, bdpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
   let dcell = 12
   // сдвиг воды (режим прокрутки): off — сколько «проплыли», offm — то же по модулю периода фона
   let off = 0, offm = 0, Hp = 1, lastScroll = -1, spd = 0, anchorX = 0, anchorY = 0, nextRing = 0
@@ -353,9 +363,11 @@ export function mountWater(host, hud, opts = {}) {
     FW = Math.max(1, host.clientWidth)
     const w = SCROLL ? FW : Math.max(FW, document.documentElement.clientWidth)
     const h = Math.max(1, host.clientHeight)
-    const d = Math.min(1.25, window.devicePixelRatio || 1) // меньше пикселей — легче видеокарте при прокрутке
+    const d0 = Math.min(1.25, window.devicePixelRatio || 1) // меньше пикселей — легче видеокарте при прокрутке
+    // режим прокрутки: карп и следы — в уменьшенном холсте (они и так размыты), фон — в полном разрешении
+    const d = SCROLL ? d0 * 0.75 : d0
     if (w === W && h === H && d === dpr && tcols) return
-    W = w; H = h; dpr = d
+    W = w; H = h; dpr = d; bdpr = d0
     canvas.style.width = W + 'px'
     canvas.width = Math.round(W * dpr)
     canvas.height = Math.round(H * dpr)
@@ -369,7 +381,7 @@ export function mountWater(host, hud, opts = {}) {
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
-    if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; resetTrail() }
+    if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; tile = clamp(Math.round(len / 52), 9, 14); resetTrail() }
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
     prevR = [0, 0, 0, 0]
@@ -390,12 +402,12 @@ export function mountWater(host, hud, opts = {}) {
     Hp = brows * dcell
     bseed = new Float32Array(bcols * brows)
     for (let i = 0; i < bseed.length; i++) bseed[i] = hash(i, 13)
-    const a = Math.ceil(dcell * dpr)
+    const a = Math.ceil(dcell * bdpr)
     batlas = document.createElement('canvas')
     batlas.width = a * BL
     batlas.height = a
     const g = batlas.getContext('2d')
-    g.font = Math.round(dcell * 0.95 * dpr) + 'px ' + font
+    g.font = Math.round(dcell * 0.95 * bdpr) + 'px ' + font
     g.textAlign = 'center'
     g.textBaseline = 'middle'
     for (let l = 1; l < BL; l++) {
@@ -412,8 +424,8 @@ export function mountWater(host, hud, opts = {}) {
     }
     // неподвижный фон рисуем ОДИН раз в отдельный холст; в кадре он ставится одной операцией
     bgStatic = document.createElement('canvas')
-    bgStatic.width = canvas.width
-    bgStatic.height = Math.ceil(Hp * dpr)
+    bgStatic.width = Math.ceil(W * bdpr)
+    bgStatic.height = Math.ceil(Hp * bdpr)
     const gs = bgStatic.getContext('2d')
     gs.fillStyle = '#2c40c7'
     gs.fillRect(0, 0, bgStatic.width, bgStatic.height)
@@ -426,13 +438,32 @@ export function mountWater(host, hud, opts = {}) {
       // 5% элементов фона «живые»: перебирают ASCII-символы; в готовый фон их не кладём,
       // а рисуем поверх в каждом кадре — так готовый холст не меняется и не перезагружается в видеопамять
       if (lv && hash(i, 71) < 0.05) { live.push(i); continue }
-      if (lv) gs.drawImage(batlas, lv * a, 0, a, a, Math.round(c * dcell * dpr), Math.round(r * dcell * dpr), a, a)
+      if (lv) gs.drawImage(batlas, lv * a, 0, a, a, Math.round(c * dcell * bdpr), Math.round(r * dcell * bdpr), a, a)
     }
     bliveIdx = Uint32Array.from(live)
     bliveT = new Float32Array(live.length)
     for (let k = 0; k < live.length; k++) bliveT[k] = hash(live[k], 5) * 2.5
     bctx = gs
     bliveInit = false
+    if (bgc) {
+      // две копии фона подряд: при сдвиге на период шов не виден
+      bgc.width = bgStatic.width; bgc.height = bgStatic.height * 2
+      bgc.style.width = W + 'px'; bgc.style.height = Hp * 2 + 'px'
+      bgx.drawImage(bgStatic, 0, 0); bgx.drawImage(bgStatic, 0, bgStatic.height)
+      for (let k = 0; k < bliveIdx.length; k++) bgCell(bliveIdx[k])
+    }
+  }
+  // перерисовать одну клетку фона на отдельном холсте (обе копии)
+  function bgCell(i) {
+    const a = batlas.height
+    const r = (i / bcols) | 0, c = i - r * bcols
+    const x = Math.round(c * dcell * bdpr)
+    for (const oy of [0, bgStatic.height]) {
+      const y = Math.round(r * dcell * bdpr) + oy
+      bgx.fillStyle = '#2c40c7'
+      bgx.fillRect(x, y, a, a)
+      if (bcur[i]) bgx.drawImage(batlas, bcur[i] * a, 0, a, a, x, y, a, a)
+    }
   }
   // смена символов у «живых» клеток: дорисовываем в готовый фон только изменившиеся клетки
   function tickBg(t) {
@@ -447,6 +478,7 @@ export function mountWater(host, hud, opts = {}) {
       let lv = 1 + ((Math.random() * (BG.length - 2)) | 0)
       if (lv === bcur[i]) lv = lv === 1 ? 2 : lv - 1
       bcur[i] = lv
+      if (bgc) bgCell(i)
     }
   }
   function drawLive() {
@@ -501,20 +533,20 @@ export function mountWater(host, hud, opts = {}) {
     if (lastSpawn < 0 || t < lastSpawn) lastSpawn = t
     const moving = st.sp > len * 0.08
     const nx = Math.cos(heading), ny = Math.sin(heading)
-    while (t - lastSpawn > 0.05) {
-      lastSpawn += 0.05
+    while (t - lastSpawn > 0.08) {
+      lastSpawn += 0.08
       if (!moving) continue
       const k = clamp(st.sp / (len * 1.6), 0, 1)
       const vs = st.sp * 0.7 + len * 0.03
       const [rx, ry] = P(0.16, -0.36, 0)
       const [lx, ly] = P(-0.16, -0.36, 0)
-      wake.push({ x: rx, y: ry + off, nx, ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 3.2, w: 1.7 })
-      wake.push({ x: lx, y: ly + off, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 3.2, w: 1.7 })
+      wake.push({ x: rx, y: ry + off, nx, ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 2.6, w: 1.7 })
+      wake.push({ x: lx, y: ly + off, nx: -nx, ny: -ny, v: vs, t0: lastSpawn, a: 0.9 + 0.6 * k, life: 2.6, w: 1.7 })
     }
     if (!moving && t > nextRing) {
       // круг: от тела карпа, чуть ниже середины
       const [cx, cy] = P(0, -0.15, 0)
-      const n = 44
+      const n = 32
       for (let i = 0; i < n; i++) {
         const a = (i / n) * Math.PI * 2
         wake.push({ x: cx + Math.cos(a) * len * 0.16, y: cy + Math.sin(a) * len * 0.3 + off, nx: Math.cos(a), ny: Math.sin(a), v: len * 0.06, t0: t, a: 1.1, life: 3.6, w: 1.8 })
@@ -522,7 +554,7 @@ export function mountWater(host, hud, opts = {}) {
       nextRing = t + 1.6 + Math.random() * 1.2
     } else if (moving) nextRing = Math.max(nextRing, t + 0.8)
     for (let i = wake.length - 1; i >= 0; i--) if (t - wake[i].t0 > wake[i].life || t < wake[i].t0) wake.splice(i, 1)
-    if (wake.length > 560) wake.splice(0, wake.length - 560)
+    if (wake.length > 240) wake.splice(0, wake.length - 240)
   }
   let field = null, fox = null, foy = null
   const touchedR = []
@@ -603,22 +635,26 @@ export function mountWater(host, hud, opts = {}) {
     }
     // фон неподвижен: готовый холст одной операцией; перерисовываем только клетки, по которым идёт след
     tickBg(t)
-    ctx.drawImage(bgStatic, 0, -Math.round(offm * sc))
-    if (Hp - offm < H) ctx.drawImage(bgStatic, 0, Math.round((Hp - offm) * sc))
-    drawLive()
-    const ba = batlas.height
+    if (bgc) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      bgc.style.transform = 'translate3d(0,' + (-offm).toFixed(1) + 'px,0)'
+    } else {
+      ctx.drawImage(bgStatic, 0, 0)
+      drawLive()
+    }
+    const ba = batlas.height, bd = SCROLL ? Math.ceil(dcell * sc) : ba
     for (let k = 0; k < touched.length; k++) {
       const i = touched[k]
       const wv = Math.min(1.2, field[i])
-      if (wv <= 0.06) continue
+      if (wv <= (SCROLL ? 0.14 : 0.06)) continue
       const r = touchedR[k], c = i % bcols
       const base = bcur[i]
       const l = Math.max(base === BG.length ? 0 : base, SCROLL ? Math.min(BG.length - 1, Math.round(1.5 + wv * 7)) : Math.min(BG.length - 3, Math.round(1.2 + wv * 4.5)))
       const x = Math.round(c * dcell * sc), y = Math.round((r * dcell - offm) * sc)
       // стираем исходный символ клетки и ставим символ гребня волны (чуть сдвинутый по ходу волны)
       ctx.fillStyle = '#2c40c7'
-      ctx.fillRect(x, y, ba, ba)
-      ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round(x + fox[i] * sc), Math.round(y + foy[i] * sc), ba, ba)
+      ctx.fillRect(x, y, bd, bd)
+      ctx.drawImage(batlas, l * ba, 0, ba, ba, Math.round(x + fox[i] * sc), Math.round(y + foy[i] * sc), bd, bd)
     }
 
     // плитки карпа
@@ -721,7 +757,9 @@ export function mountWater(host, hud, opts = {}) {
       up(b2, 2, 0.35)
       // bloom «осветлением» и бирюзовый ореол у головы
       ctx.globalCompositeOperation = 'lighter'
-      up(b4, 4, 0.22); up(b8, 8, 0.34); up(b16, 16, 0.34)
+      // на прозрачном холсте свечение не складывается с фоном — делаем его плотнее
+      const gk = SCROLL ? 1.7 : 1
+      up(b4, 4, 0.22 * gk); up(b8, 8, 0.34 * gk); up(b16, 16, Math.min(1, 0.34 * gk))
     } else ctx.globalCompositeOperation = 'lighter'
     ctx.globalAlpha = 1
     const pulse = 0.9 + 0.1 * Math.sin(t * 1.3)
@@ -749,7 +787,8 @@ export function mountWater(host, hud, opts = {}) {
     const s = performance.now()
     draw((now - t0) / 1000)
     cost = cost * 0.9 + (performance.now() - s) * 0.1
-    minDt = cost > 18 ? 1000 / 20 : 1000 / 30
+    // в режиме прокрутки, пока страница стоит (идут только круги по воде), хватает 20 кадров в секунду
+    minDt = cost > 18 || (SCROLL && Math.abs(spd) < 5) ? 1000 / 20 : 1000 / 30
   }
   function update() {
     const should = visible && !document.hidden && !(reduce && reduce.matches)
