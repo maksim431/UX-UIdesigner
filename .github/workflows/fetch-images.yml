@@ -1,0 +1,14 @@
+name: fetch-images
+on: push
+permissions:
+  contents: write
+jobs:
+  fetch:
+    if: contains(github.event.head_commit.message, '[fetch]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          while IFS=$'\t' read -r path url; do mkdir -p "$(dirname "$path")"; curl -fsSL -o "$path" "$url"; file "$path"; done < .github/fetch-images.tsv
+          git config user.name github-actions; git config user.email actions@github.com
+          git add tmp; git commit -m "fetched images"; git push
