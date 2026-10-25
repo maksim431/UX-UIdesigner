@@ -1,6 +1,6 @@
 // Версия для клиентов (/web/): шапка, появление блоков, частые вопросы и фон с карпом в финальном блоке.
 // Общая логика страницы (первый экран, контакты, «другие проекты») — в page.js.
-import { mountWater } from './water.js?v=37'
+import { mountWater } from './water.js?v=38'
 import { PIXEL_CHARS } from './ascii.js'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches

@@ -94,6 +94,7 @@ export function mountWater(host, hud, opts = {}) {
   let W = 1, H = 1, FW = 1, dpr = 1, bdpr = 1, tile = 12, tcols = 0, trows = 0, len = 1
   let dcell = 12
   // сдвиг воды (режим прокрутки): off — сколько «проплыли», offm — то же по модулю периода фона
+  let DESK = false, wph = 0
   let off = 0, offm = 0, Hp = 1, lastScroll = -1, spd = 0, anchorX = 0, anchorY = 0, nextRing = 0
   let font = getComputedStyle(document.body).fontFamily || 'monospace'
 
@@ -198,23 +199,35 @@ export function mountWater(host, hud, opts = {}) {
     off += dy
     offm = ((off % Hp) + Hp) % Hp
     const raw = dt > 0 ? dy / dt : 0
-    spd += (raw - spd) * Math.min(1, dt * 6)
-    const a = Math.abs(spd)
-    // сила работы хвоста — от скорости прокрутки; в покое карп едва шевелится
-    const vT = 0.08 + 0.92 * clamp(a / (len * 1.6), 0, 1)
-    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 6 : 1.4))
-    // при прокрутке — резкие широкие взмахи всем телом
-    ampK = 0.55 + (FW < 400 ? 0.6 : 0.9) * eff
-    const rate = 0.5 + 4.2 * eff
-    // курс — строго вниз с лёгким покачиванием
-    heading = Math.PI + (0.035 + 0.045 * eff) * Math.sin(t * (0.8 + 0.8 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    let rate
+    if (DESK) {
+      // компьютер: всё сглажено — рывки колёсика/тачпада не передаются телу, разгон и успокоение плавные
+      spd += (raw - spd) * Math.min(1, dt * 3)
+      const vT = 0.08 + 0.92 * sstep(0, 1, Math.abs(spd) / (len * 1.6))
+      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 2.5 : 1.1))
+      ampK = 0.55 + 0.9 * eff
+      rate = 0.6 + 3.4 * eff
+      // покачивание корпуса: фаза накапливается, поэтому смена темпа не даёт скачка
+      wph += dt * (0.8 + 0.6 * eff)
+      heading = Math.PI + (0.035 + 0.04 * eff) * Math.sin(wph + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    } else {
+      spd += (raw - spd) * Math.min(1, dt * 6)
+      const a = Math.abs(spd)
+      // сила работы хвоста — от скорости прокрутки; в покое карп едва шевелится
+      const vT = 0.08 + 0.92 * clamp(a / (len * 1.6), 0, 1)
+      eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 6 : 1.4))
+      ampK = 0.55 + (FW < 400 ? 0.6 : 0.9) * eff
+      rate = 0.5 + 4.2 * eff
+      // курс — строго вниз с лёгким покачиванием
+      heading = Math.PI + (0.035 + 0.045 * eff) * Math.sin(t * (0.8 + 0.8 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    }
     omega = 0
     px = anchorX; py = anchorY - len * 0.5
     turn = 0
     pushTrail()
     phase += dt * rate
     lastT = t
-    return { x: px, y: py, sp: a, sgn: Math.sign(spd) }
+    return { x: px, y: py, sp: Math.abs(spd), sgn: Math.sign(spd) }
   }
   function step(t) {
     if (SCROLL) return stepScroll(t)
@@ -312,6 +325,8 @@ export function mountWater(host, hud, opts = {}) {
     chainT = lastT
     joints[0][0] = hx; joints[0][1] = hy
     // режим прокрутки: голова стоит на месте, а вода «течёт» назад — тело тянется за головой и выпрямляется
+    // компьютер: позвоночник прямой по курсу, изгибы — только плавная волна по телу
+    if (DESK) { resetTrail(); return }
     if (SCROLL) { const d = (Math.abs(spd) + len * 0.35) * dt; for (let i = 1; i < NJ; i++) joints[i][1] -= d }
     // 1) каждый позвонок тянется за предыдущим (как верёвка)
     for (let i = 1; i < NJ; i++) {
@@ -393,6 +408,7 @@ export function mountWater(host, hud, opts = {}) {
     tile = phone ? 9 : FW < 1200 ? 11 : 12
     const visH = Math.min(H, window.innerHeight || H) // размер считаем по видимой части первого экрана
     len = phone ? Math.min(visH * 0.42, FW * 0.78) * 0.85 : Math.min(visH * 0.46, FW * 0.3)
+    DESK = SCROLL && document.documentElement.clientWidth >= 1200
     if (SCROLL && opts.place) { const pl = opts.place(FW, H); len = pl.len; anchorX = pl.x; anchorY = pl.y; px = anchorX; py = anchorY - len * 0.5; heading = Math.PI; tile = FW < 400 || document.documentElement.clientWidth < 810 ? clamp(Math.round(len / 52), 9, 14) * 0.85 : clamp(Math.round(len / 52), 9, 14); resetTrail() }
     tcols = Math.ceil(W / tile)
     trows = Math.ceil(H / tile)
@@ -811,7 +827,7 @@ export function mountWater(host, hud, opts = {}) {
     draw((now - t0) / 1000)
     cost = cost * 0.9 + (performance.now() - s) * 0.1
     // в режиме прокрутки, пока страница стоит (идут только круги по воде), хватает 20 кадров в секунду
-    minDt = cost > 18 || (SCROLL && Math.abs(spd) < 5) ? 1000 / 20 : 1000 / 30
+    minDt = cost > 18 || (SCROLL && !DESK && Math.abs(spd) < 5) ? 1000 / 20 : 1000 / 30
   }
   function update() {
     const should = visible && !document.hidden && !(reduce && reduce.matches)
