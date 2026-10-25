@@ -432,9 +432,10 @@
 .cl-cmp__c { min-height: 120px; display: flex; align-items: center; padding: 0 24px; border-top: 1px solid rgba(0, 0, 0, .25); font-size: 18px; line-height: 1.25; }
 .cl-cmp__lab { color: rgba(0, 0, 0, .6); font-size: 20px; }
 .cl-cmp__hd { min-height: 198px; padding-top: 48px; padding-bottom: 24px; align-items: flex-end; border-top: 0; font-size: 20px; font-weight: 500; }
-.cl-cmp > :nth-last-child(-n+5) { border-bottom: 1px solid rgba(0, 0, 0, .25); }
+.cl-cmp__row { display: contents; }
+.cl-cmp__row:last-child > .cl-cmp__c { border-bottom: 1px solid rgba(0, 0, 0, .25); }
 .cl-cmp__me { background: var(--blue); color: #fff; border-top-color: rgba(255, 255, 255, .3); }
-.cl-cmp > .cl-cmp__me:last-child { border-bottom-color: rgba(255, 255, 255, .3); }
+.cl-cmp__row:last-child > .cl-cmp__me { border-bottom-color: rgba(255, 255, 255, .3); }
 .cl-cmp__hd.cl-cmp__me { position: relative; background: transparent; padding-top: 0; }
 .cl-cmp__hd.cl-cmp__me span { position: relative; display: flex; align-items: flex-end; width: calc(100% + 48px); margin: 0 -24px -24px; height: 150px; padding: 0 24px 24px; background: var(--blue); font-size: 56px; line-height: 1.25; font-weight: 400; text-transform: lowercase; }
 .cl-cmp__px { position: absolute; left: 0; top: 0; width: 100%; height: 48px; }
