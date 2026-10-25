@@ -202,12 +202,12 @@ export function mountWater(host, hud, opts = {}) {
     const a = Math.abs(spd)
     // сила работы хвоста — от скорости прокрутки; в покое карп едва шевелится
     const vT = 0.08 + 0.92 * clamp(a / (len * 1.6), 0, 1)
-    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 12 : 1.6))
+    eff += (vT - eff) * Math.min(1, dt * (vT > eff ? 6 : 1.4))
     // при прокрутке — резкие широкие взмахи всем телом
-    ampK = 0.55 + (FW < 400 ? 0.75 : 1.2) * eff
-    const rate = 0.5 + 5 * eff
+    ampK = 0.55 + (FW < 400 ? 0.6 : 0.9) * eff
+    const rate = 0.5 + 4.2 * eff
     // курс — строго вниз с лёгким покачиванием
-    heading = Math.PI + (0.035 + 0.06 * eff) * Math.sin(t * (0.8 + 1.6 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
+    heading = Math.PI + (0.035 + 0.045 * eff) * Math.sin(t * (0.8 + 0.8 * eff) + seed) + 0.02 * Math.sin(t * 2.1 + seed * 1.7)
     omega = 0
     px = anchorX; py = anchorY - len * 0.5
     turn = 0
