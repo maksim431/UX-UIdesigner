@@ -730,6 +730,8 @@
           }
         }
         for (const [path, e] of texts) if (e.text !== e.orig) files.push({ path, text: e.text })
+        // превью ссылки (og:image) у кейсов — всегда текущая обложка кейса
+        for (const fl of files) if (fl.text && /(^|\/)projects\/[^/]+\/index\.html$/.test(fl.path)) fl.text = syncOg(fl.text, fl.path)
         const sha = await commit(files, 'Админка: правка ' + cur.path + (changes.length ? ' (+ перевод на en)' : ''))
         savedNote = [trNote, syncN ? 'картинки обновлены ещё на ' + syncN + ' ' + plural(syncN, 'странице', 'страницах', 'страницах') : ''].filter(Boolean).join(', ')
         setDirty(false)
@@ -739,6 +741,25 @@
         status('не сохранилось: ' + e.message, 'err')
         $('saveBtn').disabled = false
       }
+    }
+
+    // обложка кейса (первая картинка в <main>) → og:image и её размеры в <head>
+    function syncOg(html, path) {
+      const i = html.indexOf('<main')
+      if (i < 0) return html
+      const tag = (html.slice(i).match(/<img[^>]*>/) || [])[0]
+      if (!tag) return html
+      const src = (tag.match(/src="([^"]+)"/) || [])[1]
+      if (!src || /^data:/.test(src)) return html
+      let url
+      try { url = new URL(src, 'https://uxuidesign.ru/' + path).href } catch (e) { return html }
+      const w = (tag.match(/width="(\d+)"/) || [])[1], h = (tag.match(/height="(\d+)"/) || [])[1]
+      let out = html.replace(/<meta property="og:image" content="[^"]*">/, '<meta property="og:image" content="' + url + '">')
+      if (w && h) {
+        out = out.replace(/<meta property="og:image:width" content="[^"]*">/, '<meta property="og:image:width" content="' + w + '">')
+          .replace(/<meta property="og:image:height" content="[^"]*">/, '<meta property="og:image:height" content="' + h + '">')
+      }
+      return out
     }
 
     /* ================= статистика (Яндекс Метрика) ================= */
