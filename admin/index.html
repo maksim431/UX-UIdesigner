@@ -53,6 +53,7 @@
     .stats[hidden], main[hidden] { display: none; }
     .st-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .st-head .sp { flex: 1; }
+    .st-head { flex-wrap: wrap; }
     .st-setup { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-bottom: 16px; }
     .st-setup[hidden] { display: none; }
     .st-card { background: #fff; border: 1px solid var(--line); padding: 16px; min-width: 0; }
@@ -112,6 +113,12 @@
     <div class="st-head">
       <label>период <select id="stPeriod">
         <option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option><option value="365">год</option>
+      </select></label>
+      <label>версия <select id="stVer">
+        <option value="all">все версии</option><option value="product">для работодателей</option><option value="web">для клиентов</option>
+      </select></label>
+      <label>язык <select id="stLang">
+        <option value="all">все языки</option><option value="ru">русский</option><option value="en">английский</option>
       </select></label>
       <button type="button" id="stReload">обновить</button>
       <span class="sp"></span>
@@ -767,6 +774,11 @@
     $('stSetupBtn').onclick = () => { $('stSetup').hidden = !$('stSetup').hidden }
     $('stReload').onclick = () => stLoad()
     $('stPeriod').onchange = () => stLoad()
+    // фильтры версии и языка: запоминаем выбор в этом браузере
+    ;['stVer', 'stLang'].forEach((id) => {
+      try { const v = localStorage.getItem('adm_' + id); if (v) $(id).value = v } catch (e) {}
+      $(id).onchange = () => { try { localStorage.setItem('adm_' + id, $(id).value) } catch (e) {} stLoad() }
+    })
     $('stForget').onclick = async () => {
       if (!ymToken) { stStatus('ключ Яндекса в этом браузере не сохранён — удалять нечего', 'dirty'); return }
       ymToken = ''
@@ -829,7 +841,39 @@
       stLoad()
     }
 
+    /* ---------- фильтры версии и языка ----------
+       Версия для клиентов — /web/ и кейсы *-web/, для работодателей — /product/ и остальные кейсы; английская — адреса с /en/.
+       Для визитов (ym:s) условие «в визите была такая страница» (EXISTS по просмотрам), для просмотров (ym:pv) — по адресу самой страницы.
+       Если Метрика не примет EXISTS, переходим на условие по странице входа. */
+    let useStart = false
+    const pvCond = (f) => {
+      const c = []
+      const ver = $('stVer').value, lang = $('stLang').value
+      if (ver === 'web') c.push("(" + f + "=@'/web/' OR " + f + "=@'-web/')")
+      if (ver === 'product') c.push("(" + f + "=@'/product/' OR (" + f + "=@'/projects/' AND " + f + "!@'-web/'))")
+      if (lang === 'en') c.push(f + "=@'/en/'")
+      if (lang === 'ru') c.push(f + "!@'/en/'")
+      return c
+    }
+    function sessFilter() {
+      if (useStart) return pvCond('ym:s:startURL').join(' AND ')
+      return pvCond('ym:pv:URL').map((c) => 'EXISTS(' + c + ')').join(' AND ')
+    }
+    const pvFilter = () => pvCond('ym:pv:URL').join(' AND ')
+    const withF = (params) => {
+      const isPv = /ym:pv:/.test((params.metrics || '') + (params.dimensions || ''))
+      const f = isPv ? pvFilter() : sessFilter()
+      if (!f) return params
+      return { ...params, filters: params.filters ? '(' + params.filters + ') AND ' + f : f }
+    }
     async function ym(params) {
+      try { return await ymRaw(withF(params)) } catch (e) {
+        // Метрика не поняла условие по просмотрам внутри визита — пробуем по странице входа
+        if (e.status === 400 && !useStart && sessFilter()) { useStart = true; return ymRaw(withF(params)) }
+        throw e
+      }
+    }
+    async function ymRaw(params) {
       const q = new URLSearchParams({ ids: counterId, date1: $('stPeriod').value + 'daysAgo', date2: 'today', lang: 'ru', accuracy: 'full', ...params })
       let r
       for (let attempt = 0; attempt < 4; attempt++) {
@@ -911,6 +955,16 @@
           if (!funnelData.has(pg)) funnelData.set(pg, [])
           funnelData.get(pg).push({ l: st, v: d.metrics[0] })
         })
+        // этапы — только страницы выбранной версии и языка
+        const okPage = (pg) => {
+          const ver = $('stVer').value, lang = $('stLang').value, en = / · en$|^en\//.test(pg) || /\/en\//.test(pg)
+          if (lang === 'en' && !en) return false
+          if (lang === 'ru' && en) return false
+          if (ver === 'web' && !/web/.test(pg)) return false
+          if (ver === 'product' && (/web/.test(pg) || /first screen|^\/?$/.test(pg))) return false
+          return true
+        }
+        ;[...funnelData.keys()].forEach((k) => { if (!okPage(k)) funnelData.delete(k) })
         const fPages = [...funnelData.keys()].sort((a, b) => Math.max(...funnelData.get(b).map((x) => x.v)) - Math.max(...funnelData.get(a).map((x) => x.v)))
         grid.innerHTML =
           '<div class="st-card st-wide"><div class="kpis">' +
@@ -925,7 +979,8 @@
           '<div class="st-card st-wide"><h3>на каком этапе уходят</h3><p class="hint">Сколько визитов дошло до каждого раздела страницы. Красным — сколько отвалилось по сравнению с предыдущим этапом.</p>' +
           (fPages.length ? '<select class="funnel-sel" id="stFunnelSel">' + fPages.map((p) => '<option>' + escH(p) + '</option>').join('') + '</select><div id="stFunnel"></div>' : '<p class="muted">пока нет данных — этапы начнут собираться с первых визитов</p>') + '</div>'
         if (fPages.length) { $('stFunnelSel').onchange = drawFunnel; drawFunnel() }
-        stStatus(errs.length ? 'часть отчётов не загрузилась: ' + errs.join('; ') : 'данные Яндекс Метрики за ' + $('stPeriod').selectedOptions[0].textContent + ' (обновляются с задержкой до нескольких минут)', errs.length ? 'err' : '')
+        const fl = [$('stVer').value !== 'all' ? $('stVer').selectedOptions[0].textContent : '', $('stLang').value !== 'all' ? $('stLang').selectedOptions[0].textContent : ''].filter(Boolean).join(', ')
+        stStatus(errs.length ? 'часть отчётов не загрузилась: ' + errs.join('; ') : 'данные Яндекс Метрики за ' + $('stPeriod').selectedOptions[0].textContent + (fl ? ' · ' + fl + (useStart ? ' (по странице входа)' : '') : '') + ' (обновляются с задержкой до нескольких минут)', errs.length ? 'err' : '')
       } catch (e) {
         if (e.status === 401 || e.status === 403) { stStatus('Метрика не пускает: ' + e.message + '. Проверьте ключ (шаг 2) и номер счётчика.', 'err'); $('stSetup').hidden = false }
         else stStatus('не удалось загрузить: ' + e.message, 'err')
