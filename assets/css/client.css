@@ -153,6 +153,10 @@
 .cl-tasks { background: #fff; }
 .cl-tasks__grid { margin-top: 80px; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--gap); row-gap: 80px; }
 .cl-task { background: #f2f2f2; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+/* карточка с кейсом кликабельна целиком: ссылка «подробнее» растянута на всю карточку */
+.cl-task { position: relative; }
+.cl-task__body > a.cl-btn::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.cl-task:has(> .cl-task__body > a.cl-btn) { cursor: pointer; }
 .cl-tasks__grid > :nth-child(1) { grid-area: 1 / 1; }
 .cl-tasks__grid > :nth-child(2) { grid-area: 1 / 3; }
 .cl-tasks__grid > :nth-child(3) { grid-area: 2 / 2; }
