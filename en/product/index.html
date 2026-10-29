@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Maksim Koshcheev — product UX/UI designer: apps and services</title>
+  <title>Product UX/UI designer for a full-time role — Maksim Koshcheev: CV and case studies</title>
   <link rel="canonical" href="https://uxuidesign.ru/en/product/">
-  <meta name="description" content="UX/UI design of digital products: mobile apps, SaaS and internal systems — from research to the finished interface. Case studies and contacts.">
+  <meta name="description" content="Product UX/UI designer open to full-time roles: mobile apps, SaaS and internal systems. Case studies with research and before/after metrics, CV and work experience.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Maksim Koshcheev — product UX/UI designer: apps and services">
-  <meta property="og:description" content="UX/UI design of digital products: mobile apps, SaaS and internal systems — from research to the finished interface. Case studies and contacts.">
+  <meta property="og:title" content="Product UX/UI designer for a full-time role — Maksim Koshcheev: CV and case studies">
+  <meta property="og:description" content="Product UX/UI designer open to full-time roles: mobile apps, SaaS and internal systems. Case studies with research and before/after metrics, CV and work experience.">
   <meta property="og:image" content="https://uxuidesign.ru/assets/img/og-cover.gif?v=2">
   <meta property="og:image:type" content="image/gif">
   <meta property="og:image:width" content="900">
@@ -27,7 +27,8 @@
     // картинка не нашлась в папке кейса: пробуем .png, потом прежнюю картинку с Framer
     window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.removeAttribute('srcset'); i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // reload → back to the first screen
-    try { var nv = performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') location.replace('../') } catch (e) {}
+    // unless the visitor came from search or a direct link
+    try { var nv = performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') { if (sessionStorage.getItem('entry') !== 'direct') location.replace('../') } else if (sessionStorage.getItem('entry') === null) sessionStorage.setItem('entry', document.referrer.indexOf(location.origin + '/') === 0 ? 'site' : 'direct') } catch (e) {}
     // arrived via the ASCII transition
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // intro animation
@@ -44,7 +45,7 @@
   <link rel="stylesheet" href="../../assets/fonts/fonts.css?v=1">
   <link rel="modulepreload" href="../../assets/js/water.js?v=42">
   <link rel="stylesheet" href="../../assets/css/site.css?v=12">
-  <script type="application/ld+json" id="ld">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://uxuidesign.ru/#person","name":"Maksim Koshcheev","alternateName":"Максим Кощеев","jobTitle":"Product UX/UI designer","url":"https://uxuidesign.ru/","email":"mailto:v1122706@yandex.ru","sameAs":["https://t.me/maksim_koshcheev","https://vk.ru/maksakosheev"],"knowsLanguage":["ru","en"],"knowsAbout":["UX design","UI design","Web design","Landing pages","Product design","Design systems","Figma","Prototyping","UX research","Mobile apps","Telegram Mini Apps","SaaS","Web development","Website development","Landing page development","Tilda","Framer"],"subjectOf":{"@type":"DigitalDocument","name":"CV","url":"https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-en.pdf","encodingFormat":"application/pdf"}},{"@type":"WebSite","@id":"https://uxuidesign.ru/#website","url":"https://uxuidesign.ru/","name":"Maksim Koshcheev — UX/UI design and website development","inLanguage":["ru","en"],"publisher":{"@id":"https://uxuidesign.ru/#person"}},{"@type":"ProfilePage","@id":"https://uxuidesign.ru/en/product/","url":"https://uxuidesign.ru/en/product/","name":"Maksim Koshcheev — product UX/UI designer: apps and services","description":"UX/UI design of digital products: mobile apps, SaaS and internal systems — from research to the finished interface. Case studies and contacts.","inLanguage":"en","isPartOf":{"@id":"https://uxuidesign.ru/#website"},"mainEntity":{"@id":"https://uxuidesign.ru/#person"}}]}</script>
+  <script type="application/ld+json" id="ld">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://uxuidesign.ru/#person","name":"Maksim Koshcheev","alternateName":"Максим Кощеев","jobTitle":"Product UX/UI designer","url":"https://uxuidesign.ru/","email":"mailto:v1122706@yandex.ru","sameAs":["https://t.me/maksim_koshcheev","https://vk.ru/maksakosheev"],"knowsLanguage":["ru","en"],"knowsAbout":["UX design","UI design","Web design","Landing pages","Product design","Design systems","Figma","Prototyping","UX research","Mobile apps","Telegram Mini Apps","SaaS","Web development","Website development","Landing page development","Tilda","Framer"],"subjectOf":{"@type":"DigitalDocument","name":"CV","url":"https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-en.pdf","encodingFormat":"application/pdf"}},{"@type":"WebSite","@id":"https://uxuidesign.ru/#website","url":"https://uxuidesign.ru/","name":"Maksim Koshcheev — UX/UI design and website development","inLanguage":["ru","en"],"publisher":{"@id":"https://uxuidesign.ru/#person"}},{"@type":"ProfilePage","@id":"https://uxuidesign.ru/en/product/","url":"https://uxuidesign.ru/en/product/","name":"Product UX/UI designer for a full-time role — Maksim Koshcheev: CV and case studies","description":"Product UX/UI designer open to full-time roles: mobile apps, SaaS and internal systems. Case studies with research and before/after metrics, CV and work experience.","inLanguage":"en","isPartOf":{"@id":"https://uxuidesign.ru/#website"},"mainEntity":{"@id":"https://uxuidesign.ru/#person"}}]}</script>
 </head>
 <body>
   <header class="hdr hdr--home is-hero">

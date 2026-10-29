@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Максим Кощеев — продуктовый UX/UI-дизайнер: приложения и сервисы</title>
+  <title>Продуктовый UX/UI-дизайнер в штат — Максим Кощеев: резюме и кейсы</title>
   <link rel="canonical" href="https://uxuidesign.ru/product/">
-  <meta name="description" content="UX/UI-дизайн цифровых продуктов: мобильные приложения, SaaS и внутренние системы — от исследования до готового интерфейса. Кейсы и контакты.">
+  <meta name="description" content="Продуктовый UX/UI-дизайнер, ищу работу в штат: мобильные приложения, SaaS и внутренние системы. Кейсы с исследованиями и метриками до и после, резюме и опыт работы.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Максим Кощеев — продуктовый UX/UI-дизайнер: приложения и сервисы">
-  <meta property="og:description" content="UX/UI-дизайн цифровых продуктов: мобильные приложения, SaaS и внутренние системы — от исследования до готового интерфейса. Кейсы и контакты.">
+  <meta property="og:title" content="Продуктовый UX/UI-дизайнер в штат — Максим Кощеев: резюме и кейсы">
+  <meta property="og:description" content="Продуктовый UX/UI-дизайнер, ищу работу в штат: мобильные приложения, SaaS и внутренние системы. Кейсы с исследованиями и метриками до и после, резюме и опыт работы.">
   <meta property="og:image" content="https://uxuidesign.ru/assets/img/og-cover.gif?v=2">
   <meta property="og:image:type" content="image/gif">
   <meta property="og:image:width" content="900">
@@ -27,7 +27,8 @@
     // картинка не нашлась в папке кейса: пробуем .png, потом прежнюю картинку с Framer
     window.__img = function (i) { var d = i.dataset; if (d.alt) { var l = d.alt.split('|'), a = l.shift(); if (l.length) d.alt = l.join('|'); else delete d.alt; i.removeAttribute('srcset'); i.src = a; return } if (d.fb) { var f = d.fb; delete d.fb; i.src = f; return } i.style.display = 'none' }
     // обновили страницу с работами (F5 / ⌘R) — ведём на первый экран, как во Framer
-    try { var nv = performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') location.replace('../') } catch (e) {}
+    // кто пришёл из поиска или по прямой ссылке, при обновлении остаётся на этой странице
+    try { var nv = performance.getEntriesByType('navigation')[0]; if (nv && nv.type === 'reload') { if (sessionStorage.getItem('entry') !== 'direct') location.replace('../') } else if (sessionStorage.getItem('entry') === null) sessionStorage.setItem('entry', document.referrer.indexOf(location.origin + '/') === 0 ? 'site' : 'direct') } catch (e) {}
     // пришли с первого экрана через ASCII-переход — сразу закрываем экран, чтобы ничего не мелькнуло
     try { if (sessionStorage.getItem('asciiTransition')) document.documentElement.classList.add('ascii-pending') } catch (e) {}
     // анимация появления первого экрана (если в системе не выключено движение)
@@ -44,7 +45,7 @@
   <link rel="stylesheet" href="../assets/fonts/fonts.css?v=1">
   <link rel="modulepreload" href="../assets/js/water.js?v=42">
   <link rel="stylesheet" href="../assets/css/site.css?v=12">
-  <script type="application/ld+json" id="ld">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://uxuidesign.ru/#person","name":"Максим Кощеев","alternateName":"Maksim Koshcheev","jobTitle":"Продуктовый UX/UI-дизайнер","url":"https://uxuidesign.ru/","email":"mailto:v1122706@yandex.ru","sameAs":["https://t.me/maksim_koshcheev","https://vk.ru/maksakosheev"],"knowsLanguage":["ru","en"],"knowsAbout":["UX design","UI design","Web design","Landing pages","Product design","Design systems","Figma","Prototyping","UX research","Mobile apps","Telegram Mini Apps","SaaS","Web development","Website development","Landing page development","Tilda","Framer"],"subjectOf":{"@type":"DigitalDocument","name":"Резюме","url":"https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-ru.pdf","encodingFormat":"application/pdf"}},{"@type":"WebSite","@id":"https://uxuidesign.ru/#website","url":"https://uxuidesign.ru/","name":"Максим Кощеев — UX/UI-дизайн и разработка сайтов","inLanguage":["ru","en"],"publisher":{"@id":"https://uxuidesign.ru/#person"}},{"@type":"ProfilePage","@id":"https://uxuidesign.ru/product/","url":"https://uxuidesign.ru/product/","name":"Максим Кощеев — продуктовый UX/UI-дизайнер: приложения и сервисы","description":"UX/UI-дизайн цифровых продуктов: мобильные приложения, SaaS и внутренние системы — от исследования до готового интерфейса. Кейсы и контакты.","inLanguage":"ru","isPartOf":{"@id":"https://uxuidesign.ru/#website"},"mainEntity":{"@id":"https://uxuidesign.ru/#person"}}]}</script>
+  <script type="application/ld+json" id="ld">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://uxuidesign.ru/#person","name":"Максим Кощеев","alternateName":"Maksim Koshcheev","jobTitle":"Продуктовый UX/UI-дизайнер","url":"https://uxuidesign.ru/","email":"mailto:v1122706@yandex.ru","sameAs":["https://t.me/maksim_koshcheev","https://vk.ru/maksakosheev"],"knowsLanguage":["ru","en"],"knowsAbout":["UX design","UI design","Web design","Landing pages","Product design","Design systems","Figma","Prototyping","UX research","Mobile apps","Telegram Mini Apps","SaaS","Web development","Website development","Landing page development","Tilda","Framer"],"subjectOf":{"@type":"DigitalDocument","name":"Резюме","url":"https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-ru.pdf","encodingFormat":"application/pdf"}},{"@type":"WebSite","@id":"https://uxuidesign.ru/#website","url":"https://uxuidesign.ru/","name":"Максим Кощеев — UX/UI-дизайн и разработка сайтов","inLanguage":["ru","en"],"publisher":{"@id":"https://uxuidesign.ru/#person"}},{"@type":"ProfilePage","@id":"https://uxuidesign.ru/product/","url":"https://uxuidesign.ru/product/","name":"Продуктовый UX/UI-дизайнер в штат — Максим Кощеев: резюме и кейсы","description":"Продуктовый UX/UI-дизайнер, ищу работу в штат: мобильные приложения, SaaS и внутренние системы. Кейсы с исследованиями и метриками до и после, резюме и опыт работы.","inLanguage":"ru","isPartOf":{"@id":"https://uxuidesign.ru/#website"},"mainEntity":{"@id":"https://uxuidesign.ru/#person"}}]}</script>
 </head>
 <body>
   <header class="hdr hdr--home is-hero">
