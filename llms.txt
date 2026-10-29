@@ -1,4 +1,4 @@
-# Максим Кощеев — UX/UI-дизайнер (Maksim Koshcheev, UX/UI designer)
+# Максим Кощеев — UX/UI-дизайн и разработка сайтов (Maksim Koshcheev, UX/UI design and website development)
 
 > Проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников. Сначала разбираюсь в вашем бизнесе и в том, что пишут ваши клиенты. Потом делаю дизайн и живой прототип, который вы проверяете до разработки. Работаю один, напрямую с заказчиком, по договору (самозанятый). Опыт 5 лет, 60+ проектов дошли до релиза.
 
@@ -7,7 +7,7 @@
 ## Для заказчиков: услуги и цены
 
 - Страница услуг: https://uxuidesign.ru/web/
-- Что делаю: лендинги, многостраничные сайты компаний, интернет-магазины, внутренние инструменты и личные кабинеты, аудит и редизайн, мобильные приложения и Telegram Mini Apps.
+- Что делаю: дизайн и разработку сайтов под ключ (Tilda, Framer или код) — лендинги, многостраничные сайты компаний, интернет-магазины, внутренние инструменты и личные кабинеты, аудит и редизайн, мобильные приложения и Telegram Mini Apps.
 - Как работаю: бесплатный разбор сайта → структура и тексты → дизайн и живой прототип на коде → правки → передача файла Figma и инструкций разработчикам или сборка готового сайта (Tilda, Framer или код).
 - Оплата в три этапа: 30% на старте, 40% после согласования дизайна, 30% после передачи файлов или запуска сайта. 2 круга правок на каждом этапе. Работаю под NDA.
 
@@ -45,12 +45,12 @@
 
 # English
 
-> UX/UI designer. I design websites and internal systems that bring in leads and save employees time. I first study your business and what your customers say, then make the design and a live coded prototype you check before development. I work alone, directly with the client, under a contract. 5 years of experience, 60+ projects released.
+> UX/UI designer and website developer. I design and build websites and internal systems that bring in leads and save employees time. I first study your business and what your customers say, then make the design and a live coded prototype you check before development. I work alone, directly with the client, under a contract. 5 years of experience, 60+ projects released.
 
 ## For clients: services and prices
 
 - Services page: https://uxuidesign.ru/en/web/
-- Landing pages, company websites, online stores, internal tools and dashboards, audit and redesign, mobile apps and Telegram Mini Apps.
+- Turnkey website design and development (Tilda, Framer or code): landing pages, company websites, online stores, internal tools and dashboards, audit and redesign, mobile apps and Telegram Mini Apps.
 - Payment in three stages: 30% at start, 40% after design approval, 30% after handoff or launch. NDA available.
 
 - Landing page: from $500 (with development from $870), up to 5 days
