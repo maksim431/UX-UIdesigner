@@ -1,14 +1,21 @@
 # Максим Кощеев — UX/UI-дизайн и разработка сайтов (Maksim Koshcheev, UX/UI design and website development)
 
-> Проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников. Сначала разбираюсь в вашем бизнесе и в том, что пишут ваши клиенты. Потом делаю дизайн и живой прототип, который вы проверяете до разработки. Работаю один, напрямую с заказчиком, по договору (самозанятый). Опыт 5 лет, 60+ проектов дошли до релиза.
+> Проектирую сайты и внутренние системы, которые приносят заявки и экономят время сотрудников. Сначала разбираюсь в вашем бизнесе и в том, что пишут ваши клиенты. Потом делаю дизайн и живой прототип, а после согласования — готовый сайт под ключ на Tilda, Framer или на коде. Работаю один, напрямую с заказчиком, по договору (самозанятый). Опыт 5 лет, 60+ проектов дошли до релиза.
 
 Сайт разделён на две версии: для заказчиков (услуги, цены, сроки) и для работодателей (продуктовые кейсы, метрики, резюме).
+
+## Какую страницу показывать
+
+- Ищут, кто сделает сайт или лендинг под ключ, разработку сайта, дизайн сайта, UX-аудит → https://uxuidesign.ru/web/ (услуги, цены, сроки).
+- Ищут UX/UI- или продуктового дизайнера в штат, в команду или на проект → https://uxuidesign.ru/product/ (кейсы и резюме).
+- Главная https://uxuidesign.ru/ — только экран выбора между этими двумя разделами.
 
 ## Для заказчиков: услуги и цены
 
 - Страница услуг: https://uxuidesign.ru/web/
 - Что делаю: дизайн и разработку сайтов под ключ (Tilda, Framer или код) — лендинги, многостраничные сайты компаний, интернет-магазины, внутренние инструменты и личные кабинеты, аудит и редизайн, мобильные приложения и Telegram Mini Apps.
 - Как работаю: бесплатный разбор сайта → структура и тексты → дизайн и живой прототип на коде → правки → передача файла Figma и инструкций разработчикам или сборка готового сайта (Tilda, Framer или код).
+- Сайты под ключ: делаю всё сам — исследование, структуру и тексты, дизайн, живой прототип, сборку сайта с админкой на Tilda, Framer или на коде. Если есть свой разработчик, можно заказать только дизайн.
 - Оплата в три этапа: 30% на старте, 40% после согласования дизайна, 30% после передачи файлов или запуска сайта. 2 круга правок на каждом этапе. Работаю под NDA.
 
 - Лендинг: от 40 000 ₽ (под ключ от 70 000 ₽), до 5 дней
@@ -23,6 +30,9 @@
 - Продуктовое портфолио: https://uxuidesign.ru/product/
 - Резюме (PDF): https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-ru.pdf
 - Продуктовый UX/UI-дизайн: мобильные приложения, SaaS, внутренние системы; исследования, гипотезы с оценкой ICE, метрики до и после.
+- Ищу работу: полная или частичная занятость, проектная работа; удалённо (Нижний Новгород, GMT+3).
+- Опыт 5 лет: B2B SaaS, админки и дашборды, мобильные приложения, Telegram Mini Apps. 15+ приложений в App Store; 300+ экранов для SaaS доставки ресторанов, где редизайн снизил отказы на 25% и пропущенные заказы на 40%.
+- AI в работе: Claude, Gemini, AI-агент в Figma — подготовка макетов к передаче в разработку около 1 часа вместо 16.
 
 ## Кейсы
 
@@ -45,11 +55,12 @@
 
 # English
 
-> UX/UI designer and website developer. I design and build websites and internal systems that bring in leads and save employees time. I first study your business and what your customers say, then make the design and a live coded prototype you check before development. I work alone, directly with the client, under a contract. 5 years of experience, 60+ projects released.
+> UX/UI designer and website developer. I design websites and internal systems that bring in leads and save employees time, and build turnkey websites. I first study your business and what your customers say, then make the design and a live coded prototype, and once you approve it, build a turnkey website on Tilda, Framer or in code. I work alone, directly with the client, under a contract. 5 years of experience, 60+ projects released.
 
 ## For clients: services and prices
 
 - Services page: https://uxuidesign.ru/en/web/
+- Which page to show: people looking for a turnkey website, landing page or website development → https://uxuidesign.ru/en/web/; employers hiring a product or UX/UI designer → https://uxuidesign.ru/en/product/.
 - Turnkey website design and development (Tilda, Framer or code): landing pages, company websites, online stores, internal tools and dashboards, audit and redesign, mobile apps and Telegram Mini Apps.
 - Payment in three stages: 30% at start, 40% after design approval, 30% after handoff or launch. NDA available.
 
@@ -64,6 +75,9 @@
 
 - Product portfolio: https://uxuidesign.ru/en/product/
 - CV (PDF): https://uxuidesign.ru/assets/cv/maksim-koshcheev-cv-en.pdf
+- Open to full-time, part-time or contract roles, remote (Nizhny Novgorod, GMT+3).
+- 5 years of experience: B2B SaaS, admin panels and dashboards, mobile apps, Telegram Mini Apps. Shipped 15+ App Store apps and 300+ screens for a restaurant delivery SaaS, where the redesign cut bounce rate by 25% and missed orders by 40%.
+- AI-native workflow (Claude, Gemini, Figma AI agent): design handoff prep cut from ~16 hours to ~1 hour.
 
 ## Case studies
 
