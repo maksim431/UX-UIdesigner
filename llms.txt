@@ -11,8 +11,8 @@
 - Как работаю: бесплатный разбор сайта → структура и тексты → дизайн и живой прототип на коде → правки → передача файла Figma и инструкций разработчикам или сборка готового сайта (Tilda, Framer или код).
 - Оплата в три этапа: 30% на старте, 40% после согласования дизайна, 30% после передачи файлов или запуска сайта. 2 круга правок на каждом этапе. Работаю под NDA.
 
-- Лендинг: от 40 000 ₽ (с разработкой от 70 000 ₽), до 5 дней
-- Многостраничный сайт: от 60 000 ₽ (с разработкой от 100 000 ₽), от 5 дней
+- Лендинг: от 40 000 ₽ (под ключ от 70 000 ₽), до 5 дней
+- Многостраничный сайт: от 60 000 ₽ (под ключ от 100 000 ₽), от 5 дней
 - Внутренний инструмент, система, кабинет: от 50 000 ₽ (дизайн и живой прототип для тестов), от 1,5 недель
 - Разбор сайта: бесплатно (с этого удобно начать), 1 день
 - UX-аудит: от 10 000 ₽, 1 день
@@ -53,8 +53,8 @@
 - Turnkey website design and development (Tilda, Framer or code): landing pages, company websites, online stores, internal tools and dashboards, audit and redesign, mobile apps and Telegram Mini Apps.
 - Payment in three stages: 30% at start, 40% after design approval, 30% after handoff or launch. NDA available.
 
-- Landing page: from $500 (with development from $870), up to 5 days
-- Multi-page website: from $750 (with development from $1,240), from 5 days
+- Landing page: from $500 (turnkey from $870), up to 5 days
+- Multi-page website: from $750 (turnkey from $1,240), from 5 days
 - Internal tool, system, dashboard: from $620 (design and a live prototype for testing), from 1.5 weeks
 - Website review: free (an easy place to start), 1 day
 - UX audit: from $125, 1 day
