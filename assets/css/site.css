@@ -825,14 +825,20 @@ html.lb-open .ascii-cursor { display: none; }
   .fs-opt { width: auto; flex: 1 1 0; gap: 120px; }
   .fs-opt__txt { font-size: 20px; }
 }
-@container fs (max-width: 809px) {
-  .fs-choice { gap: 32px; padding: 72px 16px 32px; }
-  .fs-hi { font-size: 32px; }
-  .fs-sub { font-size: 18px; }
+@media (max-width: 809.98px) { .fs--home { justify-content: flex-start; } }
+@container fs (width < 810px) {
+  .fs-choice { width: 100%; gap: 32px; padding: 71px 16px 32px; }
+  .fs-head { align-items: flex-start; gap: 9px; text-align: left; }
+  .fs-hi { width: 100%; font-size: clamp(20px, calc((100cqi - 48px) / 11.4), 30px); line-height: 1.19; }
+  .fs-role { display: block; padding-inline-start: calc(5ch + 2.8px); overflow-wrap: anywhere; }
+  .fs-sub { font-size: 16px; line-height: 20px; letter-spacing: .2px; }
   .fs-cards { flex-direction: column; gap: 16px; }
   .fs-opt { gap: 48px; }
-  .fs-opt__txt { width: auto; font-size: 18px; }
-  .fs-opt__btn { height: 52px; font-size: 16px; }
+  .fs-opt__txt { width: 304px; font-size: 14px; line-height: 17px; letter-spacing: .4px; }
+  .fs-opt__txt > br, .fs-opt__details > br { display: none; }
+  .fs-opt__details, .fs-opt__more { display: block; }
+  .fs-opt__details { margin-top: 17px; }
+  .fs-opt__btn { width: 239px; max-width: 100%; height: 44px; font-size: 16px; }
 }
 
 /* шапка: «скачать cv» — контакты — язык (язык всегда правее контактов) */
