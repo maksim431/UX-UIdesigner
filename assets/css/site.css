@@ -828,13 +828,13 @@ html.lb-open .ascii-cursor { display: none; }
 }
 @media (max-width: 809.98px) { .fs--home { justify-content: flex-start; } }
 @container fs (width < 810px) {
-  .fs-choice { width: 100%; gap: 32px; padding: 40px 16px 32px; }
+  .fs-choice { width: 100%; gap: 32px; padding: 70px 16px 32px; }
   .fs-head { align-items: flex-start; gap: 7px; text-align: left; }
   .fs-hi { width: 100%; font-size: clamp(20px, calc((100cqi - 48px) / 11.4), 30px); line-height: 1.19; }
   .fs-role { display: block; padding-inline-start: calc(5ch + 2.8px); overflow-wrap: anywhere; }
   .fs-sub { font-size: 16px; line-height: 20px; letter-spacing: .2px; }
-  .fs-cards { flex-direction: column; gap: 8px; }
-  .fs-opt { gap: 24px; }
+  .fs-cards { flex-direction: column; gap: 20px; }
+  .fs-opt { gap: 32px; }
   .fs-opt__txt { width: 100%; font-size: 14px; line-height: 17px; letter-spacing: .4px; }
   .fs-opt__txt > br, .fs-opt__desktop { display: none; }
   .fs-opt__mobile { display: inline; }
