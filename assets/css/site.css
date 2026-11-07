@@ -818,6 +818,7 @@ html.lb-open .ascii-cursor { display: none; }
 .fs-opt:hover { background: #e8e8e8; }
 .fs-opt:focus-visible { outline: 2px solid rgb(45, 67, 200); outline-offset: 3px; }
 .fs-opt__txt { width: 384px; max-width: 100%; font-size: 24px; line-height: 1.2; text-transform: lowercase; text-wrap: balance; }
+.fs-opt__mobile { display: none; }
 .fs-opt__btn { align-self: flex-end; min-width: 0; height: 56px; padding: 0 32px; font-size: 18px; line-height: 21.6px; }
 @container fs (max-width: 1199px) {
   .fs-choice { gap: 48px; padding: 64px 40px; }
@@ -827,18 +828,18 @@ html.lb-open .ascii-cursor { display: none; }
 }
 @media (max-width: 809.98px) { .fs--home { justify-content: flex-start; } }
 @container fs (width < 810px) {
-  .fs-choice { width: 100%; gap: 32px; padding: 71px 16px 32px; }
-  .fs-head { align-items: flex-start; gap: 9px; text-align: left; }
+  .fs-choice { width: 100%; gap: 32px; padding: 40px 16px 32px; }
+  .fs-head { align-items: flex-start; gap: 7px; text-align: left; }
   .fs-hi { width: 100%; font-size: clamp(20px, calc((100cqi - 48px) / 11.4), 30px); line-height: 1.19; }
   .fs-role { display: block; padding-inline-start: calc(5ch + 2.8px); overflow-wrap: anywhere; }
   .fs-sub { font-size: 16px; line-height: 20px; letter-spacing: .2px; }
-  .fs-cards { flex-direction: column; gap: 16px; }
-  .fs-opt { gap: 48px; }
-  .fs-opt__txt { width: 304px; font-size: 14px; line-height: 17px; letter-spacing: .4px; }
-  .fs-opt__txt > br, .fs-opt__details > br { display: none; }
-  .fs-opt__details, .fs-opt__more { display: block; }
-  .fs-opt__details { margin-top: 17px; }
-  .fs-opt__btn { width: 239px; max-width: 100%; height: 44px; font-size: 16px; }
+  .fs-cards { flex-direction: column; gap: 8px; }
+  .fs-opt { gap: 24px; }
+  .fs-opt__txt { width: 100%; font-size: 14px; line-height: 17px; letter-spacing: .4px; }
+  .fs-opt__txt > br, .fs-opt__desktop { display: none; }
+  .fs-opt__mobile { display: inline; }
+  .fs-opt__details { display: block; margin-top: 17px; color: #878787; }
+  .fs-opt__btn { width: 218px; max-width: 100%; height: 40px; font-size: 14px; }
 }
 
 /* шапка: «скачать cv» — контакты — язык (язык всегда правее контактов) */
@@ -973,6 +974,11 @@ html.lb-open .ascii-cursor { display: none; }
   opacity: 0; transform: translateY(16px); transition: opacity .3s var(--ease), transform .3s var(--ease);
 }
 .cc.is-in { opacity: 1; transform: none; }
+.fs-home:has(> .cc:not([hidden])) {
+  display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh;
+}
+.fs-home:has(> .cc:not([hidden])) > .fs--home { flex: 1 0 auto; min-height: 0; }
+.fs-home > .cc { position: static; margin: 0 16px 16px; transform: none; }
 .cc a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
 .cc__b { display: flex; gap: 16px; align-items: center; margin-top: 12px; }
 .cc__yes { background: #fff; color: #000; padding: 8px 16px; font-size: 13px; }
