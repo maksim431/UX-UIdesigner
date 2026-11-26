@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121110">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FARFOR">
+  <title>FARFOR</title>
+  <link rel="apple-touch-icon" href="assets/app-192.png">
+  <link rel="manifest" href="app.webmanifest">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app" id="app" data-category="home">
+    <div class="status" aria-hidden="true">
+      <span class="time">14:59</span>
+      <img class="telegram" src="assets/telegram.svg" alt="">
+      <span class="asset notification"><img src="assets/notification.png" alt=""></span>
+      <img class="bluetooth" src="assets/bluetooth.svg" alt="">
+      <span class="network">4G</span>
+      <img class="signal" src="assets/signal.svg" alt="">
+      <img class="wifi" src="assets/wifi.svg" alt="">
+      <span class="battery-level">92 %</span>
+      <img class="battery" src="assets/battery.svg" alt="">
+    </div>
+    <header class="location">
+      <div class="location-label" aria-live="polite">
+        <span class="asset location-art"><img id="location-art" src="assets/pin.png" alt=""></span>
+        <span id="location-label">Москва, ул.Ленина, 192</span>
+      </div>
+      <span class="profile"><img src="assets/profile.svg" alt="Войти"></span>
+    </header>
+    <div class="catalog-frame">
+      <main class="catalog" id="catalog">
+        <div class="banners" aria-label="Баннеры акций" tabindex="0">
+          <p>Баннер акции 1</p>
+          <p>Баннер акции 2</p>
+          <p>Баннер акции 3</p>
+        </div>
+        <section>
+          <h1>Вам понравится</h1>
+          <div class="recommendations" id="recommendations"></div>
+        </section>
+        <section id="pizza">
+          <h2>Пицца</h2>
+          <div class="products"></div>
+        </section>
+        <section id="rolls">
+          <h2>Роллы</h2>
+          <div class="products"></div>
+        </section>
+      </main>
+      <button class="basket" id="basket" aria-label="Оформить демо-заказ" hidden>
+        <span class="basket-art"><span class="asset"><img src="assets/basket.png" alt=""></span></span>
+        <span id="total">440 ₽</span>
+      </button>
+    </div>
+    <footer class="footer">
+      <nav class="categories" aria-label="Категории">
+        <button type="button" data-category="home" aria-current="true"><span class="asset category-art star"><img src="assets/star.png" alt=""></span>Для вас</button>
+        <button type="button" data-category="pizza"><span class="asset category-art pizza-art"><img src="assets/categories.png" alt=""></span>Пицца</button>
+        <button type="button" data-category="rolls"><span class="category-art"><span class="asset roll-art"><img src="assets/categories.png" alt=""></span></span>Роллы</button>
+        <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Детское меню</span>
+        <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Закуски</span>
+      </nav>
+      <div class="footer-row">
+        <img class="logo" src="assets/logo.svg" alt="FARFOR роллы и пицца">
+        <div class="tools">
+          <span class="tool"><img src="assets/sort.svg" alt="Сортировка"></span>
+          <button class="tool" id="filters" aria-label="Настроить фильтры" aria-expanded="true"><img src="assets/filters.svg" alt=""></button>
+        </div>
+        <div class="chips" aria-label="Подкатегории" tabindex="0">
+          <span>Рекомендуем</span><span>Хит!</span><span>Острое</span><span>от Шефа</span><span>от Шефа</span>
+        </div>
+      </div>
+      <div class="gesture" aria-hidden="true"></div>
+    </footer>
+  </div>
+</body>
+</html>
