@@ -90,10 +90,11 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .demo-message { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); padding: 10px 16px; border-radius: 50px; background: var(--paper); color: var(--ink); font-weight: 600; text-align: center; pointer-events: none; }
 .demo-message:empty { opacity: 0; }
 .footer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 10px; overflow: hidden; padding: 12px 0 24px 12px; background: var(--ink); }
-.categories, .chips { display: flex; min-width: 0; height: 40px; overflow-x: auto; padding-right: 12px; overscroll-behavior-inline: contain; touch-action: pan-x pinch-zoom; -webkit-user-select: none; user-select: none; }
+.categories, .chips { min-width: 0; height: 40px; overflow-x: auto; overflow-y: hidden; scroll-padding-inline-end: 12px; overscroll-behavior-inline: contain; touch-action: pan-x pinch-zoom; -webkit-user-select: none; user-select: none; }
+.tab-track { display: flex; width: max-content; min-width: 100%; padding-inline-end: 12px; }
 .categories.is-dragging, .chips.is-dragging { cursor: grabbing; }
 :is(.categories, .chips).is-dragging button { cursor: inherit; }
-.categories > * { display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; padding-inline: 10px; height: 40px; border-radius: 40px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.categories .tab-track > * { display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; padding-inline: 10px; height: 40px; border-radius: 40px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .categories button:nth-child(1) { width: 97px; }
 .categories button:nth-child(2), .categories button:nth-child(3) { width: 88px; }
 .categories .category:nth-child(4) { width: 142px; }
@@ -109,7 +110,8 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .logo { width: 140px; height: 40px; margin-inline: auto; transform: translateX(-6px); }
 .tools { display: flex; flex: none; }
 .tool { width: 40px; height: 40px; display: grid; place-items: center; }
-.chips { flex: 1; gap: 4px; }
+.chips { flex: 1; }
+.chips .tab-track { gap: 4px; }
 .chips button { display: grid; align-items: center; justify-content: center; flex: none; padding-inline: 12px; height: 40px; border-radius: 100px; background: rgb(252 245 239 / 6%); font-size: 12px; font-weight: 600; line-height: 1; }
 .chips button:nth-child(1) { width: 110px; }
 .chips button:nth-child(2) { width: 51px; }

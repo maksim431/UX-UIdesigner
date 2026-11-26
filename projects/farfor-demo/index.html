@@ -12,7 +12,7 @@
   <link rel="manifest" href="app.webmanifest">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="fonts.css">
-  <link rel="stylesheet" href="app.css?v=4">
+  <link rel="stylesheet" href="app.css?v=5">
   <script src="app.js?v=4" defer></script>
 </head>
 <body>
@@ -65,11 +65,13 @@
     </div>
     <footer class="footer">
       <nav class="categories" aria-label="Категории">
-        <button type="button" data-category="home" aria-current="true"><span class="asset category-art star"><img src="assets/star.png" alt=""></span>Для вас</button>
-        <button type="button" data-category="pizza"><span class="asset category-art pizza-art"><img src="assets/categories.png" alt=""></span>Пицца</button>
-        <button type="button" data-category="rolls"><span class="category-art"><span class="asset roll-art"><img src="assets/categories.png" alt=""></span></span>Роллы</button>
-        <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Детское меню</span>
-        <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Закуски</span>
+        <div class="tab-track">
+          <button type="button" data-category="home" aria-current="true"><span class="asset category-art star"><img src="assets/star.png" alt=""></span>Для вас</button>
+          <button type="button" data-category="pizza"><span class="asset category-art pizza-art"><img src="assets/categories.png" alt=""></span>Пицца</button>
+          <button type="button" data-category="rolls"><span class="category-art"><span class="asset roll-art"><img src="assets/categories.png" alt=""></span></span>Роллы</button>
+          <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Детское меню</span>
+          <span class="category"><span class="asset category-art kids"><img src="assets/categories.png" alt=""></span>Закуски</span>
+        </div>
       </nav>
       <div class="footer-row">
         <img class="logo" src="assets/logo.svg" alt="FARFOR роллы и пицца">
@@ -78,11 +80,13 @@
           <button type="button" class="tool" id="filters" aria-label="Настроить фильтры"><img src="assets/filters.svg" alt=""></button>
         </div>
         <div class="chips" aria-label="Подкатегории" tabindex="0">
-          <button type="button" data-subcategory="recommended" aria-pressed="false">Рекомендуем</button>
-          <button type="button" data-subcategory="hit" aria-pressed="false">Хит!</button>
-          <button type="button" data-subcategory="spicy" aria-pressed="false">Острое</button>
-          <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
-          <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
+          <div class="tab-track">
+            <button type="button" data-subcategory="recommended" aria-pressed="false">Рекомендуем</button>
+            <button type="button" data-subcategory="hit" aria-pressed="false">Хит!</button>
+            <button type="button" data-subcategory="spicy" aria-pressed="false">Острое</button>
+            <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
+            <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
+          </div>
         </div>
       </div>
       <div class="gesture" aria-hidden="true"></div>
