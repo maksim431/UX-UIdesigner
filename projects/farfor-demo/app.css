@@ -49,7 +49,7 @@ img { display: block; }
 .location-art img { inset: -19.44%; width: 138.88%; height: 138.88%; object-fit: cover; }
 .profile { display: grid; width: 40px; height: 40px; place-items: center; }
 .catalog-frame { position: relative; min-height: 0; overflow: hidden; border-radius: 36px; background: #302f2d; }
-.catalog { height: 100%; overflow: auto; padding: 8px; overscroll-behavior: contain; }
+.catalog { height: 100%; overflow: auto; padding: 8px; overscroll-behavior: contain; overflow-anchor: none; }
 .catalog, .banners, .categories, .chips { scrollbar-width: none; }
 .catalog::-webkit-scrollbar, .banners::-webkit-scrollbar, .categories::-webkit-scrollbar, .chips::-webkit-scrollbar { display: none; }
 .catalog > * + * { margin-top: 24px; }
@@ -86,10 +86,13 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .basket-art { display: block; width: 32px; height: 32px; }
 .basket-art .asset { width: 30.222px; height: 32px; }
 .basket-art img { left: -43.51%; top: -29.25%; width: 180.95%; height: 160.2%; }
+.empty-subcategory { padding: 8px 10px; }
+.demo-message { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); padding: 10px 16px; border-radius: 50px; background: var(--paper); color: var(--ink); font-weight: 600; text-align: center; pointer-events: none; }
+.demo-message:empty { opacity: 0; }
 .footer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 10px; overflow: hidden; padding: 12px 0 24px 12px; background: var(--ink); }
 .categories, .chips { display: flex; min-width: 0; height: 40px; overflow-x: auto; padding-right: 12px; overscroll-behavior-inline: contain; touch-action: pan-x pinch-zoom; -webkit-user-select: none; user-select: none; }
 .categories.is-dragging, .chips.is-dragging { cursor: grabbing; }
-.categories.is-dragging button { cursor: inherit; }
+:is(.categories, .chips).is-dragging button { cursor: inherit; }
 .categories > * { display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; padding-inline: 10px; height: 40px; border-radius: 40px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .categories button:nth-child(1) { width: 97px; }
 .categories button:nth-child(2), .categories button:nth-child(3) { width: 88px; }
@@ -107,14 +110,13 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .tools { display: flex; flex: none; }
 .tool { width: 40px; height: 40px; display: grid; place-items: center; }
 .chips { flex: 1; gap: 4px; }
-.chips span { display: grid; align-items: center; justify-content: center; flex: none; padding-inline: 12px; height: 40px; border-radius: 100px; background: rgb(252 245 239 / 6%); font-size: 12px; font-weight: 600; line-height: 1; }
-.chips span:nth-child(1) { width: 110px; }
-.chips span:nth-child(2) { width: 51px; }
-.chips span:nth-child(3) { width: 71px; }
-.chips span:nth-child(n+4) { width: 79px; }
-.app[data-category="home"] :is(.tools, .chips), .app:not([data-category="home"]) .logo,
-.app.filters-closed .chips { display: none; }
-.app.filters-closed .tools { margin-inline: auto; transform: translateX(-6px); }
+.chips button { display: grid; align-items: center; justify-content: center; flex: none; padding-inline: 12px; height: 40px; border-radius: 100px; background: rgb(252 245 239 / 6%); font-size: 12px; font-weight: 600; line-height: 1; }
+.chips button:nth-child(1) { width: 110px; }
+.chips button:nth-child(2) { width: 51px; }
+.chips button:nth-child(3) { width: 71px; }
+.chips button:nth-child(n+4) { width: 79px; }
+.chips button[aria-pressed="true"] { background: var(--paper); color: #0f0e0f; }
+.app[data-category="home"] :is(.tools, .chips), .app:not([data-category="home"]) .logo { display: none; }
 .gesture { position: absolute; left: 50%; bottom: 5.6px; transform: translateX(-50%); width: 156px; height: 4.4px; border-radius: 2.2px; background: #616161; }
 @media (display-mode: fullscreen), (display-mode: standalone) {
   .app { grid-template-rows: max(45px, env(safe-area-inset-top)) 40px minmax(0, 1fr) calc(126px + env(safe-area-inset-bottom)); }

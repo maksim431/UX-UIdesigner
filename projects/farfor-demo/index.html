@@ -12,8 +12,8 @@
   <link rel="manifest" href="app.webmanifest">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="fonts.css">
-  <link rel="stylesheet" href="app.css?v=2">
-  <script src="app.js?v=3" defer></script>
+  <link rel="stylesheet" href="app.css?v=4">
+  <script src="app.js?v=4" defer></script>
 </head>
 <body>
   <div class="app" id="app" data-category="home">
@@ -49,16 +49,19 @@
         <section id="pizza">
           <h2>Пицца</h2>
           <div class="products"></div>
+          <p class="empty-subcategory" role="status" hidden>В этой подкатегории пока нет товаров</p>
         </section>
         <section id="rolls">
           <h2>Роллы</h2>
           <div class="products"></div>
+          <p class="empty-subcategory" role="status" hidden>В этой подкатегории пока нет товаров</p>
         </section>
       </main>
       <button class="basket" id="basket" aria-label="Оформить демо-заказ" hidden>
         <span class="basket-art"><span class="asset"><img src="assets/basket.png" alt=""></span></span>
         <span id="total">440 ₽</span>
       </button>
+      <p class="demo-message" id="demo-message" role="status"></p>
     </div>
     <footer class="footer">
       <nav class="categories" aria-label="Категории">
@@ -71,11 +74,15 @@
       <div class="footer-row">
         <img class="logo" src="assets/logo.svg" alt="FARFOR роллы и пицца">
         <div class="tools">
-          <span class="tool"><img src="assets/sort.svg" alt="Сортировка"></span>
-          <button class="tool" id="filters" aria-label="Настроить фильтры" aria-expanded="true"><img src="assets/filters.svg" alt=""></button>
+          <button type="button" class="tool" id="sort" aria-label="Сортировка"><img src="assets/sort.svg" alt=""></button>
+          <button type="button" class="tool" id="filters" aria-label="Настроить фильтры"><img src="assets/filters.svg" alt=""></button>
         </div>
         <div class="chips" aria-label="Подкатегории" tabindex="0">
-          <span>Рекомендуем</span><span>Хит!</span><span>Острое</span><span>от Шефа</span><span>от Шефа</span>
+          <button type="button" data-subcategory="recommended" aria-pressed="false">Рекомендуем</button>
+          <button type="button" data-subcategory="hit" aria-pressed="false">Хит!</button>
+          <button type="button" data-subcategory="spicy" aria-pressed="false">Острое</button>
+          <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
+          <button type="button" data-subcategory="chef" aria-pressed="false">от Шефа</button>
         </div>
       </div>
       <div class="gesture" aria-hidden="true"></div>

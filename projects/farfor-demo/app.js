@@ -4,10 +4,15 @@ const pizza = document.querySelector('#pizza');
 const rolls = document.querySelector('#rolls');
 const basket = document.querySelector('#basket');
 const total = document.querySelector('#total');
-const filters = document.querySelector('#filters');
+const demoMessage = document.querySelector('#demo-message');
 const categoryButtons = document.querySelectorAll('nav button');
+const subcategoryButtons = document.querySelectorAll('[data-subcategory]');
 const items = new Map();
 const price = 440;
+const tagLabels = { chef: 'От шефа', recommended: 'Рекомендуем', hit: 'Хит!' };
+let activeSubcategory = null;
+let scrollBeforeFilter = 0;
+let demoMessageTimer;
 
 function addCard(container, id, name, size, tags = []) {
   const card = document.createElement('article');
@@ -16,7 +21,7 @@ function addCard(container, id, name, size, tags = []) {
   if (size === 'promo') {
     card.innerHTML = media;
   } else {
-    const labels = tags.map(tag => '<span class="tag">' + tag + '</span>').join('');
+    const labels = tags.map(tag => '<span class="tag">' + tagLabels[tag] + '</span>').join('');
     card.innerHTML = media + `
       <p class="card-name">${name}</p>
       <div class="card-action">
@@ -30,6 +35,7 @@ function addCard(container, id, name, size, tags = []) {
       ${tags.length ? '<div class="tags">' + labels + '</div><span class="asset pepper"><img src="assets/pepper.png" alt="Острое"></span>' : ''}
     `;
     card.dataset.item = id;
+    if (tags.length) card.dataset.subcategories = [...tags, 'spicy'].join(' ');
     card.querySelector('.price').setAttribute('aria-label', name + ', + ' + price + ' ₽');
     items.set(id, { card, count: 0 });
   }
@@ -43,10 +49,10 @@ const recommendations = document.querySelector('#recommendations');
 
 function fillCategory(section, name, promoIndex, hitIndex) {
   const grid = section.querySelector('.products');
-  addCard(grid, section.id + '-large', name, 'large', ['От шефа', 'Рекомендуем']);
+  addCard(grid, section.id + '-large', name, 'large', ['chef', 'recommended']);
   for (let index = 0; index < 6; index += 1) {
     const size = index === promoIndex ? 'promo' : 'medium';
-    const tag = index === hitIndex ? 'Хит!' : 'От шефа';
+    const tag = index === hitIndex ? 'hit' : 'chef';
     addCard(grid, section.id + '-' + index, name, size, [tag]);
   }
 }
@@ -84,6 +90,7 @@ function setCategory(category) {
 }
 
 function openCategory(category) {
+  if (activeSubcategory) setSubcategory(null);
   setCategory(category);
   if (category === 'home') catalog.scrollTop = 0;
   if (category === 'pizza') {
@@ -98,6 +105,7 @@ for (const button of categoryButtons) {
 }
 
 catalog.addEventListener('scroll', () => {
+  if (activeSubcategory) return;
   const position = catalog.scrollTop + Math.min(35, catalog.clientHeight / 4);
   if (position >= rolls.offsetTop) setCategory('rolls');
   else if (position >= pizza.offsetTop) setCategory('pizza');
@@ -116,10 +124,40 @@ basket.addEventListener('click', () => {
   openCategory('rolls');
 });
 
-filters.addEventListener('click', () => {
-  const isClosed = app.classList.toggle('filters-closed');
-  filters.setAttribute('aria-expanded', String(!isClosed));
-});
+function setSubcategory(button) {
+  const section = document.getElementById(app.dataset.category);
+  if (!section) return;
+  if (button && !activeSubcategory) scrollBeforeFilter = catalog.scrollTop;
+  activeSubcategory = button;
+  const subcategory = button?.dataset.subcategory;
+
+  for (const tab of subcategoryButtons) {
+    tab.setAttribute('aria-pressed', String(tab === button));
+  }
+  for (const content of catalog.children) {
+    content.hidden = Boolean(subcategory) && content !== section;
+  }
+  const cards = section.querySelectorAll('.card');
+  let matches = 0;
+  for (const card of cards) {
+    card.hidden = Boolean(subcategory) && !card.dataset.subcategories?.split(' ').includes(subcategory);
+    if (!card.hidden) matches += 1;
+  }
+  section.querySelector('.empty-subcategory').hidden = !subcategory || matches > 0;
+  catalog.scrollTop = subcategory ? 0 : scrollBeforeFilter;
+}
+
+for (const button of subcategoryButtons) {
+  button.addEventListener('click', () => setSubcategory(activeSubcategory === button ? null : button));
+}
+
+for (const button of document.querySelectorAll('.tools button')) {
+  button.addEventListener('click', () => {
+    clearTimeout(demoMessageTimer);
+    demoMessage.textContent = 'Это демо-проект';
+    demoMessageTimer = setTimeout(() => { demoMessage.textContent = ''; }, 3000);
+  });
+}
 
 for (const strip of document.querySelectorAll('.categories, .chips')) {
   let drag = null;
