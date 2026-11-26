@@ -120,3 +120,55 @@ filters.addEventListener('click', () => {
   const isClosed = app.classList.toggle('filters-closed');
   filters.setAttribute('aria-expanded', String(!isClosed));
 });
+
+for (const strip of document.querySelectorAll('.categories, .chips')) {
+  let drag = null;
+  let suppressClick = false;
+
+  strip.addEventListener('pointerdown', event => {
+    suppressClick = false;
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    if (strip.scrollWidth <= strip.clientWidth) return;
+    drag = { id: event.pointerId, x: event.clientX, left: strip.scrollLeft };
+  });
+
+  strip.addEventListener('pointermove', event => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const distance = event.clientX - drag.x;
+    if (!suppressClick) {
+      if (Math.abs(distance) < 6) return;
+      suppressClick = true;
+      strip.setPointerCapture(event.pointerId);
+      strip.classList.add('is-dragging');
+    }
+    strip.scrollLeft = drag.left - distance;
+  });
+
+  function finishDrag(event) {
+    if (!drag || event.pointerId !== drag.id) return;
+    drag = null;
+    strip.classList.remove('is-dragging');
+  }
+
+  strip.addEventListener('pointerup', finishDrag);
+  strip.addEventListener('pointercancel', finishDrag);
+  strip.addEventListener('lostpointercapture', finishDrag);
+  strip.addEventListener('pointerleave', event => {
+    if (!strip.hasPointerCapture(event.pointerId)) finishDrag(event);
+  });
+
+  strip.addEventListener('click', event => {
+    if (!suppressClick || event.detail === 0) return;
+    suppressClick = false;
+    event.preventDefault();
+    event.stopPropagation();
+  }, { capture: true });
+
+  strip.addEventListener('wheel', event => {
+    if (event.ctrlKey || event.deltaX || !event.deltaY) return;
+    const unit = [1, 16, strip.clientWidth][event.deltaMode] ?? 1;
+    const before = strip.scrollLeft;
+    strip.scrollLeft += event.deltaY * unit;
+    if (strip.scrollLeft !== before) event.preventDefault();
+  }, { passive: false });
+}

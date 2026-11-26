@@ -86,8 +86,10 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .basket-art { display: block; width: 32px; height: 32px; }
 .basket-art .asset { width: 30.222px; height: 32px; }
 .basket-art img { left: -43.51%; top: -29.25%; width: 180.95%; height: 160.2%; }
-.footer { position: relative; display: grid; align-content: start; gap: 10px; overflow: hidden; padding: 12px 0 24px 12px; background: var(--ink); }
-.categories, .chips { display: flex; height: 40px; overflow-x: auto; padding-right: 12px; overscroll-behavior-inline: contain; }
+.footer { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 10px; overflow: hidden; padding: 12px 0 24px 12px; background: var(--ink); }
+.categories, .chips { display: flex; min-width: 0; height: 40px; overflow-x: auto; padding-right: 12px; overscroll-behavior-inline: contain; touch-action: pan-x pinch-zoom; -webkit-user-select: none; user-select: none; }
+.categories.is-dragging, .chips.is-dragging { cursor: grabbing; }
+.categories.is-dragging button { cursor: inherit; }
 .categories > * { display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; padding-inline: 10px; height: 40px; border-radius: 40px; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .categories button:nth-child(1) { width: 97px; }
 .categories button:nth-child(2), .categories button:nth-child(3) { width: 88px; }
@@ -104,7 +106,7 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .logo { width: 140px; height: 40px; margin-inline: auto; transform: translateX(-6px); }
 .tools { display: flex; flex: none; }
 .tool { width: 40px; height: 40px; display: grid; place-items: center; }
-.chips { gap: 4px; }
+.chips { flex: 1; gap: 4px; }
 .chips span { display: grid; align-items: center; justify-content: center; flex: none; padding-inline: 12px; height: 40px; border-radius: 100px; background: rgb(252 245 239 / 6%); font-size: 12px; font-weight: 600; line-height: 1; }
 .chips span:nth-child(1) { width: 110px; }
 .chips span:nth-child(2) { width: 51px; }
