@@ -2,7 +2,7 @@
   color-scheme: dark;
   font: 500 14px Montserrat, sans-serif;
   color: #fcf5ef;
-  background: #121110;
+  background: #1d1c1b;
   --ink: #141413;
   --paper: #fcf5ef;
   --tile: rgb(255 255 255 / 14%);
@@ -106,8 +106,17 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .roll-art { width: 17px; height: 18px; }
 .roll-art img { left: -50%; top: -266.67%; width: 1950%; height: 4028.57%; }
 .kids img { left: -900%; top: -266.67%; width: 1857.14%; height: 4028.57%; }
-.footer-row { display: flex; align-items: center; height: 40px; gap: 4px; }
-.logo { width: 140px; height: 40px; margin-inline: auto; transform: translateX(-6px); }
+.snacks img { left: -1850%; top: -266.67%; width: 2166.67%; height: 4028.57%; }
+.footer-row { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; height: 40px; --footer-transition: 200ms; }
+.logo, .footer-controls {
+  grid-area: 1 / 1;
+  opacity: 1;
+  visibility: visible;
+  translate: 0;
+  transition: opacity var(--footer-transition) ease, translate var(--footer-transition) ease, visibility 0s;
+}
+.logo { width: 140px; height: 40px; justify-self: center; transform: translateX(-6px); }
+.footer-controls { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .tools { display: flex; flex: none; }
 .tool { width: 40px; height: 40px; display: grid; place-items: center; }
 .chips { flex: 1; }
@@ -118,7 +127,17 @@ h1, h2 { padding-inline: 10px; margin-bottom: 12px; font: 500 22px/27px Inter, s
 .chips button:nth-child(3) { width: 71px; }
 .chips button:nth-child(n+4) { width: 79px; }
 .chips button[aria-pressed="true"] { background: var(--paper); color: #0f0e0f; }
-.app[data-category="home"] :is(.tools, .chips), .app:not([data-category="home"]) .logo { display: none; }
+.app[data-category="home"] .footer-controls, .app:not([data-category="home"]) .logo {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition-delay: 0s, 0s, var(--footer-transition);
+}
+.app[data-category="home"] .footer-controls { translate: 0 5px; }
+.app:not([data-category="home"]) .logo { translate: 0 -5px; }
+@media (prefers-reduced-motion: reduce) {
+  .footer-row { --footer-transition: 0ms; }
+}
 .gesture { position: absolute; left: 50%; bottom: 5.6px; transform: translateX(-50%); width: 156px; height: 4.4px; border-radius: 2.2px; background: #616161; }
 @media (display-mode: fullscreen), (display-mode: standalone) {
   .app { grid-template-rows: max(45px, env(safe-area-inset-top)) 40px minmax(0, 1fr) calc(126px + env(safe-area-inset-bottom)); }

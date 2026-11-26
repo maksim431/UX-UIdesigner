@@ -5,6 +5,7 @@ const rolls = document.querySelector('#rolls');
 const basket = document.querySelector('#basket');
 const total = document.querySelector('#total');
 const demoMessage = document.querySelector('#demo-message');
+const footerControls = document.querySelector('.footer-controls');
 const categoryButtons = document.querySelectorAll('nav button');
 const subcategoryButtons = document.querySelectorAll('[data-subcategory]');
 const items = new Map();
@@ -83,6 +84,7 @@ catalog.addEventListener('click', event => {
 
 function setCategory(category) {
   app.dataset.category = category;
+  footerControls.inert = category === 'home';
   for (const button of categoryButtons) {
     if (button.dataset.category === category) button.setAttribute('aria-current', 'true');
     else button.removeAttribute('aria-current');
