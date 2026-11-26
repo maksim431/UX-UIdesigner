@@ -22,9 +22,9 @@ function addCard(container, id, name, size, tags = []) {
       <div class="card-action">
         <button type="button" class="price" data-delta="1">+ ${price} ₽</button>
         <div class="quantity" hidden>
-          <button type="button" data-delta="1" aria-label="Добавить"><img src="assets/plus.svg" alt=""></button>
-          <output aria-label="Количество">0</output>
           <button type="button" data-delta="-1" aria-label="Убрать"><img src="assets/minus.svg" alt=""></button>
+          <output aria-label="Количество">0</output>
+          <button type="button" data-delta="1" aria-label="Добавить"><img src="assets/plus.svg" alt=""></button>
         </div>
       </div>
       ${tags.length ? '<div class="tags">' + labels + '</div><span class="asset pepper"><img src="assets/pepper.png" alt="Острое"></span>' : ''}
@@ -68,7 +68,7 @@ catalog.addEventListener('click', event => {
   item.count = Math.max(0, item.count + Number(button.dataset.delta));
   updateItem(item);
   if (event.detail === 0 && (button.hidden || button.parentElement.hidden)) {
-    card.querySelector(item.count ? '.quantity button' : '.price').focus({ preventScroll: true });
+    card.querySelector(item.count ? '.quantity [data-delta="1"]' : '.price').focus({ preventScroll: true });
   }
   const count = [...items.values()].reduce((sum, entry) => sum + entry.count, 0);
   total.textContent = (count * price) + ' ₽';
